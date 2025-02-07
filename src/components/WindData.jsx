@@ -2,14 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 export default function GetWindData(){
     const [showEntries, setShowEntries] = useState()
-    const apiUrl = `${getApiUrl()}/testData-15min.json`;
-
-    function getApiUrl() {
-        const protocol = window.location.protocol;
-        const host = window.location.host;
-
-        return `${protocol}//${host}`;
-    }
+    // const apiUrl = 'http://localhost:4321/testData-15min.json';
+    const apiUrl = 'https://weather-station-dashboard-xi.vercel.app/testData-15min.json';
 
     function pullJson() {
         fetch(apiUrl)

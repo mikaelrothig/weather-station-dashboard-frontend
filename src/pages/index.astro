@@ -40,7 +40,7 @@ let formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, '-');
         <span class="text-center col-span-3 text-xs">Direction</span>
     </div>
     <div class="border border-zinc-900 rounded p-3 overflow-scroll">
-        <WindData client:load client:only/>
+        <WindData client:load/>
     </div>
 
     <Footer/>
