@@ -19,6 +19,6 @@
     }
 
     button {
-        @apply text-zinc-200 text-sm hover:cursor-pointer;
+        @apply text-zinc-200 text-sm  hover:cursor-pointer;
     }
 }
