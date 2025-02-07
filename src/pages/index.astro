@@ -22,13 +22,13 @@ let formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, '-');
     </div>
 
     <div class="flex gap-x-2 pb-2">
-        <div class="grid grid-cols-2 p-1 w-full bg-zinc-200 dark:bg-zinc-900 rounded">
+        <div class="grid grid-cols-2 p-1 w-full bg-zinc-900 rounded">
             <button class="p-2 rounded">1m Average</button>
-            <button class="bg-zinc-50 dark:bg-zinc-950 p-2 rounded">15m Average</button>
+            <button class="bg-zinc-950 p-2 rounded">15m Average</button>
         </div>
 
-        <button class="bg-zinc-200 dark:bg-zinc-900 rounded py-3 px-4">
-            <ArrowsClockwise height="16" width="16" tailwindAttr="fill-zinc-900 dark:fill-zinc-200"/>
+        <button class="bg-zinc-900 rounded py-3 px-4">
+            <ArrowsClockwise height="16" width="16" tailwindAttr="fill-zinc-200"/>
         </button>
     </div>
 
@@ -39,7 +39,7 @@ let formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, '-');
         <span class="text-center col-span-2 text-xs">High</span>
         <span class="text-center col-span-3 text-xs">Direction</span>
     </div>
-    <div class="border border-zinc-200 dark:border-zinc-900 rounded p-3 overflow-scroll">
+    <div class="border border-zinc-900 rounded p-3 overflow-scroll">
         <WindData client:load/>
     </div>
 
