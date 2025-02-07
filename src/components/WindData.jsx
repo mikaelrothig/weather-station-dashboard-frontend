@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 export default function GetWindData(){
     const [showEntries, setShowEntries] = useState()
-    const apiUrl = 'http://localhost:4321/testData-15min.json';
+    const apiUrl = `${getApiUrl()}/testData-15min.json`;
+
+    function getApiUrl() {
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+
+        return `${protocol}//${host}`;
+    }
 
     function pullJson() {
         fetch(apiUrl)
