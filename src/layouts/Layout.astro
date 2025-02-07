@@ -10,8 +10,10 @@ import '../styles/global.css';
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro Basics</title>
 	</head>
-	<body>
-		<slot />
+	<body class="bg-zinc-950 antialiased">
+		<main class="px-6 max-w-[400px] pt-16 h-screen mx-auto space-y-12">
+			<slot />
+		</main>
 	</body>
 </html>
 

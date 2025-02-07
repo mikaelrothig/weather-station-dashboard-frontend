@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@layer base {
+
+    h1 {
+        @apply text-2xl text-zinc-100 font-bold;
+    }
+
+    h2 {
+        @apply text-lg text-zinc-100 font-bold;
+    }
+
+    p {
+        @apply text-xs text-zinc-500;
+    }
+
+    span {
+        @apply text-zinc-100;
+    }
+}
