@@ -65,7 +65,7 @@ export default function GetWindData(){
     }, []);
 
     return (
-        <div className="border border-zinc-900 rounded-lg p-3 space-y-2 overflow-scroll">
+        <div className="space-y-2">
             {showEntries}
         </div>
     );

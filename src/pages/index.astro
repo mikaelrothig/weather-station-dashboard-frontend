@@ -19,7 +19,8 @@ let formattedDate = currentDate.toISOString().slice(0, 10).replace(/-/g, '-');
             I’m definitely not just scraping Mac wind data.
         </p>
     </div>
-    <div class="flex flex-grow">
+
+    <div class="border border-zinc-900 rounded-lg p-3 overflow-scroll">
         <WindData client:load/>
     </div>
 
