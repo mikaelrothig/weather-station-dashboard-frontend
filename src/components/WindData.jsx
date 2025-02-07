@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function GetWindData(){
     const [showEntries, setShowEntries] = useState()
-    const apiUrl = 'http://localhost:4321/testData.json';
+    const apiUrl = 'http://localhost:4321/testData-15min.json';
 
     function pullJson() {
         fetch(apiUrl)
@@ -15,12 +15,12 @@ export default function GetWindData(){
 
                     return (
                         <div>
-                            <div className="grid grid-cols-12 gap-x-2 border rounded border-gray-950">
+                            <div className="grid grid-cols-12 gap-x-2">
                                 <span className="flex col-span-3 items-center justify-center px-4 py-2 font-bold text-sm">{entry.time}</span>
                                 <span className={`flex col-span-2 items-center justify-center px-4 py-2 rounded font-bold text-sm ${bgLow}`}>{Math.round(entry.low)}</span>
                                 <span className={`flex col-span-2 items-center justify-center px-4 py-2 rounded font-bold text-sm ${bgAvg}`}>{Math.round(entry.avg)}</span>
                                 <span className={`flex col-span-2 items-center justify-center px-4 py-2 rounded font-bold text-sm ${bgHigh}`}>{Math.round(entry.high)}</span>
-                                <span className="flex col-span-3 items-center justify-center px-4 py-2 bg-zinc-900 rounded font-bold text-sm">{entry.dir}</span>
+                                <span className="flex col-span-3 items-center justify-center px-4 py-2 bg-zinc-200 dark:bg-zinc-900 rounded font-bold text-sm">{entry.dir}</span>
                             </div>
                         </div>
                     )
@@ -33,28 +33,28 @@ export default function GetWindData(){
 
         switch (true) {
             case entry >= 40:
-                bgColor = 'bg-purple-600';
+                bgColor = 'bg-purple-400 dark:bg-purple-600';
                 break;
             case entry >= 35:
-                bgColor = 'bg-pink-600';
+                bgColor = 'bg-pink-400 dark:bg-pink-600';
                 break;
             case entry >= 30:
-                bgColor = 'bg-rose-600';
+                bgColor = 'bg-rose-400 dark:bg-rose-600';
                 break;
             case entry >= 25:
-                bgColor = 'bg-orange-600';
+                bgColor = 'bg-orange-400 dark:bg-orange-600';
                 break;
             case entry >= 20:
-                bgColor = 'bg-yellow-600';
+                bgColor = 'bg-yellow-400 dark:bg-yellow-600';
                 break;
             case entry >= 15:
-                bgColor = 'bg-emerald-600';
+                bgColor = 'bg-emerald-400 dark:bg-emerald-600';
                 break;
             case entry >= 10:
-                bgColor = 'bg-teal-600';
+                bgColor = 'bg-teal-400 dark:bg-teal-600';
                 break;
             default:
-                bgColor = 'bg-cyan-600';
+                bgColor = 'bg-cyan-400 dark:bg-cyan-600';
         }
 
         return bgColor;
