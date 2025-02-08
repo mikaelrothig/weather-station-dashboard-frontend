@@ -10,9 +10,9 @@ export default function GetWindData(){
             .then(response => response.json())
             .then(responseData => {
                 setShowEntries(responseData.map(function(entry) {
-                    let bgLow = getBackgroundColor(entry.low)
-                    let bgAvg = getBackgroundColor(entry.avg)
-                    let bgHigh = getBackgroundColor(entry.high)
+                    let bgLow = getBackgroundColor(Math.round(entry.low))
+                    let bgAvg = getBackgroundColor(Math.round(entry.avg))
+                    let bgHigh = getBackgroundColor(Math.round(entry.high))
                     index++
 
                     return (
