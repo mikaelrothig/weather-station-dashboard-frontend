@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function GetWindData(){
     const [showEntries, setShowEntries] = useState()
-    const apiUrl = 'http://localhost:4321/testData-15min.json';
+    const apiUrl = 'http://localhost:5173/testData-15min.json';
 
     function pullJson() {
         let index = 0;
         fetch(apiUrl)
             .then(response => response.json())
             .then(responseData => {
-                setShowEntries(responseData.map(function(entry) {
+                setShowEntries(responseData.map(function(entry: any) {
                     let bgLow = getBackgroundColor(Math.round(entry.low))
                     let bgAvg = getBackgroundColor(Math.round(entry.avg))
                     let bgHigh = getBackgroundColor(Math.round(entry.high))
                     index++
 
                     return (
-                        <div class="space-y-2">
+                        <div className="space-y-2">
                             <div className="grid grid-cols-12 gap-x-2">
                                 <span className="flex col-span-3 items-center justify-center px-4 py-2 font-bold text-sm">{entry.time}</span>
                                 <span className={`flex col-span-2 items-center justify-center px-4 py-2 rounded-md font-bold text-sm ${bgLow}`}>{Math.round(entry.low)}</span>
@@ -25,7 +25,7 @@ export default function GetWindData(){
                                 <span className="flex col-span-3 items-center justify-center px-4 py-2 bg-zinc-900 rounded-md font-bold text-sm">{entry.dir}</span>
                             </div>
                             {index !== responseData.length && (
-                                <div className="border border-t-zinc-900" />
+                                <div className="border-t border-zinc-900" />
                             )}
                         </div>
                     )
@@ -33,7 +33,7 @@ export default function GetWindData(){
             })
     }
 
-    function getBackgroundColor(entry) {
+    function getBackgroundColor(entry: number) {
         let bgColor;
 
         switch (true) {
@@ -70,8 +70,10 @@ export default function GetWindData(){
     }, []);
 
     return (
-        <div className="space-y-2">
-            {showEntries}
+        <div className="border border-zinc-900 rounded-md p-3 overflow-scroll">
+            <div className="space-y-2">
+                {showEntries}
+            </div>
         </div>
     );
 }
