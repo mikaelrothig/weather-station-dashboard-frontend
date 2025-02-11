@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getBackgroundColor } from './ColorUtils.tsx';
 
 export default function GetWindData(){
     const [showEntries, setShowEntries] = useState()
@@ -10,59 +11,22 @@ export default function GetWindData(){
             .then(response => response.json())
             .then(responseData => {
                 setShowEntries(responseData.map(function(entry: any) {
-                    let bgLow = getBackgroundColor(Math.round(entry.low))
-                    let bgAvg = getBackgroundColor(Math.round(entry.avg))
-                    let bgHigh = getBackgroundColor(Math.round(entry.high))
+                    const bgLow = getBackgroundColor(Math.round(entry.low))
+                    const bgAvg = getBackgroundColor(Math.round(entry.avg))
+                    const bgHigh = getBackgroundColor(Math.round(entry.high))
                     index++
 
                     return (
-                        <div className="space-y-2">
-                            <div className="grid grid-cols-12 gap-x-2">
-                                <span className="flex col-span-3 items-center justify-center px-4 py-2 font-bold text-sm">{entry.time}</span>
-                                <span className={`flex col-span-2 items-center justify-center px-4 py-2 rounded-md font-bold text-sm ${bgLow}`}>{Math.round(entry.low)}</span>
-                                <span className={`flex col-span-2 items-center justify-center px-4 py-2 rounded-md font-bold text-sm ${bgAvg}`}>{Math.round(entry.avg)}</span>
-                                <span className={`flex col-span-2 items-center justify-center px-4 py-2 rounded-md font-bold text-sm ${bgHigh}`}>{Math.round(entry.high)}</span>
-                                <span className="flex col-span-3 items-center justify-center px-4 py-2 bg-zinc-900 rounded-md font-bold text-sm">{entry.dir}</span>
-                            </div>
-                            {index !== responseData.length && (
-                                <div className="border-t border-zinc-900" />
-                            )}
+                        <div className="min-w-12 max-w-12 space-x-0.5 space-y-0.5">
+                            <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">{entry.time}</span>
+                            <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgLow}`}>{Math.round(entry.low)}</span>
+                            <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgAvg}`}>{Math.round(entry.avg)}</span>
+                            <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgHigh}`}>{Math.round(entry.high)}</span>
+                            <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">{entry.dir}</span>
                         </div>
                     )
                 }))
             })
-    }
-
-    function getBackgroundColor(entry: number) {
-        let bgColor;
-
-        switch (true) {
-            case entry >= 40:
-                bgColor = 'bg-purple-600';
-                break;
-            case entry >= 35:
-                bgColor = 'bg-pink-600';
-                break;
-            case entry >= 30:
-                bgColor = 'bg-rose-600';
-                break;
-            case entry >= 25:
-                bgColor = 'bg-orange-600';
-                break;
-            case entry >= 20:
-                bgColor = 'bg-yellow-600';
-                break;
-            case entry >= 15:
-                bgColor = 'bg-emerald-600';
-                break;
-            case entry >= 10:
-                bgColor = 'bg-teal-600';
-                break;
-            default:
-                bgColor = 'bg-cyan-600';
-        }
-
-        return bgColor;
     }
 
     useEffect(() => {
@@ -70,8 +34,16 @@ export default function GetWindData(){
     }, []);
 
     return (
-        <div className="border border-zinc-900 rounded-md p-3 overflow-scroll">
-            <div className="space-y-2">
+        <div className="flex  bg-zinc-900 rounded-md overflow-hidden">
+            <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
+                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Time</span>
+                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Low (knots)</span>
+                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Avg (knots)</span>
+                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">High (knots)</span>
+                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Wind direction</span>
+            </div>
+
+            <div className="flex overflow-scroll">
                 {showEntries}
             </div>
         </div>

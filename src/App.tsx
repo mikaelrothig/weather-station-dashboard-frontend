@@ -1,12 +1,29 @@
 import Header from "./Header.tsx";
-import Footer from "./Footer.tsx";
 import WindData from "./WindData.tsx";
 
 function App() {
-    return <div className="px-6 max-w-[400px] pt-16 h-screen mx-auto flex flex-col justify-between space-y-8">
+    return <div className="mx-12 my-12 space-y-8">
         <Header/>
-        <WindData/>
-        <Footer/>
+        <div className="flex flex-col gap-4">
+            <div className="flex gap-4">
+                <div className="bg-zinc-900 rounded-md min-h-36 min-w-36">
+                </div>
+                <div className="bg-zinc-900 rounded-md min-h-36 min-w-36">
+
+                </div>
+                <div className="overflow-hidden">
+                    <WindData/>
+                </div>
+            </div>
+
+            <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md">
+
+            </div>
+
+            <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md">
+
+            </div>
+        </div>
     </div>
 }
 

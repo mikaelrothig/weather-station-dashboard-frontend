@@ -5,7 +5,7 @@
 @layer base {
 
     h1 {
-        @apply text-2xl text-zinc-200 font-bold;
+        @apply text-4xl text-zinc-200 font-bold;
     }
 
     h2 {
@@ -17,6 +17,10 @@
     }
 
     span {
+        @apply text-zinc-200 text-xs;
+    }
+
+    table {
         @apply text-zinc-200 text-xs;
     }
 
