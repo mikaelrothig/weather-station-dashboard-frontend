@@ -17,7 +17,7 @@ export default function GetWindData(){
                     index++
 
                     return (
-                        <div className="min-w-12 max-w-12 space-x-0.5 space-y-0.5">
+                        <div className={`min-w-12 max-w-12 space-y-0.5 ${index < responseData.length ? 'mr-0.5' : ''}`}>
                             <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">{entry.time}</span>
                             <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgLow}`}>{Math.round(entry.low)}</span>
                             <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgAvg}`}>{Math.round(entry.avg)}</span>
@@ -34,7 +34,7 @@ export default function GetWindData(){
     }, []);
 
     return (
-        <div className="flex  bg-zinc-900 rounded-md overflow-hidden">
+        <div className="flex bg-zinc-900 rounded-md overflow-hidden gap-x-0.5">
             <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
                 <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Time</span>
                 <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Low (knots)</span>
