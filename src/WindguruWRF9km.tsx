@@ -114,7 +114,7 @@ const WindguruComponent = () => {
                     <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Temperature (°C)</span>
                 </div>
 
-                <div className="flex overflow-scroll">
+                <div className="flex overflow-x-scroll">
                     {windData.fcst.hours.map((time, index) => {
                         const windSpeed = windData.fcst.WINDSPD[index];
                         const windGust = windData.fcst.GUST[index];
