@@ -17,25 +17,20 @@ const getLocalTimeDetails = (init_h: string, time: number): { hour: string, date
     const offsetHours = -(new Date().getTimezoneOffset()) / 60;
     const now = new Date();
     const currentDay = now.getDate();
-    const currentMonth = now.getMonth() + 1; // Months are 0-based, so add 1
+    const currentMonth = now.getMonth() + 1;
     const currentYear = now.getFullYear();
 
-    // Calculate total hours offset from the starting hour
-    const totalHours = parseInt(init_h) + time + offsetHours;
 
-    // Calculate how many full days to add (if totalHours exceeds 24)
+    const totalHours = parseInt(init_h) + time + offsetHours;
     const daysToAdd = Math.floor(totalHours / 24);
 
-    // Calculate the adjusted hour (ensuring it stays within 0-23 range)
     let localHour = totalHours % 24;
     if (localHour < 0) localHour += 24; // Handle negative hours
 
-    // Calculate the new day, ensuring proper month transitions
     let adjustedDay = currentDay + daysToAdd;
     let adjustedMonth = currentMonth;
     let adjustedYear = currentYear;
 
-    // Handle month transitions
     while (true) {
         const lastDayOfMonth = new Date(adjustedYear, adjustedMonth, 0).getDate();
         if (adjustedDay > lastDayOfMonth) {
@@ -50,7 +45,6 @@ const getLocalTimeDetails = (init_h: string, time: number): { hour: string, date
         }
     }
 
-    // Ensure no negative days (going back to the previous month)
     while (adjustedDay < 1) {
         adjustedMonth -= 1;
         if (adjustedMonth < 1) {
@@ -60,10 +54,8 @@ const getLocalTimeDetails = (init_h: string, time: number): { hour: string, date
         adjustedDay += new Date(adjustedYear, adjustedMonth, 0).getDate();
     }
 
-    // Get the abbreviated weekday name (e.g., "Mon", "Tue")
     const weekday = new Date(adjustedYear, adjustedMonth - 1, adjustedDay).toLocaleString('en-US', { weekday: 'short' });
 
-    // Return the object with the required details
     return {
         hour: localHour.toString().padStart(2, "0")+'h',
         date: adjustedDay,
@@ -122,14 +114,11 @@ const WindguruComponent = () => {
                         const windGust = windData.fcst.GUST[index];
                         const windDir = windData.fcst.WINDDIR[index];
                         const temperature = windData.fcst.TMP[index];
-                        // const init_h = windData.fcst.init_h;
                         const localTimeDetails = getLocalTimeDetails(windData.fcst.init_h, time);
 
-                        // Set background color based on the wind speed and gust values
                         const bgWindSpeed = getBackgroundColor(Math.round(windSpeed));
                         const bgGust = getBackgroundColor(Math.round(windGust));
                         const bgTemperature = getBackgroundColor(Math.round(temperature));
-
 
                         return (
                             <div key={index} className={`min-w-12 max-w-12 space-y-0.5 ${index < windData.fcst.hours.length - 1 ? "mr-0.5" : ""}`}>
