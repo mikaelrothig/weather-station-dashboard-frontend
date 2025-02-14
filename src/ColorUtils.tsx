@@ -1,5 +1,3 @@
-// utils/colorUtils.ts
-
 export function getBackgroundColor(entry: number): string {
     let bgColor;
 
