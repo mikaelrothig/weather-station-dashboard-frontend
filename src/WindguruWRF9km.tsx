@@ -9,7 +9,9 @@ interface Forecast {
         WINDDIR: number[];
         WINDSPD: number[];
         hours: number[];
+        init_d: string;
         init_h: string;
+        model_name: string;
     };
 }
 
@@ -101,11 +103,15 @@ const WindguruComponent = () => {
         <div>
             <div className="flex bg-zinc-900 rounded-md overflow-hidden gap-x-0.5">
                 <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Hour</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Wind speed (knots)</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Wind gusts (knots)</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Wind Direction</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">Temperature (°C)</span>
+                    <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">
+                        <span className="flex justify-center text-zinc-500">{windData.fcst.model_name}</span>
+                        <span className="flex justify-center text-zinc-500">{windData.fcst.init_d}</span>
+                        <span className="flex justify-center text-zinc-500">{windData.fcst.init_h+' UTC'}</span>
+                    </div>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind speed (knots)</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind gusts (knots)</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Temperature (°C)</span>
                 </div>
 
                 <div className="flex overflow-scroll">
@@ -121,12 +127,12 @@ const WindguruComponent = () => {
                         const bgTemperature = getBackgroundColor(Math.round(temperature));
 
                         return (
-                            <div key={index} className={`min-w-12 max-w-12 space-y-0.5 ${index < windData.fcst.hours.length - 1 ? "mr-0.5" : ""}`}>
-                                <span className="flex flex-col items-center justify-center p-1.5 font-bold bg-zinc-800">
+                            <div key={index} className={`min-w-9 max-w-9 space-y-0.5 ${index < windData.fcst.hours.length - 1 ? "mr-0.5" : ""}`}>
+                                <div className="flex flex-col items-center justify-center p-1.5 font-bold bg-zinc-800">
                                     <span>{localTimeDetails.weekday}</span>
                                     <span>{localTimeDetails.date}</span>
                                     <span>{localTimeDetails.hour}</span>
-                                </span>
+                                </div>
                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgWindSpeed}`}>
                                     {Math.round(windSpeed)}
                                 </span>
@@ -134,7 +140,7 @@ const WindguruComponent = () => {
                                     {Math.round(windGust)}
                                 </span>
                                 <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
-                                    <LucideMousePointer2 className="fill-zinc-200 min-w-3 min-h-3 max-w-3 max-h-3" style={{ transform: `rotate(${windDir-135}deg)` }} />
+                                    <LucideMousePointer2 className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" style={{ transform: `rotate(${windDir-135}deg)` }} />
                                 </span>
                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgTemperature}`}>
                                     {Math.round(temperature)}
