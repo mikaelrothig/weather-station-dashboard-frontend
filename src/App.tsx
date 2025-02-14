@@ -6,8 +6,8 @@ function App() {
         <div className="px-4 py-4 space-y-8">
             <Header/>
 
-            <div className="flex flex-col gap-4">
-                <div className="flex gap-4">
+            <div className="flex flex-col gap-8">
+                <div className="flex gap-8">
                     <div className="bg-zinc-900 rounded-md min-h-36 min-w-36">
                     </div>
                     <div className="bg-zinc-900 rounded-md min-h-36 min-w-36">

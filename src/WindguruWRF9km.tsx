@@ -100,13 +100,15 @@ const WindguruComponent = () => {
     }
 
     return (
-        <div>
-            <div className="flex bg-zinc-900 rounded-md overflow-hidden gap-x-0.5">
+        <div className="space-y-0.5">
+            <span className="flex justify-center bg-zinc-800 text-zinc-500 font-bold p-1.5">{windData.fcst.model_name}</span>
+
+            <div className="flex bg-zinc-900 overflow-hidden gap-x-0.5">
                 <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
                     <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">
-                        <span className="flex justify-center text-zinc-500">{windData.fcst.model_name}</span>
+                        <span className="flex justify-center text-zinc-500">Last updated: </span>
                         <span className="flex justify-center text-zinc-500">{windData.fcst.init_d}</span>
-                        <span className="flex justify-center text-zinc-500">{windData.fcst.init_h+' UTC'}</span>
+                        <span className="flex justify-center text-zinc-500">{windData.fcst.init_h + ' UTC'}</span>
                     </div>
                     <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind speed (knots)</span>
                     <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind gusts (knots)</span>
@@ -126,9 +128,11 @@ const WindguruComponent = () => {
                         const bgGust = getBackgroundColor(Math.round(windGust));
                         const bgTemperature = getBackgroundColor(Math.round(temperature));
 
+                        const dayBackground = localTimeDetails.date % 2 === 0 ? "bg-zinc-700" : "bg-zinc-800";
+
                         return (
                             <div key={index} className={`min-w-9 max-w-9 space-y-0.5 ${index < windData.fcst.hours.length - 1 ? "mr-0.5" : ""}`}>
-                                <div className="flex flex-col items-center justify-center p-1.5 font-bold bg-zinc-800">
+                                <div className={`flex flex-col items-center justify-center p-1.5 font-bold ${dayBackground}`}>
                                     <span>{localTimeDetails.weekday}</span>
                                     <span>{localTimeDetails.date}</span>
                                     <span>{localTimeDetails.hour}</span>
@@ -139,7 +143,7 @@ const WindguruComponent = () => {
                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgGust}`}>
                                     {Math.round(windGust)}
                                 </span>
-                                <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
+                                <span className={`flex items-center justify-center p-1.5 font-bold ${dayBackground}`}>
                                     <LucideMousePointer2 className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" style={{ transform: `rotate(${windDir-135}deg)` }} />
                                 </span>
                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgTemperature}`}>
