@@ -2,7 +2,7 @@
     Weather Station Dashboard Frontend
 </h1>
 <p align="center">
-    Frontent for a dashboard that shows weather forecast data from <a href="https://www.windguru.cz/208276" target="_blank">Windguru (South Africa - Kitebeach)</a> and live wind data from <a href="https://mac-wind.appspot.com/" target="_blank">Macwind</a>.
+    Frontent for a dashboard that shows weather forecast data from <a href="https://www.windguru.cz/208276" target="_blank">Windguru</a> and live wind data from <a href="https://mac-wind.appspot.com/" target="_blank">Macwind</a>.
 </p>
 
 ## Commands
