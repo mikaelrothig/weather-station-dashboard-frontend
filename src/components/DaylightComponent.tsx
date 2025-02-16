@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { Sunset} from "lucide-react";
+import { Sunset } from "lucide-react";
 
 interface Forecast {
     sunrise: number;

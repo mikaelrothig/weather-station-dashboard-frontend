@@ -2,6 +2,7 @@ import Header from "./Header.tsx";
 import WRFComponent from "./components/WRFComponent.tsx";
 import GFSComponent from "./components/GFSComponent.tsx"
 import DaylightComponent from "./components/DaylightComponent.tsx"
+import TemperatureComponent from "./components/TemperatureComponent.tsx";
 
 function App() {
     return <div className="max-w-[1536px] mx-auto">
@@ -11,6 +12,7 @@ function App() {
             <div className="flex flex-col gap-8">
                 <div className="flex gap-8">
                     <div className="bg-zinc-900 rounded-md min-h-56 min-w-56">
+                        <TemperatureComponent/>
                     </div>
                     <div className="bg-zinc-900 rounded-md min-h-56 min-w-56">
                         <DaylightComponent/>
