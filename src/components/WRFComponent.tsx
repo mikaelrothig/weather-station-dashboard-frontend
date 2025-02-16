@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-import {getBackgroundColor} from "./utils/ColorUtils.tsx";
-import {getLocalTimeDetails} from "./utils/TimeUtils.tsx";
+import {getBackgroundColor} from "../utils/ColorUtils.tsx";
+import {getLocalTimeDetails} from "../utils/TimeUtils.tsx";
 
 import {LucideMousePointer2} from "lucide-react";
 
@@ -18,7 +18,7 @@ interface Forecast {
     };
 }
 
-const WindguruComponent = () => {
+const WRFComponent = () => {
     const [windData, setWindData] = useState<Forecast | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ const WindguruComponent = () => {
     useEffect(() => {
         const fetchWindguruData = async () => {
             try {
-                const response = await fetch("http://localhost:4000/api/windguru/gfs-13km");
+                const response = await fetch("http://localhost:4000/api/windguru/wrf-9km");
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -69,11 +69,7 @@ const WindguruComponent = () => {
                 </div>
 
                 <div className="flex overflow-x-scroll">
-                    {windData.fcst.hours
-                        .map((time, index) => ({ time, index }))
-                        .filter(({ time }) => time % 2 === 0)
-                        .map(({ time, index }) => {
-
+                    {windData.fcst.hours.map((time, index) => {
                         const windSpeed = windData.fcst.WINDSPD[index];
                         const windGust = windData.fcst.GUST[index];
                         const windDir = windData.fcst.WINDDIR[index];
@@ -114,4 +110,4 @@ const WindguruComponent = () => {
     );
 };
 
-export default WindguruComponent;
+export default WRFComponent;
