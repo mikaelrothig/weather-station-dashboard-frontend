@@ -42,7 +42,7 @@ const DaylightComponent = () => {
 
     const sunriseHour = parseInt(String(windData.sunrise).split(":")[0], 10);
     const sunsetHour = parseInt(String(windData.sunset).split(":")[0], 10);
-    const currentHour = new Date().getHours(); // Get the current hour (0-23)
+    const currentHour = new Date().getHours();
 
     const sunrisePosition = ((sunriseHour / 23) * 100).toFixed(2);
     const sunsetPosition = ((sunsetHour / 23) * 100).toFixed(2);
