@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getBackgroundColor } from '../utils/ColorUtils.tsx';
-import {LucideMousePointer2, LucideRadio} from 'lucide-react';
+import { LucideMousePointer2, LucideRadio, LucideRefreshCw } from 'lucide-react';
 
 interface LiveWind {
     dirDegrees: string;
@@ -14,57 +14,64 @@ interface LiveWind {
 
 const MacwindComponent = () => {
     const [windData, setWindData] = useState<LiveWind[] | null>(null);
-    // const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [timeFrame, setTimeFrame] = useState<'1min' | '15min'>('1min');
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const fetchMacwindData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await fetch(`http://localhost:4000/api/macwind/${timeFrame}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data: LiveWind[] = await response.json();
+            setWindData(data);
+        } catch (error) {
+            setError("Failed to fetch Macwind data");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchMacwindData = async () => {
-            try {
-                // setLoading(true);
-                setError(null);
-                const response = await fetch(`http://localhost:4000/api/macwind/${timeFrame}`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const data: LiveWind[] = await response.json();
-                setWindData(data);
-            } catch (error) {
-                setError("Failed to fetch Macwind data");
-            } finally {
-                // setLoading(false);
-            }
-        };
-
         fetchMacwindData();
     }, [timeFrame]);
 
-    // if (loading) return <p className="p-4 font-bold min-h-56 min-w-56">Loading...</p>;
-    if (error) return <p className="p-4 font-bold text-red-500 min-h-56 min-w-56">{error}</p>;
-
     return (
         <div className="space-y-2">
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
                 <span className="flex gap-x-2 px-3 py-2 w-fit h-fit bg-rose-600 font-bold rounded-md uppercase">
-                    <LucideRadio className="stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"/>
+                    <LucideRadio className="stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" />
                     LIVE WIND
                 </span>
 
-                <div className="flex justify-center bg-zinc-900 w-fit p-1 rounded-md">
+                <div className="flex gap-x-2">
                     <button
-                        className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '1min' ? 'bg-zinc-700' : 'bg-transparent'}`}
-                        onClick={() => setTimeFrame('1min')}
+                        className="px-3 py-2 rounded-md bg-zinc-900 hover:bg-zinc-800"
+                        onClick={fetchMacwindData}
+                        disabled={loading}
                     >
-                        1min Average
+                        <LucideRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
-                    <button
-                        className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '15min' ? 'bg-zinc-700' : 'bg-transparent'}`}
-                        onClick={() => setTimeFrame('15min')}
-                    >
-                        15min Average
-                    </button>
+
+                    <div className="flex justify-center bg-zinc-900 w-fit p-1 rounded-md items-center gap-x-2">
+                        <button
+                            className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '1min' ? 'bg-zinc-700' : 'bg-transparent'}`}
+                            onClick={() => setTimeFrame('1min')}
+                        >
+                            1min Average
+                        </button>
+                        <button
+                            className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '15min' ? 'bg-zinc-700' : 'bg-transparent'}`}
+                            onClick={() => setTimeFrame('15min')}
+                        >
+                            15min Average
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -67,16 +67,16 @@ const TemperatureComponent = () => {
 
     return (
         <div className="rounded-md overflow-hidden flex flex-col h-full">
-        <span className="flex items-center justify-center bg-zinc-800 text-zinc-500 font-bold p-2 uppercase gap-x-2">
-            <Thermometer className="stroke-zinc-500 h-4 w-4" />
-            TEMPERATURE
-        </span>
+             <span className="flex items-center justify-center bg-zinc-800 text-zinc-500 font-bold p-2 uppercase gap-x-2">
+                <Thermometer className="stroke-zinc-500 h-4 w-4" />
+                TEMPERATURE
+            </span>
 
             <div className="flex flex-col items-center justify-center gap-y-4 h-full w-fit mx-auto">
-            <span className="flex text-7xl font-black">
-                {Math.round(currentTemperature)}
-                <span className="relative top-1 text-xl">°C</span>
-            </span>
+                <span className="flex text-7xl font-black">
+                    {Math.round(currentTemperature)}
+                    <span className="relative top-1 text-xl">°C</span>
+                </span>
                 <div className="relative w-full h-1.5 rounded-full"
                     style={{background: "linear-gradient(to right, #0891b2 0%, #ca8a04 50%, #e11d48 100%)",}}
                 >
