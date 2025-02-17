@@ -45,7 +45,7 @@ const MacwindComponent = () => {
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-2">
             <div className="flex justify-between">
                 <span className="flex gap-x-2 px-3 py-2 w-fit h-fit bg-rose-600 font-bold rounded-md uppercase">
                     <LucideRadio className="stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"/>
@@ -78,29 +78,35 @@ const MacwindComponent = () => {
                     <div className="flex bg-zinc-900 overflow-hidden gap-x-0.5">
                         <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
                             <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Time</span>
-                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Avg Speed (knots)</span>
-                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Gusts (knots)</span>
+                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Low (knots)</span>
+                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Average (knots)</span>
+                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">High (knots)</span>
                             <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
                         </div>
                         <div className="flex overflow-x-scroll">
                             {windData.map((entry, index) => {
-                                const avgWindSpeed = parseFloat(entry.avg);
-                                const windGust = parseFloat(entry.high);
+                                const low = parseFloat(entry.low);
+                                const avg = parseFloat(entry.avg);
+                                const high = parseFloat(entry.high);
                                 const windDir = parseFloat(entry.dirDegrees);
 
-                                const bgWindSpeed = getBackgroundColor(Math.round(avgWindSpeed));
-                                const bgGust = getBackgroundColor(Math.round(windGust));
+                                const bgLow = getBackgroundColor(Math.round(low));
+                                const bgAvg = getBackgroundColor(Math.round(avg));
+                                const bgHigh = getBackgroundColor(Math.round(high));
 
                                 return (
                                     <div key={index} className={`min-w-12 max-w-12 space-y-0.5 ${index < windData.length - 1 ? 'mr-0.5' : ''}`}>
                                         <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
                                             {entry.time}
                                         </span>
-                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgWindSpeed}`}>
-                                            {Math.round(avgWindSpeed)}
+                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgLow}`}>
+                                            {Math.round(low)}
                                         </span>
-                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgGust}`}>
-                                            {Math.round(windGust)}
+                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgAvg}`}>
+                                            {Math.round(avg)}
+                                        </span>
+                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgHigh}`}>
+                                            {Math.round(high)}
                                         </span>
                                         <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
                                             <LucideMousePointer2 className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" style={{ transform: `rotate(${windDir - 135}deg)` }} />

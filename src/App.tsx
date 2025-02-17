@@ -14,22 +14,22 @@ function App() {
 
                 <div className="flex flex-col gap-8">
                     <div className="flex gap-8">
-                        <div className="bg-zinc-900 rounded-md min-h-52 min-w-52">
+                        <div className="bg-zinc-900 rounded-md min-h-56 min-w-56">
                             <TemperatureComponent />
                         </div>
-                        <div className="bg-zinc-900 rounded-md min-h-52 min-w-52">
+                        <div className="bg-zinc-900 rounded-md min-h-56 min-w-56">
                             <DaylightComponent />
                         </div>
-                        <div className="space-y-5 overflow-hidden w-full min-h-52">
+                        <div className="space-y-5 overflow-hidden w-full min-h-56">
                             <MacwindComponent />
                         </div>
                     </div>
 
-                    <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md">
+                    <div className="overflow-hidden w-full bg-zinc-900 rounded-md">
                         <WRFComponent />
                     </div>
 
-                    <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md">
+                    <div className="overflow-hidden w-full bg-zinc-900 rounded-md">
                         <GFSComponent />
                     </div>
                 </div>
