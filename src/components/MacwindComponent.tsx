@@ -48,7 +48,7 @@ const MacwindComponent = () => {
         <div className="space-y-4">
             <div className="flex justify-between">
                 <span className="flex gap-x-2 px-3 py-2 w-fit h-fit bg-rose-600 font-bold rounded-md uppercase">
-                    <LucideRadio className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"/>
+                    <LucideRadio className="stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"/>
                     LIVE WIND
                 </span>
 
