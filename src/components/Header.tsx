@@ -16,8 +16,8 @@ function Header() {
     const formattedDate = currentTime.toLocaleDateString([], { weekday: "long", day: "2-digit", month: "short" });
 
     return (
-        <div className="flex justify-between">
-            <div className="flex flex-col gap-y-2 pt-16">
+        <div className="flex justify-between pt-8">
+            <div className="flex flex-col gap-y-2">
                 <h1>Kite Beach Forecast</h1>
                 <div className="flex items-center gap-x-2">
                     <LocateFixed className="stroke-zinc-500 h-4 w-4" />
@@ -25,7 +25,7 @@ function Header() {
                 </div>
             </div>
 
-            <div className="flex flex-col gap-y-2 pt-16">
+            <div className="flex flex-col gap-y-2">
                 <span className="flex justify-end text-4xl text-zinc-200 font-bold">{formattedTime}</span>
                 <span className="flex justify-end text-lg text-zinc-500">{formattedDate}</span>
             </div>

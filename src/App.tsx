@@ -9,7 +9,7 @@ import Footer from "./components/Footer.tsx";
 function App() {
     return (
         <div className="max-w-[1536px] mx-auto min-h-screen flex flex-col">
-            <div className="px-4 py-4 space-y-8 flex-grow">
+            <div className="px-8 space-y-8 flex-grow">
                 <Header />
 
                 <div className="flex flex-col gap-8">
