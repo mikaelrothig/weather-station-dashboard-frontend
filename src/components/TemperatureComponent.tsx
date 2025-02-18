@@ -73,9 +73,9 @@ const TemperatureComponent = () => {
             </span>
 
             <div className="flex flex-col items-center justify-center gap-y-4 h-full w-fit mx-auto">
-                <span className="flex text-7xl font-black">
+                <span className="flex text-5xl sm:text-6xl md:text-7xl font-black">
                     {Math.round(currentTemperature)}
-                    <span className="relative top-1 text-xl">°C</span>
+                    <span className="relative top-1 text-base sm:text-lg md:text-xl">°C</span>
                 </span>
                 <div className="relative w-full h-1.5 rounded-full"
                     style={{background: "linear-gradient(to right, #0891b2 0%, #ca8a04 50%, #e11d48 100%)",}}

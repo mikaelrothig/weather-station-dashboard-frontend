@@ -19,10 +19,12 @@ function Header() {
         <div className="grid md:grid-cols-2 gap-y-4 pt-8 2xl:pt-12">
             <div className="grid justify-center md:justify-start gap-y-1 md:gap-y-2">
                 <h1 className="flex justify-center">Kite Beach Forecast</h1>
-                <div className="flex items-center gap-x-2">
-                    <LocateFixed className="stroke-zinc-500 h-4 w-4" />
-                    <span className="text-base md:text-lg text-zinc-500">Blouberg, Western Cape, South Africa</span>
-                </div>
+                <button className="flex items-center gap-x-2 group"
+                        onClick={() => window.open('https://www.google.com/maps?q=-33.82,18.47', '_blank')}
+                >
+                    <LocateFixed className="stroke-zinc-500 md:group-hover:stroke-zinc-400 h-4 w-4" />
+                    <span className="text-base md:text-lg text-zinc-500 md:group-hover:text-zinc-400">Blouberg, Western Cape, South Africa</span>
+                </button>
             </div>
 
             <div className="flex md:flex-col justify-center md:justify-start gap-1 md:gap-2">

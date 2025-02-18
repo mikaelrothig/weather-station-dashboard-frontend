@@ -57,7 +57,7 @@ const DaylightComponent = () => {
             </span>
 
             <div className="flex flex-col items-center justify-center gap-y-4 h-full w-fit mx-auto">
-                <span className="text-5xl font-black">{windData.sunset}</span>
+                <span className="text-3xl sm:text-4xl md:text-5xl font-black">{windData.sunset}</span>
 
                 <div
                     className="relative w-full h-1.5 rounded-full"

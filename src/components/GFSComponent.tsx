@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import {getBackgroundColor} from "../utils/ColorUtils.tsx";
 import {getLocalTimeDetails} from "../utils/TimeUtils.tsx";
 
-import {LucideMousePointer2} from "lucide-react";
+import {LucideMinus, LucideMousePointer2, LucidePlus} from "lucide-react";
 
 interface Forecast {
     fcst: {
@@ -22,6 +22,7 @@ const GFSComponent = () => {
     const [windData, setWindData] = useState<Forecast | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [showLabels, setShowLabels] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchWindguruData = async () => {
@@ -42,6 +43,18 @@ const GFSComponent = () => {
         };
 
         fetchWindguruData();
+
+        const handleResize = () => {
+            setShowLabels(window.innerWidth >= 512);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        handleResize();
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
     }, []);
 
     if (loading) return <p className="p-4 font-bold min-h-56 min-w-56">Loading...</p>;
@@ -53,20 +66,30 @@ const GFSComponent = () => {
 
     return (
         <div className="space-y-0.5">
-            <span className="flex justify-center bg-zinc-800 text-zinc-500 font-bold p-1.5">{windData.fcst.model_name}</span>
+            <div className="flex gap-x-0.5">
+                <button
+                    className="px-2.5 p-1.5 bg-zinc-800 hover:bg-zinc-700"
+                    onClick={() => setShowLabels(!showLabels)}
+                >
+                    {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
+                </button>
+                <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5">{windData.fcst.model_name}</span>
+            </div>
 
             <div className="flex bg-zinc-900 overflow-hidden gap-x-0.5">
-                <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
-                    <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">
-                        <span className="flex justify-center text-zinc-500">Last updated: </span>
-                        <span className="flex justify-center text-zinc-500">{windData.fcst.init_d}</span>
-                        <span className="flex justify-center text-zinc-500">{windData.fcst.init_h + ' UTC'}</span>
+                {showLabels && (
+                    <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
+                        <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs">
+                            <span className="flex justify-center text-zinc-500">Last updated: </span>
+                            <span className="flex justify-center text-zinc-500">{windData.fcst.init_d}</span>
+                            <span className="flex justify-center text-zinc-500">{windData.fcst.init_h + ' UTC'}</span>
+                        </div>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind speed (knots)</span>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind gusts (knots)</span>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Temperature (°C)</span>
                     </div>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind speed (knots)</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind gusts (knots)</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Temperature (°C)</span>
-                </div>
+                )}
 
                 <div className="flex overflow-x-scroll">
                     {windData.fcst.hours

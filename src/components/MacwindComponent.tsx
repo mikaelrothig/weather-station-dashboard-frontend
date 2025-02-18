@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getBackgroundColor } from '../utils/ColorUtils.tsx';
-import { LucideMousePointer2, LucideRadio, LucideRefreshCw } from 'lucide-react';
+import {LucideMinus, LucideMousePointer2, LucidePlus, LucideRadio, LucideRefreshCw} from 'lucide-react';
 
 interface LiveWind {
     dirDegrees: string;
@@ -17,6 +17,7 @@ const MacwindComponent = () => {
     const [error, setError] = useState<string | null>(null);
     const [timeFrame, setTimeFrame] = useState<'1min' | '15min'>('1min');
     const [loading, setLoading] = useState<boolean>(false);
+    const [showLabels, setShowLabels] = useState<boolean>(true);
 
     const fetchMacwindData = async () => {
         try {
@@ -39,13 +40,25 @@ const MacwindComponent = () => {
 
     useEffect(() => {
         fetchMacwindData();
+
+        const handleResize = () => {
+            setShowLabels(window.innerWidth >= 512);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        handleResize();
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
     }, [timeFrame]);
 
     return (
         <div className="space-y-2">
             <div className="flex justify-between items-center">
                 <span className="flex gap-x-2 px-3 py-2 w-fit h-fit bg-rose-600 font-bold rounded-md uppercase">
-                    <LucideRadio className="stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" />
+                    <LucideRadio className="hidden sm:block stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" />
                     LIVE WIND
                 </span>
 
@@ -58,18 +71,18 @@ const MacwindComponent = () => {
                         <LucideRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                     </button>
 
-                    <div className="flex justify-center bg-zinc-900 w-fit p-1 rounded-md items-center gap-x-2">
+                    <div className="flex justify-center bg-zinc-900 w-fit p-1 rounded-md items-center">
                         <button
                             className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '1min' ? 'bg-zinc-700' : 'bg-transparent'}`}
                             onClick={() => setTimeFrame('1min')}
                         >
-                            1min Average
+                            1min Avg
                         </button>
                         <button
                             className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '15min' ? 'bg-zinc-700' : 'bg-transparent'}`}
                             onClick={() => setTimeFrame('15min')}
                         >
-                            15min Average
+                            15min Avg
                         </button>
                     </div>
                 </div>
@@ -80,16 +93,26 @@ const MacwindComponent = () => {
 
             {windData && windData.length > 0 && (
                 <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md space-y-0.5">
-                    <span className="flex justify-center bg-zinc-800 text-zinc-500 font-bold p-1.5">MAC Wind</span>
+                    <div className="flex gap-x-0.5">
+                        <button
+                            className="px-2.5 p-1.5 bg-zinc-800 hover:bg-zinc-700"
+                            onClick={() => setShowLabels(!showLabels)}
+                        >
+                            {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
+                        </button>
+                        <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5">MAC Wind</span>
+                    </div>
 
                     <div className="flex bg-zinc-900 overflow-hidden gap-x-0.5">
-                        <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
-                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Time</span>
-                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Low (knots)</span>
-                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Average (knots)</span>
-                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">High (knots)</span>
-                            <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
-                        </div>
+                        {showLabels && (
+                            <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
+                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Time</span>
+                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Low (knots)</span>
+                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Average (knots)</span>
+                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">High (knots)</span>
+                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
+                            </div>
+                        )}
                         <div className="flex overflow-x-scroll">
                             {windData.map((entry, index) => {
                                 const low = parseFloat(entry.low);

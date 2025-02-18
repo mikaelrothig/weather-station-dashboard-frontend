@@ -9,18 +9,18 @@ import Footer from "./components/Footer.tsx";
 function App() {
     return (
         <div className="max-w-[1536px] mx-auto min-h-screen flex flex-col">
-            <div className="px-8 space-y-8 flex-grow">
+            <div className="px-4 md:px-8 space-y-8 flex-grow">
                 <Header />
 
                 <div className="flex flex-col gap-8">
-                    <div className="flex gap-8">
-                        <div className="bg-zinc-900 rounded-md min-h-56 min-w-56">
+                    <div className="grid grid-cols-4 xl:grid-cols-12 gap-8 xl:min-h-56">
+                        <div className="col-span-2 bg-zinc-900 rounded-md h-40 xl:mt-11 xl:h-48">
                             <TemperatureComponent />
                         </div>
-                        <div className="bg-zinc-900 rounded-md min-h-56 min-w-56">
+                        <div className="col-span-2 bg-zinc-900 rounded-md h-40 xl:mt-11 xl:h-48">
                             <DaylightComponent />
                         </div>
-                        <div className="space-y-5 overflow-hidden w-full min-h-56">
+                        <div className="col-span-4 xl:col-span-8 space-y-5 overflow-hidden w-full min-h-56">
                             <MacwindComponent />
                         </div>
                     </div>
@@ -35,7 +35,6 @@ function App() {
                 </div>
             </div>
 
-            {/* Footer pushed to bottom if not enough content */}
             <div className="mt-auto">
                 <Footer />
             </div>
