@@ -51,7 +51,7 @@ const DaylightComponent = () => {
 
     return (
         <div className="rounded-md overflow-hidden flex flex-col h-full">
-            <span className="flex items-center justify-center bg-zinc-800 text-zinc-500 font-bold p-2 uppercase gap-x-2">
+            <span className="flex items-center justify-center bg-zinc-800 text-zinc-500 font-bold p-1.5 uppercase gap-x-2">
                 <Sunset className="stroke-zinc-500 h-4 w-4" />
                 SUNSET
             </span>
