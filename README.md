@@ -10,10 +10,17 @@
 
 ![demo](https://raw.githubusercontent.com/MikaelRothig/weather-station-dashboard-frontend/main/src/assets/images/demo.png)
 
-## Commands
+## 🛠 Installation & Set Up
+*This project relies on the <a href="https://github.com/mikaelrothig/weather-station-dashboard-backend">Weather Station Dashboard Backend</a> to recieve weather data. Please make sure to follow it's installation and setup steps.*
 
-| Command         | Action                                      |
-|:----------------|:--------------------------------------------|
-| `npm install`   | Installs dependencies                       |
-| `npm run dev`   | Starts local dev server at `localhost:4000` |
-| `npm run build` | Build to `./dist/`                          |
+1. Install dependancies
+
+   ```sh
+   npm install
+   ```
+
+2. Start the local development server
+
+   ```sh
+   npm run dev
+   ```
