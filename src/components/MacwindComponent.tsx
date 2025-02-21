@@ -23,7 +23,7 @@ const MacwindComponent = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await fetch(`http://localhost:4000/macwind/${timeFrame}`);
+            const response = await fetch(`https://weather-station-dashboard-backend.vercel.app/macwind/${timeFrame}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

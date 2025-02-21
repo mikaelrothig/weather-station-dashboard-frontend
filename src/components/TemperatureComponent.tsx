@@ -17,7 +17,7 @@ const TemperatureComponent = () => {
     useEffect(() => {
         const fetchWindguruData = async () => {
             try {
-                const response = await fetch("http://localhost:4000/windguru/wrf-9km");
+                const response = await fetch("https://weather-station-dashboard-backend.vercel.app/windguru/wrf-9km");
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
