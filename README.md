@@ -13,7 +13,7 @@
 ## 🛠 Installation & Set Up
 *This project relies on the <a href="https://github.com/mikaelrothig/weather-station-dashboard-backend">Weather Station Dashboard Backend</a> to recieve weather data. Please make sure to follow it's installation and setup steps.*
 
-1. Install dependancies
+1. Install dependencies
 
    ```sh
    npm install
