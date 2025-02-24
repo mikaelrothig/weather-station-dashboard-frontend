@@ -5,14 +5,16 @@ import { LucideMinus, LucidePlus, LucideMousePointer2 } from "lucide-react";
 
 interface Forecast {
     fcst: {
-        GUST: number[];
         TMP: number[];
-        WINDDIR: number[];
-        WINDSPD: number[];
         hours: number[];
         init_d: string;
         init_h: string;
         model_name: string;
+    },
+    fcst_sea: {
+        GUST: number[];
+        WINDDIR: number[];
+        WINDSPD: number[];
     };
 }
 
@@ -58,7 +60,7 @@ const WRFComponent = () => {
     if (loading) return <p className="p-4 font-bold min-h-56 min-w-56">Loading...</p>;
     if (error) return <p className="p-4 font-bold text-red-500 min-h-56 min-w-56">{error}</p>;
 
-    if (!windData || !windData.fcst || !windData.fcst.WINDSPD) {
+    if (!windData || !windData.fcst || !windData.fcst_sea.WINDSPD) {
         return <p className="p-4 font-bold text-red-500 min-h-56 min-w-56">No wind data available</p>;
     }
 
@@ -90,9 +92,9 @@ const WRFComponent = () => {
                 )}
                 <div className="flex overflow-x-scroll">
                     {windData.fcst.hours.map((time, index) => {
-                        const windSpeed = windData.fcst.WINDSPD[index];
-                        const windGust = windData.fcst.GUST[index];
-                        const windDir = windData.fcst.WINDDIR[index];
+                        const windSpeed = windData.fcst_sea.WINDSPD[index];
+                        const windGust = windData.fcst_sea.GUST[index];
+                        const windDir = windData.fcst_sea.WINDDIR[index];
                         const temperature = windData.fcst.TMP[index];
                         const localTimeDetails = getLocalTimeDetails(windData.fcst.init_h, time);
 
