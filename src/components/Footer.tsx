@@ -8,7 +8,7 @@ function Footer() {
                 <a className="text-zinc-200 text-xs" href="https://mac-wind.appspot.com/" target="_blank" rel="noopener noreferrer">MAC Wind</a>
                 <span className="text-zinc-500">.</span>
             </div>
-            <span>©{new Date().getFullYear()} Mikael Röthig</span>
+            <span>{new Date().getFullYear()} - Mikael Röthig</span>
         </div>
     );
 }
