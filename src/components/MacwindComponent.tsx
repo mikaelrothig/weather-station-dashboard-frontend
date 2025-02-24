@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getBackgroundColor } from '../utils/ColorUtils.tsx';
-import {LucideMinus, LucideMousePointer2, LucidePlus, LucideRadio, LucideRefreshCw} from 'lucide-react';
+import { LucideMinus, LucideMousePointer2, LucidePlus, LucideRadio, LucideRefreshCw } from 'lucide-react';
 
 interface LiveWind {
     dirDegrees: string;
@@ -18,6 +18,7 @@ const MacwindComponent = () => {
     const [timeFrame, setTimeFrame] = useState<'1min' | '15min'>('1min');
     const [loading, setLoading] = useState<boolean>(false);
     const [showLabels, setShowLabels] = useState<boolean>(true);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const fetchMacwindData = async () => {
         try {
@@ -46,13 +47,18 @@ const MacwindComponent = () => {
         };
 
         window.addEventListener("resize", handleResize);
-
         handleResize();
 
         return () => {
             window.removeEventListener("resize", handleResize);
         };
     }, [timeFrame]);
+
+    useEffect(() => {
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
+        }
+    }, [windData]);
 
     return (
         <div className="space-y-2">
@@ -88,8 +94,8 @@ const MacwindComponent = () => {
                 </div>
             </div>
 
-            {error && <p className="text-red-500">{error}</p>}
-            {windData && windData.length === 0 && <p className="text-red-500">No wind data available</p>}
+            {error && <p className="font-bold text-rose-600 text-wrap">{error}</p>}
+            {windData && windData.length === 0 && <p className="p-4 font-bold text-rose-600">No wind data available</p>}
 
             {windData && windData.length > 0 && (
                 <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md space-y-0.5">
@@ -103,7 +109,7 @@ const MacwindComponent = () => {
                         <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5">MAC Wind</span>
                     </div>
 
-                    <div className="flex bg-zinc-900 overflow-hidden gap-x-0.5">
+                    <div className="flex bg-zinc-900 gap-x-0.5">
                         {showLabels && (
                             <div className="flex flex-col gap-y-0.5 min-w-36 max-w-36">
                                 <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Time</span>
@@ -113,8 +119,8 @@ const MacwindComponent = () => {
                                 <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
                             </div>
                         )}
-                        <div className="flex overflow-x-scroll">
-                            {windData.map((entry, index) => {
+                        <div ref={scrollContainerRef} className="flex overflow-x-scroll">
+                            {windData.slice().reverse().map((entry, index) => {
                                 const low = parseFloat(entry.low);
                                 const avg = parseFloat(entry.avg);
                                 const high = parseFloat(entry.high);
@@ -129,15 +135,9 @@ const MacwindComponent = () => {
                                         <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
                                             {entry.time}
                                         </span>
-                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgLow}`}>
-                                            {Math.round(low)}
-                                        </span>
-                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgAvg}`}>
-                                            {Math.round(avg)}
-                                        </span>
-                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgHigh}`}>
-                                            {Math.round(high)}
-                                        </span>
+                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgLow}`}>{Math.round(low)}</span>
+                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgAvg}`}>{Math.round(avg)}</span>
+                                        <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgHigh}`}>{Math.round(high)}</span>
                                         <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
                                             <LucideMousePointer2 className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" style={{ transform: `rotate(${windDir - 135}deg)` }} />
                                         </span>

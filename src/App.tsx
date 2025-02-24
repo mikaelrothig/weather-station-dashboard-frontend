@@ -21,7 +21,10 @@ function App() {
                             <DaylightComponent />
                         </div>
                         <div className="col-span-4 xl:col-span-8 space-y-5 overflow-hidden w-full min-h-56">
-                            <MacwindComponent />
+                            <div className="relative h-full w-full">
+                                <div className="absolute rounded-md inset-0 z-[-10] bg-zinc-900" style={{ top: "4rem" }}></div>
+                                <MacwindComponent />
+                            </div>
                         </div>
                     </div>
 

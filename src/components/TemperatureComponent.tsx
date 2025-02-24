@@ -35,11 +35,11 @@ const TemperatureComponent = () => {
         fetchWindguruData();
     }, []);
 
-    if (loading) return <p className="p-4 font-bold min-h-56 min-w-56">Loading...</p>;
-    if (error) return <p className="p-4 font-bold text-red-500 min-h-56 min-w-56">{error}</p>;
+    if (loading) return <p className="p-4 font-bold">Loading...</p>;
+    if (error) return <p className="p-4 font-bold text-rose-600">{error}</p>;
 
     if (!windData) {
-        return <p className="p-4 font-bold text-red-500 min-h-56 min-w-56">No wind data available</p>;
+        return <p className="p-4 font-bold text-rose-600">No wind data available</p>;
     }
 
     const localHour = new Date().getHours();
@@ -63,7 +63,7 @@ const TemperatureComponent = () => {
     const currentTemperature = temperatures[closestIndex];
 
     if (loading) return <p>Loading...</p>;
-    if (error) return <p className="p-4 font-bold text-red-500 min-h-56 min-w-56">{error}</p>;
+    if (error) return <p className="p-4 font-bold text-rose-600">{error}</p>;
 
     return (
         <div className="rounded-md overflow-hidden flex flex-col h-full">
