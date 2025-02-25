@@ -84,13 +84,17 @@ const MacwindComponent = () => {
                             className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '1min' ? 'bg-zinc-700' : 'bg-transparent'}`}
                             onClick={() => setTimeFrame('1min')}
                         >
-                            1min Avg
+                            <div className="flex gap-x-1">
+                                1min <span className="hidden sm:block">Avg</span>
+                            </div>
                         </button>
                         <button
                             className={`py-1.5 px-3 font-bold rounded-md text-xs ${timeFrame === '15min' ? 'bg-zinc-700' : 'bg-transparent'}`}
                             onClick={() => setTimeFrame('15min')}
                         >
-                            15min Avg
+                            <div className="flex gap-x-1">
+                                15min <span className="hidden sm:block">Avg</span>
+                            </div>
                         </button>
                     </div>
                 </div>
