@@ -29,7 +29,7 @@ const GFSComponent = () => {
     useEffect(() => {
         const fetchWindguruData = async () => {
             try {
-                const response = await fetch("https://weather-station-dashboard-backend.vercel.app/windguru/gfs-13km");
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/gfs-13km`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
