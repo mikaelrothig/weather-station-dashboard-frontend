@@ -39,7 +39,7 @@ const TemperatureComponent = () => {
     if (error) return <p className="p-4 font-bold text-rose-600">{error}</p>;
 
     if (!windData) {
-        return <p className="p-4 font-bold text-rose-600">No wind data available</p>;
+        return <p className="p-4 font-bold text-zinc-600">No wind data available</p>;
     }
 
     const localHour = new Date().getHours();

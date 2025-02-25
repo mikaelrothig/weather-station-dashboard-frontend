@@ -7,14 +7,16 @@ import {LucideMinus, LucideMousePointer2, LucidePlus} from "lucide-react";
 
 interface Forecast {
     fcst: {
-        GUST: number[];
         TMP: number[];
-        WINDDIR: number[];
-        WINDSPD: number[];
         hours: number[];
         init_d: string;
         init_h: string;
         model_name: string;
+    },
+    fcst_sea: {
+        GUST: number[];
+        WINDDIR: number[];
+        WINDSPD: number[];
     };
 }
 
@@ -60,8 +62,8 @@ const GFSComponent = () => {
     if (loading) return <p className="p-4 font-bold min-h-56 min-w-56">Loading...</p>;
     if (error) return <p className="p-4 font-bold text-rose-600 min-h-56 min-w-56">{error}</p>;
 
-    if (!windData || !windData.fcst || !windData.fcst.WINDSPD) {
-        return <p className="p-4 font-bold text-rose-600 min-h-56 min-w-56">No wind data available</p>;
+    if (!windData || !windData.fcst || !windData.fcst_sea.WINDSPD) {
+        return <p className="p-4 font-bold text-zinc-600 min-h-56 min-w-56">No wind data available</p>;
     }
 
     return (
@@ -97,9 +99,9 @@ const GFSComponent = () => {
                         .filter(({ time }) => time % 2 === 0)
                         .map(({ time, index }) => {
 
-                        const windSpeed = windData.fcst.WINDSPD[index];
-                        const windGust = windData.fcst.GUST[index];
-                        const windDir = windData.fcst.WINDDIR[index];
+                        const windSpeed = windData.fcst_sea.WINDSPD[index];
+                        const windGust = windData.fcst_sea.GUST[index];
+                        const windDir = windData.fcst_sea.WINDDIR[index];
                         const temperature = windData.fcst.TMP[index];
                         const localTimeDetails = getLocalTimeDetails(windData.fcst.init_h, time);
 

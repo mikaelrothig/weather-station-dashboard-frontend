@@ -64,8 +64,10 @@ const MacwindComponent = () => {
         <div className="space-y-2">
             <div className="flex justify-between items-center">
                 <span className="flex gap-x-2 px-3 py-2 w-fit h-fit bg-rose-600 font-bold rounded-md uppercase">
-                    <LucideRadio className="hidden sm:block stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" />
-                    LIVE WIND
+                    <LucideRadio className="stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" />
+                    <div className="flex gap-x-1">
+                        LIVE <span className="hidden sm:block">WIND</span>
+                    </div>
                 </span>
 
                 <div className="flex gap-x-2">
@@ -94,8 +96,8 @@ const MacwindComponent = () => {
                 </div>
             </div>
 
-            {error && <p className="font-bold text-rose-600 text-wrap">{error}</p>}
-            {windData && windData.length === 0 && <p className="p-4 font-bold text-rose-600">No wind data available</p>}
+            {error && <p className="p-4 font-bold text-rose-600 text-wrap">{error}</p>}
+            {windData && windData.length === 0 && <p className="p-4 font-bold text-zinc-600">No wind data available.<br/>Likely due to loadshedding.</p>}
 
             {windData && windData.length > 0 && (
                 <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md space-y-0.5">

@@ -61,7 +61,7 @@ const WRFComponent = () => {
     if (error) return <p className="p-4 font-bold text-rose-600 min-h-56 min-w-56">{error}</p>;
 
     if (!windData || !windData.fcst || !windData.fcst_sea.WINDSPD) {
-        return <p className="p-4 font-bold text-rose-600 min-h-56 min-w-56">No wind data available</p>;
+        return <p className="p-4 font-bold text-zinc-600 min-h-56 min-w-56">No wind data available</p>;
     }
 
     return (
