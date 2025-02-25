@@ -18,8 +18,14 @@
    ```sh
    npm install
    ```
+   
+2. Create an `.env.local` file in the base directory and paste the following;
 
-2. Start the local development server
+   ```
+   VITE_API_BASE_URL=http://localhost:4000
+   ```
+   
+3. Start the local development server
 
    ```sh
    npm run dev
