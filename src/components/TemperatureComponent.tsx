@@ -1,46 +1,21 @@
-import { useState, useEffect } from 'react';
 import { Thermometer } from "lucide-react";
 
-interface Forecast {
-    fcst: {
-        TMP: number[];
-        hours: number[];
-        init_h: string;
-    };
+interface TemperatureProps {
+    windData: {
+        fcst: {
+            init_h: string;
+            hours: number[];
+            TMP: number[];
+        };
+    } | null;
+    loading: boolean;
+    error: string | null;
 }
 
-const TemperatureComponent = () => {
-    const [windData, setWindData] = useState<Forecast | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchWindguruData = async () => {
-            try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/wrf-9km`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const data: Forecast = await response.json();
-                setWindData(data);
-            } catch (error) {
-                setError("Failed to fetch Windguru data");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchWindguruData();
-    }, []);
-
+const TemperatureComponent = ({ windData, loading, error }: TemperatureProps) => {
     if (loading) return <p className="p-4 font-bold">Loading...</p>;
     if (error) return <p className="p-4 font-bold text-rose-600">{error}</p>;
-
-    if (!windData) {
-        return <p className="p-4 font-bold text-zinc-600">No wind data available</p>;
-    }
+    if (!windData) return <p className="p-4 font-bold text-zinc-600">No wind data available</p>;
 
     const localHour = new Date().getHours();
     const initHourUTC = parseInt(windData.fcst.init_h, 10);
@@ -62,9 +37,6 @@ const TemperatureComponent = () => {
 
     const currentTemperature = temperatures[closestIndex];
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p className="p-4 font-bold text-rose-600">{error}</p>;
-
     return (
         <div className="rounded-md overflow-hidden flex flex-col h-full">
              <span className="flex items-center justify-center bg-zinc-800 text-zinc-500 font-bold p-1.5 uppercase gap-x-2">
@@ -78,7 +50,7 @@ const TemperatureComponent = () => {
                     <span className="relative top-1 text-base sm:text-lg md:text-xl">°C</span>
                 </span>
                 <div className="relative w-full h-1.5 rounded-full"
-                    style={{background: "linear-gradient(to right, #0891b2 0%, #ca8a04 50%, #e11d48 100%)",}}
+                     style={{background: "linear-gradient(to right, #0891b2 0%, #ca8a04 50%, #e11d48 100%)",}}
                 >
                     <div
                         className="absolute top-[-5px] h-4 w-4 rounded-full bg-zinc-200 border-4 border-zinc-900"

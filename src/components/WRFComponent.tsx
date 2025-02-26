@@ -1,68 +1,40 @@
-import { useState, useEffect } from 'react';
+import { LucideMinus, LucidePlus, LucideMousePointer2 } from "lucide-react";
 import { getBackgroundColor } from "../utils/ColorUtils.tsx";
 import { getLocalTimeDetails } from "../utils/TimeUtils.tsx";
-import { LucideMinus, LucidePlus, LucideMousePointer2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
-interface Forecast {
-    fcst: {
-        TMP: number[];
-        hours: number[];
-        init_d: string;
-        init_h: string;
-        model_name: string;
-    },
-    fcst_sea: {
-        GUST: number[];
-        WINDDIR: number[];
-        WINDSPD: number[];
-    };
+interface WRFProps {
+    windData: {
+        fcst: {
+            model_name: string;
+            init_d: string;
+            init_h: string;
+            hours: number[];
+            TMP: number[];
+        };
+        fcst_sea: {
+            WINDSPD: number[];
+            GUST: number[];
+            WINDDIR: number[];
+        };
+    } | null;
+    loading: boolean;
+    error: string | null;
 }
 
-const WRFComponent = () => {
-    const [windData, setWindData] = useState<Forecast | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+const WRFComponent = ({ windData, loading, error }: WRFProps) => {
     const [showLabels, setShowLabels] = useState<boolean>(true);
 
     useEffect(() => {
-        const fetchWindguruData = async () => {
-            try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/wrf-9km`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const data: Forecast = await response.json();
-                setWindData(data);
-            } catch (error) {
-                setError("Failed to fetch Windguru data");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchWindguruData();
-
-        const handleResize = () => {
-            setShowLabels(window.innerWidth >= 512);
-        };
-
+        const handleResize = () => setShowLabels(window.innerWidth >= 512);
         window.addEventListener("resize", handleResize);
-
         handleResize();
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     if (loading) return <p className="p-4 font-bold min-h-56 min-w-56">Loading...</p>;
     if (error) return <p className="p-4 font-bold text-rose-600 min-h-56 min-w-56">{error}</p>;
-
-    if (!windData || !windData.fcst || !windData.fcst_sea.WINDSPD) {
-        return <p className="p-4 font-bold text-zinc-600 min-h-56 min-w-56">No wind data available</p>;
-    }
+    if (!windData) return <p className="p-4 font-bold text-zinc-600 min-h-56 min-w-56">No wind data available</p>;
 
     return (
         <div className="space-y-0.5">

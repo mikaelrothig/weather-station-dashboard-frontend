@@ -1,44 +1,19 @@
-import { useState, useEffect } from 'react';
-
 import { Sunset } from "lucide-react";
 
-interface Forecast {
-    sunrise: number;
-    sunset: number;
+interface DaylightProps {
+    windData: {
+        sunrise: string;
+        sunset: string;
+    } | null;
+    loading: boolean;
+    error: string | null;
 }
 
-const DaylightComponent = () => {
-    const [windData, setWindData] = useState<Forecast | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchWindguruData = async () => {
-            try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/wrf-9km`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const data: Forecast = await response.json();
-                setWindData(data);
-            } catch (error) {
-                setError("Failed to fetch Windguru data");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchWindguruData();
-    }, []);
+const DaylightComponent = ({ windData, loading, error }: DaylightProps) => {
 
     if (loading) return <p className="p-4 font-bold">Loading...</p>;
     if (error) return <p className="p-4 font-bold text-rose-600">{error}</p>;
-
-    if (!windData) {
-        return <p className="p-4 font-bold text-zinc-600">No wind data available</p>;
-    }
+    if (!windData) return <p className="p-4 font-bold text-zinc-600">No wind data available</p>;
 
     const sunriseHour = parseInt(String(windData.sunrise).split(":")[0], 10);
     const sunsetHour = parseInt(String(windData.sunset).split(":")[0], 10);
@@ -47,7 +22,6 @@ const DaylightComponent = () => {
     const sunrisePosition = ((sunriseHour / 23) * 100).toFixed(2);
     const sunsetPosition = ((sunsetHour / 23) * 100).toFixed(2);
     const positionLeft = ((currentHour / 23) * 100).toFixed(2);
-
 
     return (
         <div className="rounded-md overflow-hidden flex flex-col h-full">
