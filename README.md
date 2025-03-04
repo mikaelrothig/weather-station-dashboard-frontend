@@ -5,7 +5,7 @@
     Weather Station Dashboard Frontend
 </h1>
 <p align="center">
-    Frontend for a dashboard that shows weather forecast data from multiple sources.
+    Frontend for a Kite Beach, Cape Town weather app that aggregates data from multiple sources.
 </p>
 
 ![demo](https://raw.githubusercontent.com/MikaelRothig/weather-station-dashboard-frontend/main/src/assets/images/demo.png)
