@@ -1,5 +1,4 @@
-import Header from "./components/Header.tsx";
-import DaylightComponent from "./components/DaylightComponent.tsx"
+import SunsetComponent from "./components/SunsetComponent.tsx"
 import TemperatureComponent from "./components/TemperatureComponent.tsx";
 import MacwindComponent from "./components/MacwindComponent.tsx";
 import WRFComponent from "./components/WRFComponent.tsx";
@@ -23,7 +22,7 @@ function App() {
                             <TemperatureComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
                         </div>
                         <div className="col-span-2 bg-zinc-900 rounded-md h-40 xl:mt-11 xl:h-48">
-                            <DaylightComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
+                            <SunsetComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
                         </div>
                         <div className="col-span-4 xl:col-span-8 space-y-5 overflow-hidden w-full min-h-56">
                             <div className="relative h-full w-full">
