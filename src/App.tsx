@@ -1,4 +1,4 @@
-import SunsetComponent from "./components/SunsetComponent.tsx"
+import SunsetComponent from "./components/SunsetComponent.tsx";
 import TemperatureComponent from "./components/TemperatureComponent.tsx";
 import MacwindComponent from "./components/MacwindComponent.tsx";
 import WRFComponent from "./components/WRFComponent.tsx";
