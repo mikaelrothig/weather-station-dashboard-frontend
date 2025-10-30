@@ -15,6 +15,8 @@ interface Forecast {
     };
     sunrise: string;
     sunset: string;
+    lat: number;
+    lon: number;
 }
 
 export const useWRFData = () => {
