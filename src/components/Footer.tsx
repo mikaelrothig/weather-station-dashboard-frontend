@@ -12,7 +12,7 @@ function Footer() {
             </span>
 
             <div className="flex gap-x-0.5">
-                <a href="https://github.com/mikaelrothig/weather-station-dashboard-frontend" className="flex gap-x-2 items-center px-3 py-2 bg-zinc-800 rounded-l-md font-bold">
+                <a href="https://github.com/mikaelrothig/weather-station-dashboard-frontend" target="_blank" className="flex gap-x-2 items-center px-3 py-2 bg-zinc-800 rounded-l-md font-bold">
                     <div className="relative">
                         <div className="flex w-2 h-2 bg-rose-500 rounded-full">
                             <div className="absolute inset-0 w-2 h-2 rounded-full bg-rose-500 opacity-75 animate-ping"></div>
