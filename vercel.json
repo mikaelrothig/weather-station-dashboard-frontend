@@ -2,6 +2,6 @@
   "rewrites": [
     { "source": "/langebaan", "destination": "/langebaan.html" },
     { "source": "/witsand", "destination": "/witsand.html" },
-    { "source": "/mistycliffs", "destination": "/misty-cliffs.html" }
+    { "source": "/misty-cliffs", "destination": "/misty-cliffs.html" }
   ]
 }
