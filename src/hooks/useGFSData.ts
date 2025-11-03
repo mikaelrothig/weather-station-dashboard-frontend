@@ -16,7 +16,7 @@ interface Forecast {
 }
 
 
-export const useGFSData = (location: string) => {
+export const useGFSData = (spot: string) => {
     const [data, setData] = useState<Forecast | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,7 @@ export const useGFSData = (location: string) => {
     useEffect(() => {
         const fetchWindguruData = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/gfs-13km/${location}`);
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/gfs-13km/${spot}`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -40,7 +40,7 @@ export const useGFSData = (location: string) => {
         };
 
         fetchWindguruData();
-    }, [location]);
+    }, [spot]);
 
     return { data, loading, error };
 };

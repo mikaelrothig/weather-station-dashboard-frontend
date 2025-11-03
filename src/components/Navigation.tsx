@@ -15,7 +15,7 @@ function Navigation() {
 
     const currentPath = window.location.pathname;
 
-    const locations = [
+    const spots = [
         { abbr: "01", name: "Blouberg", url: "/" },
         { abbr: "02", name: "Langebaan", url: "/langebaan" },
         { abbr: "03", name: "Witsand", url: "/witsand" },
@@ -39,10 +39,10 @@ function Navigation() {
             </button>
 
             <div className="grid grid-cols-4 lg:flex lg:flex-col gap-0.5 flex-grow">
-                {locations.map(({ abbr, name, url }, index) => {
+                {spots.map(({ abbr, name, url }, index) => {
                     const isActive = currentPath === url;
                     const isFirst = index === 0;
-                    const isLast = index === locations.length - 1;
+                    const isLast = index === spots.length - 1;
 
                     return (
                         <a
