@@ -13,11 +13,11 @@ interface SpotInfoProps {
     } | null;
     loading: boolean;
     error: string | null;
-    spotHeading: string;
+    spotName: string;
     spotSubHeading: string;
 }
 
-const SpotInfoComponent = ({ windData, loading, error, spotHeading, spotSubHeading }: SpotInfoProps) => {
+const SpotInfoComponent = ({ windData, loading, error, spotName, spotSubHeading }: SpotInfoProps) => {
     const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
@@ -44,7 +44,7 @@ const SpotInfoComponent = ({ windData, loading, error, spotHeading, spotSubHeadi
 
             <div className="flex flex-col h-full justify-between p-3">
                 <div>
-                    <h1>{spotHeading}</h1>
+                    <h1>{spotName}</h1>
                     <span className="text-sm text-zinc-500 md:group-hover:text-zinc-400">{spotSubHeading}</span>
                 </div>
 
