@@ -4,10 +4,11 @@ import SpotInfoComponent from "../components/SpotInfoComponent.tsx";
 import MacwindComponent from "../components/MacwindComponent.tsx";
 import WRFComponent from "../components/WRFComponent.tsx";
 import GFSComponent from "../components/GFSComponent.tsx";
-import Navigation from "../components/Navigation.tsx";
+import DesktopNavigation from "../components/DesktopNavigation.tsx";
 import Footer from "../components/Footer.tsx";
 import { useWRFData } from "../hooks/useWRFData.ts";
 import { useGFSData } from "../hooks/useGFSData.ts";
+import MobileNavigation from "../components/MobileNavigation.tsx";
 
 interface SpotProps {
     spotName: string;
@@ -20,16 +21,15 @@ function Spot({ spotName, spotSubHeading, showMacwind = false }: SpotProps) {
     const { data: windDataGFS, loading: loadingGFS, error: errorGFS } = useGFSData(spotName);
 
     return (
-        <div className="flex flex-col lg:flex-row w-screen h-screen">
+        <div className="flex flex-col lg:flex-row w-screen h-full">
             <div className="hidden lg:block py-8 pl-8 h-screen">
-                <Navigation />
+                <DesktopNavigation />
             </div>
 
-            <div className="w-full overflow-y-auto px-4 md:px-8 pt-4 md:pt-8">
-                <div className="flex flex-col mx-auto max-w-[1536px] h-full">
-                    <div className="lg:hidden pb-8">
-                        <Navigation />
-                    </div>
+            <MobileNavigation />
+
+            <div className="w-full lg:overflow-y-auto px-4 md:px-8 pt-28 md:pt-8">
+                <div className="flex flex-col mx-auto max-w-[1536px]">
                     <div className="space-y-8 flex-grow">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                             <div className="col-span-2 bg-zinc-900 rounded-md h-40 xl:h-48">

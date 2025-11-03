@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { LayoutGrid, Bug } from "lucide-react";
 
-function Navigation() {
+function DesktopNavigation() {
     const [expanded, setExpanded] = useState<boolean>(() => {
         const saved = localStorage.getItem("navExpanded");
         return saved !== null ? JSON.parse(saved) : true;
@@ -81,4 +81,4 @@ function Navigation() {
     );
 }
 
-export default Navigation;
+export default DesktopNavigation;
