@@ -67,7 +67,17 @@ const MacwindComponent = () => {
 
             {windData && windData.length > 0 && (
                 <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md space-y-0.5">
-                    <div className="flex justify-between items-center bg-zinc-900 rounded-md p-3 gap-x-0.5">
+                    <div className="flex gap-x-0.5 pb-3">
+                        <button
+                            className="px-2.5 p-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-tl-md"
+                            onClick={() => setShowLabels(!showLabels)}
+                        >
+                            {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
+                        </button>
+                        <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5 rounded-tr-md">MAC Wind</span>
+                    </div>
+
+                    <div className="flex justify-between items-center bg-zinc-900 rounded-md px-3 pb-3 gap-x-0.5">
                         <span className="flex gap-x-2 px-3 py-1.5 w-fit h-fit bg-rose-600 font-bold rounded-l-md uppercase">
                             <LucideRadio className="stroke-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" />
                             <div className="flex gap-x-1">
@@ -103,16 +113,6 @@ const MacwindComponent = () => {
                                 </div>
                             </button>
                         </div>
-                    </div>
-
-                    <div className="flex gap-x-0.5 px-3 pb-3">
-                        <button
-                            className="px-2.5 p-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-l-md"
-                            onClick={() => setShowLabels(!showLabels)}
-                        >
-                            {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
-                        </button>
-                        <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5 rounded-r-md">MAC Wind</span>
                     </div>
 
                     <div className="flex bg-zinc-900 gap-x-0.5">
