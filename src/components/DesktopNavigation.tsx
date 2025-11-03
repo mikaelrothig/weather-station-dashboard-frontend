@@ -24,13 +24,13 @@ function Navigation() {
 
     return (
         <div
-            className={`p-3 lg:space-y-8 bg-zinc-900 rounded-md w-full lg:w-fit lg:h-full overflow-x-auto no-scrollbar flex flex-col ${
-                expanded ? "lg:min-w-48 lg:max-w-48" : "w-fit"
+            className={`p-3 space-y-8 bg-zinc-900 rounded-md w-fit h-full overflow-x-auto no-scrollbar flex flex-col ${
+                expanded ? "min-w-48 max-w-48" : "w-fit"
             }`}
         >
             <button
                 onClick={toggleMenu}
-                className={`hidden lg:flex items-center gap-x-2 px-3 py-2 h-9 bg-zinc-800 hover:bg-zinc-700 rounded-md w-full ${
+                className={`flex items-center gap-x-2 px-3 py-2 h-9 bg-zinc-800 hover:bg-zinc-700 rounded-md w-full ${
                     expanded ? "" : "justify-center"
                 }`}
             >
@@ -38,7 +38,7 @@ function Navigation() {
                 {expanded && <div className="flex gap-x-1 text-zinc-200">Menu</div>}
             </button>
 
-            <div className="grid grid-cols-4 lg:flex lg:flex-col gap-0.5 flex-grow">
+            <div className="flex flex-col gap-0.5 flex-grow">
                 {spots.map(({ abbr, name, url }, index) => {
                     const isActive = currentPath === url;
                     const isFirst = index === 0;
@@ -51,15 +51,15 @@ function Navigation() {
                             className={`flex items-center gap-x-2 px-3 py-2 h-9 text-nowrap
                                 ${isActive ? "bg-rose-600 hover:bg-rose-500" : "bg-zinc-800 hover:bg-zinc-700"}
                                 ${expanded ? "" : "justify-center"}
-                                ${isFirst ? "rounded-l-md lg:rounded-bl-none lg:rounded-t-md" : ""}
-                                ${isLast ? "rounded-r-md lg:rounded-tr-none lg:rounded-b-md" : ""}`}
+                                ${isFirst ? "rounded-bl-none rounded-t-md" : ""}
+                                ${isLast ? "rounded-r-md rounded-tr-none rounded-b-md" : ""}`}
                         >
-                            <span className="hidden lg:inline text-zinc-200">{abbr}</span>
+                            <span className="inline text-zinc-200">{abbr}</span>
 
                             <span
                                 className={`text-zinc-200 ${
-                                    expanded ? "lg:inline" : "lg:hidden"
-                                } block lg:block`}
+                                    expanded ? "inline" : "hidden"
+                                } block`}
                             >
                                 {name}
                             </span>
@@ -70,7 +70,7 @@ function Navigation() {
 
             <a
                 href="mailto:mrrothig@gmail.com"
-                className={`hidden lg:flex items-center gap-x-2 px-3 py-2 h-9 bg-zinc-800 hover:bg-zinc-700 rounded-md w-full mt-auto ${
+                className={`flex items-center gap-x-2 px-3 py-2 h-9 bg-zinc-800 hover:bg-zinc-700 rounded-md w-full mt-auto ${
                     expanded ? "" : "justify-center"
                 }`}
             >

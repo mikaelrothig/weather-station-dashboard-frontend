@@ -36,7 +36,7 @@ export const useWRFData = (spot: string) => {
                 const result: Forecast = await response.json();
                 setData(result);
             } catch (error) {
-                setError("Failed to fetch Windguru data");
+                setError(`Failed to fetch Windguru data ${error}`);
             } finally {
                 setLoading(false);
             }
