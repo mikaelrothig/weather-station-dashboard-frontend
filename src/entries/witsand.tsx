@@ -6,7 +6,7 @@ import {Analytics} from "@vercel/analytics/react";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-      <App spotHeading="Witsand" spotSubHeading="Western Cape, South Africa" showMacwind={false} />
+      <App spotName="Witsand" spotSubHeading="Western Cape, South Africa" showMacwind={false} />
       <Analytics/>
   </StrictMode>,
 )
