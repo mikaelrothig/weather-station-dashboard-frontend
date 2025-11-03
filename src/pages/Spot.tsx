@@ -1,23 +1,23 @@
-import SunsetComponent from "./components/SunsetComponent.tsx";
-import TemperatureComponent from "./components/TemperatureComponent.tsx";
-import SpotInfoComponent from "./components/SpotInfoComponent.tsx";
-import MacwindComponent from "./components/MacwindComponent.tsx";
-import WRFComponent from "./components/WRFComponent.tsx";
-import GFSComponent from "./components/GFSComponent.tsx";
-import Navigation from "./components/Navigation.tsx";
-import Footer from "./components/Footer.tsx";
-import { useWRFData } from "./hooks/useWRFData.ts";
-import { useGFSData } from "./hooks/useGFSData.ts";
+import SunsetComponent from "../components/SunsetComponent.tsx";
+import TemperatureComponent from "../components/TemperatureComponent.tsx";
+import SpotInfoComponent from "../components/SpotInfoComponent.tsx";
+import MacwindComponent from "../components/MacwindComponent.tsx";
+import WRFComponent from "../components/WRFComponent.tsx";
+import GFSComponent from "../components/GFSComponent.tsx";
+import Navigation from "../components/Navigation.tsx";
+import Footer from "../components/Footer.tsx";
+import { useWRFData } from "../hooks/useWRFData.ts";
+import { useGFSData } from "../hooks/useGFSData.ts";
 
-interface AppProps {
-    spotHeading: string;
+interface SpotProps {
+    spotName: string;
     spotSubHeading: string;
     showMacwind?: boolean;
 }
 
-function App({ spotHeading, spotSubHeading, showMacwind = false }: AppProps) {
-    const { data: windDataWRF, loading: loadingWRF, error: errorWRF } = useWRFData();
-    const { data: windDataGFS, loading: loadingGFS, error: errorGFS } = useGFSData();
+function Spot({ spotName, spotSubHeading, showMacwind = false }: SpotProps) {
+    const { data: windDataWRF, loading: loadingWRF, error: errorWRF } = useWRFData(spotName);
+    const { data: windDataGFS, loading: loadingGFS, error: errorGFS } = useGFSData(spotName);
 
     return (
         <div className="flex flex-col lg:flex-row w-screen h-screen">
@@ -33,7 +33,7 @@ function App({ spotHeading, spotSubHeading, showMacwind = false }: AppProps) {
                     <div className="space-y-8 flex-grow">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                             <div className="col-span-2 bg-zinc-900 rounded-md h-40 xl:h-48">
-                                <SpotInfoComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} spotHeading={spotHeading} spotSubHeading={spotSubHeading} />
+                                <SpotInfoComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} spotName={spotName} spotSubHeading={spotSubHeading} />
                             </div>
                             <div className="col-span-1 bg-zinc-900 rounded-md h-40 xl:h-48">
                                 <TemperatureComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
@@ -71,4 +71,4 @@ function App({ spotHeading, spotSubHeading, showMacwind = false }: AppProps) {
     );
 }
 
-export default App;
+export default Spot;
