@@ -19,7 +19,7 @@ interface Forecast {
     lon: number;
 }
 
-export const useWRFData = () => {
+export const useWRFData = (location: string) => {
     const [data, setData] = useState<Forecast | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export const useWRFData = () => {
     useEffect(() => {
         const fetchWindguruData = async () => {
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/wrf-9km`);
+                const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/windguru/wrf-9km/${location}`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -43,7 +43,7 @@ export const useWRFData = () => {
         };
 
         fetchWindguruData();
-    }, []);
+    }, [location]);
 
     return { data, loading, error };
 };
