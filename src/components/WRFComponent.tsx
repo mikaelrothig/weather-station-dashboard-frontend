@@ -38,14 +38,14 @@ const WRFComponent = ({ windData, loading, error }: WRFProps) => {
 
     return (
         <div className="space-y-0.5">
-            <div className="flex gap-x-0.5 p-3">
+            <div className="flex gap-x-0.5 pb-3">
                 <button
-                    className="px-2.5 p-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-l-md"
+                    className="px-2.5 p-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-tl-md"
                     onClick={() => setShowLabels(!showLabels)}
                 >
                     {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
                 </button>
-                <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5 rounded-r-md">{windData.fcst.model_name}</span>
+                <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5 rounded-tr-md">{windData.fcst.model_name}</span>
             </div>
 
             <div className="flex bg-zinc-900 overflow-hidden gap-x-0.5">
