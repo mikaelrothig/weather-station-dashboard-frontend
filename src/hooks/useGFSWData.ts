@@ -24,7 +24,7 @@ export const useGFSWData = (spot: string) => {
                 const data: Forecast = await response.json();
                 setData(data);
             } catch (error) {
-                setError(`Failed to fetch Windguru data: ${error}`);
+                setError(`${error}`);
             } finally {
                 setLoading(false);
             }

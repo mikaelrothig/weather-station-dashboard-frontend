@@ -33,7 +33,7 @@ const MacwindComponent = () => {
             const data: LiveWind[] = await response.json();
             setWindData(data);
         } catch (error) {
-            setError("Failed to fetch Macwind data");
+            setError(`${error}`);
         } finally {
             setLoading(false);
         }
