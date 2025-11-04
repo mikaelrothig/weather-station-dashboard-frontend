@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getBackgroundColor } from '../utils/ColorUtils.tsx';
+import { getWindBackgroundColor } from '../utils/ColorUtils.tsx';
 import { LucideMinus, LucideMousePointer2, LucidePlus, LucideRadio, LucideRefreshCw } from 'lucide-react';
 
 interface LiveWind {
@@ -133,9 +133,9 @@ const MacwindComponent = () => {
                                     const high = parseFloat(entry.high);
                                     const windDir = parseFloat(entry.dirDegrees);
 
-                                    const bgLow = getBackgroundColor(Math.round(low));
-                                    const bgAvg = getBackgroundColor(Math.round(avg));
-                                    const bgHigh = getBackgroundColor(Math.round(high));
+                                    const bgLow = getWindBackgroundColor(Math.round(low));
+                                    const bgAvg = getWindBackgroundColor(Math.round(avg));
+                                    const bgHigh = getWindBackgroundColor(Math.round(high));
 
                                     return (
                                         <div key={index} className={`min-w-12 max-w-12 space-y-0.5 ${index < windData.length - 1 ? 'mr-0.5' : ''}`}>
