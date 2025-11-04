@@ -1,5 +1,5 @@
 import { LucideMinus, LucidePlus, LucideMousePointer2 } from "lucide-react";
-import { getBackgroundColor } from "../utils/ColorUtils.tsx";
+import { getWindBackgroundColor } from "../utils/ColorUtils.tsx";
 import { getLocalTimeDetails } from "../utils/TimeUtils.tsx";
 import { useState, useEffect } from "react";
 
@@ -71,9 +71,9 @@ const WRFComponent = ({ windData, loading, error }: WRFProps) => {
                             const temperature = windData.fcst.TMP[index];
                             const localTimeDetails = getLocalTimeDetails(windData.fcst.init_h, time);
 
-                            const bgWindSpeed = getBackgroundColor(Math.round(windSpeed));
-                            const bgGust = getBackgroundColor(Math.round(windGust));
-                            const bgTemperature = getBackgroundColor(Math.round(temperature));
+                            const bgWindSpeed = getWindBackgroundColor(Math.round(windSpeed));
+                            const bgGust = getWindBackgroundColor(Math.round(windGust));
+                            const bgTemperature = getWindBackgroundColor(Math.round(temperature));
 
                             const dayBackground = localTimeDetails.date % 2 === 0 ? "bg-zinc-700" : "bg-zinc-800";
 
