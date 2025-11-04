@@ -15,7 +15,6 @@ interface Forecast {
     };
 }
 
-
 export const useGFSData = (spot: string) => {
     const [data, setData] = useState<Forecast | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
