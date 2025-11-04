@@ -17,8 +17,7 @@ function MobileNavigation() {
                         <a
                             key={url}
                             href={url}
-                            className={`flex justify-center items-center h-9 rounded-md px-3 py-2 text-sm font-medium text-nowrap text-zinc-200 transition-colors
-                    ${isActive ? "bg-rose-600 hover:bg-rose-500" : "bg-zinc-800 hover:bg-zinc-700"}`}
+                            className={`flex justify-center items-center h-9 rounded-md px-3 py-2 text-sm font-medium text-nowrap text-zinc-200 transition-colors ${isActive ? "bg-rose-600" : "bg-zinc-800"}`}
                         >
                             {name}
                         </a>
