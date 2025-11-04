@@ -12,7 +12,7 @@ function Footer() {
             </span>
 
             <div className="flex gap-x-0.5">
-                <a href="https://github.com/mikaelrothig/weather-station-dashboard-frontend" target="_blank" className="flex gap-x-2 items-center px-3 py-2 bg-zinc-800 rounded-l-md font-bold">
+                <a href="https://github.com/mikaelrothig/weather-station-dashboard-frontend" target="_blank" className="flex gap-x-2 items-center px-3 py-2 bg-zinc-800 rounded-l-md font-normal hover:text-rose-500">
                     <div className="relative">
                         <div className="flex w-2 h-2 bg-rose-500 rounded-full">
                             <div className="absolute inset-0 w-2 h-2 rounded-full bg-rose-500 opacity-75 animate-ping"></div>
@@ -20,8 +20,8 @@ function Footer() {
                     </div>
                     v2.0
                 </a>
-                <span className="px-3 py-2 bg-zinc-800 text-zinc-500 font-bold">{new Date().getFullYear()}</span>
-                <span className="flex flex-grow px-3 py-2 bg-zinc-800 text-zinc-500 font-bold">Mikael Röthig</span>
+                <span className="px-3 py-2 bg-zinc-800 text-zinc-500">{new Date().getFullYear()}</span>
+                <span className="flex flex-grow px-3 py-2 bg-zinc-800 text-zinc-500">Mikael Röthig</span>
                 <div className="flex gap-x-2 px-3 py-2 items-center bg-zinc-800 text-zinc-500 rounded-r-md">
                     <a href="mailto:mrrothig@gmail.com">
                         <Mail className="stroke-zinc-500 hover:stroke-zinc-200 h-4 w-4"/>
