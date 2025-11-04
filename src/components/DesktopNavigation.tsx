@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LayoutGrid, Bug } from "lucide-react";
+import { Menu, Bug } from "lucide-react";
 
 function DesktopNavigation() {
     const [expanded, setExpanded] = useState<boolean>(() => {
@@ -34,7 +34,7 @@ function DesktopNavigation() {
                     expanded ? "" : "justify-center"
                 }`}
             >
-                <LayoutGrid className="stroke-zinc-200 w-4 h-4 flex-shrink-0" />
+                <Menu className="stroke-zinc-200 w-4 h-4 flex-shrink-0" />
                 {expanded && <div className="flex gap-x-1 text-zinc-200">Menu</div>}
             </button>
 
