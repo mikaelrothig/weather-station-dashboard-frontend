@@ -88,7 +88,7 @@ const MacwindComponent = () => {
                         <div className="flex flex-grow w-full h-7 bg-zinc-800"/>
 
                         <button
-                            className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700"
+                            className="px-3 py-1.5 bg-zinc-800 lg:hover:bg-zinc-700"
                             onClick={fetchMacwindData}
                             disabled={loading}
                         >
