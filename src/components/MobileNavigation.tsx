@@ -10,14 +10,14 @@ function MobileNavigation() {
 
     return (
         <div className="sticky top-0 z-50 lg:hidden bg-zinc-950 shadow-md px-4 md:px-8 py-4">
-            <div className="grid grid-cols-4 gap-3">
+            <div className="flex gap-2 overflow-x-scroll no-scrollbar">
                 {spots.map(({ name, url }) => {
                     const isActive = currentPath === url;
                     return (
                         <a
                             key={url}
                             href={url}
-                            className={`flex justify-center items-center h-9 rounded-md px-3 py-2 text-sm font-medium text-nowrap text-zinc-200 transition-colors ${isActive ? "bg-rose-600" : "bg-zinc-800"}`}
+                            className={`flex justify-center items-center h-9 rounded-md px-3 py-2 min-w-28 text-sm font-medium text-nowrap text-zinc-200 transition-colors ${isActive ? "bg-rose-600" : "bg-zinc-800"}`}
                         >
                             {name}
                         </a>
