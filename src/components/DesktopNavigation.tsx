@@ -18,8 +18,8 @@ function DesktopNavigation() {
     const spots = [
         { abbr: "01", name: "Blouberg", url: "/" },
         { abbr: "02", name: "Langebaan", url: "/langebaan" },
-        { abbr: "03", name: "Witsand", url: "/witsand" },
-        { abbr: "04", name: "Misty Cliffs", url: "/misty-cliffs" },
+        { abbr: "03", name: "Misty Cliffs", url: "/misty-cliffs" },
+        { abbr: "04", name: "Witsand", url: "/witsand" },
     ];
 
     return (
