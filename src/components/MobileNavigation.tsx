@@ -3,9 +3,10 @@ function MobileNavigation() {
 
     const spots = [
         { abbr: "01", name: "Blouberg", url: "/" },
-        { abbr: "02", name: "Langebaan", url: "/langebaan" },
-        { abbr: "03", name: "Misty Cliffs", url: "/misty-cliffs" },
-        { abbr: "04", name: "Witsand", url: "/witsand" },
+        { abbr: "02", name: "Hermanus", url: "/hermanus" },
+        { abbr: "03", name: "Langebaan", url: "/langebaan" },
+        { abbr: "04", name: "Misty Cliffs", url: "/misty-cliffs" },
+        { abbr: "05", name: "Witsand", url: "/witsand" },
     ];
 
     return (
@@ -17,7 +18,7 @@ function MobileNavigation() {
                         <a
                             key={url}
                             href={url}
-                            className={`flex justify-center items-center h-9 rounded-md px-3 py-2 min-w-28 text-sm font-medium text-nowrap text-zinc-200 transition-colors ${isActive ? "bg-rose-600" : "bg-zinc-800"}`}
+                            className={`flex justify-center items-center h-9 rounded-md px-3 py-2 min-w-28 text-sm font-medium text-nowrap transition-colors ${isActive ? "bg-zinc-200 text-zinc-950" : "bg-zinc-800 text-zinc-200"}`}
                         >
                             {name}
                         </a>

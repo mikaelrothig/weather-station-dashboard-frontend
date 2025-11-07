@@ -17,9 +17,10 @@ function DesktopNavigation() {
 
     const spots = [
         { abbr: "01", name: "Blouberg", url: "/" },
-        { abbr: "02", name: "Langebaan", url: "/langebaan" },
-        { abbr: "03", name: "Misty Cliffs", url: "/misty-cliffs" },
-        { abbr: "04", name: "Witsand", url: "/witsand" },
+        { abbr: "02", name: "Hermanus", url: "/hermanus" },
+        { abbr: "03", name: "Langebaan", url: "/langebaan" },
+        { abbr: "04", name: "Misty Cliffs", url: "/misty-cliffs" },
+        { abbr: "05", name: "Witsand", url: "/witsand" },
     ];
 
     return (
@@ -49,17 +50,15 @@ function DesktopNavigation() {
                             key={abbr}
                             href={url}
                             className={`flex items-center gap-x-2 px-3 py-2 h-9 text-nowrap
-                                ${isActive ? "bg-rose-600 hover:bg-rose-500" : "bg-zinc-800 hover:bg-zinc-700"}
+                                ${isActive ? "bg-zinc-200 hover:bg-zinc-300" : "bg-zinc-800 hover:bg-zinc-700"}
                                 ${expanded ? "" : "justify-center"}
                                 ${isFirst ? "rounded-bl-none rounded-t-md" : ""}
                                 ${isLast ? "rounded-r-md rounded-tr-none rounded-b-md" : ""}`}
                         >
-                            <span className="inline text-zinc-200">{abbr}</span>
+                            <span className={`inline ${isActive ? "text-zinc-950" : "text-zinc-200"}`}>{abbr}</span>
 
                             <span
-                                className={`text-zinc-200 ${
-                                    expanded ? "inline" : "hidden"
-                                } block`}
+                                className={`text-zinc-200 ${expanded ? "inline" : "hidden"} ${isActive ? "text-zinc-950" : "text-zinc-200"} block`}
                             >
                                 {name}
                             </span>
