@@ -48,10 +48,10 @@ const SpotInfoComponent = ({ windData, loading, error, spotName, spotSubHeading 
                     <span className="text-sm text-zinc-500 md:group-hover:text-zinc-400">{spotSubHeading}</span>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-0.5">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-0.5">
                     <span className="flex items-center px-3 py-2 h-9 rounded-l-md bg-zinc-800 font-bold">{formattedDate}</span>
-                    <span className="flex items-center px-3 py-2 h-9 rounded-r-md md:rounded-r-none bg-zinc-800 font-bold">{formattedTime}</span>
-                    <span className="hidden md:flex items-center px-3 py-2 h-9 rounded-r-md bg-zinc-800 font-bold">{windData.lat}, {windData.lon}</span>
+                    <span className="flex items-center px-3 py-2 h-9 rounded-r-md md:rounded-r-none lg:rounded-r-md xl:rounded-r-none bg-zinc-800 font-bold">{formattedTime}</span>
+                    <span className="hidden md:flex lg:hidden xl:flex items-center px-3 py-2 h-9 rounded-r-md bg-zinc-800 font-bold">{windData.lat}, {windData.lon}</span>
                 </div>
             </div>
         </div>
