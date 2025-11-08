@@ -9,9 +9,10 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        hermanus: resolve(__dirname, 'hermanus.html'),
         langebaan: resolve(__dirname, 'langebaan.html'),
-        witsand: resolve(__dirname, 'witsand.html'),
         mistycliffs: resolve(__dirname, 'misty-cliffs.html'),
+        witsand: resolve(__dirname, 'witsand.html'),
       },
     },
   },
