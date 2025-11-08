@@ -1,7 +1,8 @@
 {
   "rewrites": [
+    { "source": "/hermanus", "destination": "/hermanus.html" },
     { "source": "/langebaan", "destination": "/langebaan.html" },
-    { "source": "/witsand", "destination": "/witsand.html" },
-    { "source": "/misty-cliffs", "destination": "/misty-cliffs.html" }
+    { "source": "/misty-cliffs", "destination": "/misty-cliffs.html" },
+    { "source": "/witsand", "destination": "/witsand.html" }
   ]
 }
