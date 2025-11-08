@@ -5,8 +5,8 @@ import Spot from '../pages/Spot.tsx'
 import { Analytics } from "@vercel/analytics/react";
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <Spot spotName="Hermanus" spotSubHeading="Western Cape, South Africa" showMacwind={false} />
-        <Analytics/>
-    </StrictMode>,
+  <StrictMode>
+      <Spot spotName="Hermanus" spotSubHeading="Western Cape, South Africa" showMacwind={false} />
+      <Analytics/>
+  </StrictMode>,
 )

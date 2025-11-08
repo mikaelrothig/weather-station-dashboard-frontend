@@ -5,11 +5,11 @@ import MacwindComponent from "../components/MacwindComponent.tsx";
 import WRFComponent from "../components/WRFComponent.tsx";
 import GFSComponent from "../components/GFSComponent.tsx";
 import DesktopNavigation from "../components/DesktopNavigation.tsx";
+import MobileNavigation from "../components/MobileNavigation.tsx";
 import Footer from "../components/Footer.tsx";
 import { useWRFData } from "../hooks/useWRFData.ts";
 import { useGFSData } from "../hooks/useGFSData.ts";
 import { useGFSWData } from "../hooks/useGFSWData.ts";
-import MobileNavigation from "../components/MobileNavigation.tsx";
 
 interface SpotProps {
     spotName: string;
