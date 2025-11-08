@@ -1,4 +1,4 @@
-export function getBackgroundColor(entry: number): string {
+export function getWindBackgroundColor(entry: number): string {
     let bgColor;
 
     switch (true) {
@@ -46,6 +46,58 @@ export function getBackgroundColor(entry: number): string {
             break;
         default:
             bgColor = 'bg-sky-600';
+    }
+
+    return bgColor;
+}
+
+export function getWaveBackgroundColor(entry: number): string {
+    let bgColor;
+
+    switch (true) {
+        case entry >= 3:
+            bgColor = 'bg-indigo-600';
+            break;
+        case entry >= 2.5:
+            bgColor = 'bg-blue-600';
+            break;
+        case entry >= 2:
+            bgColor = 'bg-sky-600';
+            break;
+        case entry >= 1.5:
+            bgColor = 'bg-cyan-600';
+            break;
+        case entry >= 1:
+            bgColor = 'bg-teal-600';
+            break;
+        default:
+            bgColor = 'bg-emerald-600';
+    }
+
+    return bgColor;
+}
+
+export function getWavePeriodBackgroundColor(entry: number): string {
+    let bgColor;
+
+    switch (true) {
+        case entry >= 20:
+            bgColor = 'bg-rose-600';
+            break;
+        case entry >= 18:
+            bgColor = 'bg-pink-600';
+            break;
+        case entry >= 16:
+            bgColor = 'bg-fuchsia-600';
+            break;
+        case entry >= 14:
+            bgColor = 'bg-purple-600';
+            break;
+        case entry >= 12:
+            bgColor = 'bg-violet-600';
+            break;
+        default:
+            bgColor = 'bg-indigo-600';
     }
 
     return bgColor;

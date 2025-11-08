@@ -1,6 +1,6 @@
 import { Sunset } from "lucide-react";
 
-interface DaylightProps {
+interface SunsetProps {
     windData: {
         sunrise: string;
         sunset: string;
@@ -9,7 +9,7 @@ interface DaylightProps {
     error: string | null;
 }
 
-const DaylightComponent = ({ windData, loading, error }: DaylightProps) => {
+const SunsetComponent = ({ windData, loading, error }: SunsetProps) => {
 
     if (loading) return <p className="p-4 font-bold">Loading...</p>;
     if (error) return <p className="p-4 font-bold text-rose-600">{error}</p>;
@@ -49,4 +49,4 @@ const DaylightComponent = ({ windData, loading, error }: DaylightProps) => {
     );
 };
 
-export default DaylightComponent;
+export default SunsetComponent;
