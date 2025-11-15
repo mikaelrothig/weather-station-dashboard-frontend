@@ -10,7 +10,7 @@ function MobileNavigation() {
     ];
 
     return (
-        <div className="sticky top-0 z-50 lg:hidden bg-zinc-950 shadow-md px-4 md:px-8 py-4">
+        <div className="sticky top-0 z-50 lg:hidden bg-zinc-950 shadow-md px-4 md:px-8 py-4 mb-4">
             <div className="flex gap-2 sm:justify-center overflow-x-scroll no-scrollbar">
                 {spots.map(({ name, url }) => {
                     const isActive = currentPath === url;
