@@ -102,3 +102,38 @@ export function getWavePeriodBackgroundColor(entry: number): string {
 
     return bgColor;
 }
+
+export function getGraphStrokeColor(entry: number): string {
+    switch (true) {
+        case entry >= 42:
+            return '#4f46e5';
+        case entry >= 39:
+            return '#7c3aed';
+        case entry >= 36:
+            return '#9333ea';
+        case entry >= 33:
+            return '#c026d3';
+        case entry >= 30:
+            return '#db2777';
+        case entry >= 27:
+            return '#e11d48';
+        case entry >= 24:
+            return '#ea580c';
+        case entry >= 21:
+            return '#d97706';
+        case entry >= 18:
+            return '#ca8a04';
+        case entry >= 15:
+            return '#65a30d';
+        case entry >= 12:
+            return '#16a34a';
+        case entry >= 9:
+            return '#059669';
+        case entry >= 6:
+            return '#0d9488';
+        case entry >= 3:
+            return '#0891b2';
+        default:
+            return '#0284c7';
+    }
+};
