@@ -218,7 +218,7 @@ const MacwindComponent = () => {
                                         stroke="#27272A"
                                         tick={({ x, y, payload, index }) => {
                                             const time = payload.value;
-                                            const [hours, minutes] = time.split(':').map(Number);
+                                            const [, minutes] = time.split(':').map(Number);
                                             const isLastTick = index === graphData.length - 1;
 
                                             // Determine tick interval rule based on timeframe
