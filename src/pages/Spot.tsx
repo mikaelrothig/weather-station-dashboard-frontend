@@ -25,7 +25,9 @@ function Spot({ spotName, spotSubHeading, showMacwind = false }: SpotProps) {
 
     return (
         <div className="flex flex-col lg:flex-row w-full lg:h-screen">
-            <Snowfall/>
+            <div className="hidden lg:block">
+                <Snowfall />
+            </div>
             <div className="hidden lg:block py-8 pl-8 h-screen">
                 <DesktopNavigation />
             </div>
