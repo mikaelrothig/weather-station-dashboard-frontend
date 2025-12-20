@@ -32,6 +32,11 @@ const MacwindComponent = () => {
     const [graphView, setGraphView] = useState<boolean>(true);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+    const [showText, setShowText] = useState<boolean>(() => {
+        const saved = localStorage.getItem('macwind-show-direction-text');
+        return saved === 'true';
+    });
+
     const fetchMacwindData = async () => {
         try {
             setLoading(true);
@@ -49,6 +54,10 @@ const MacwindComponent = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const toggleDirection = () => {
+        setShowText(prev => !prev);
     };
 
     useEffect(() => {
@@ -77,6 +86,13 @@ const MacwindComponent = () => {
             scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth;
         }
     }, [windData]);
+
+    useEffect(() => {
+        localStorage.setItem(
+            'macwind-show-direction-text',
+            String(showText)
+        );
+    }, [showText]);
 
     const graphData = windData
         ? windData.slice().reverse().map(entry => ({
@@ -169,6 +185,19 @@ const MacwindComponent = () => {
                                         const bgAvg = getWindBackgroundColor(Math.round(avg));
                                         const bgHigh = getWindBackgroundColor(Math.round(high));
 
+                                        function degreesToCompass(deg:number):string {
+                                            const directions = [
+                                                "N", "NNE", "NE", "ENE",
+                                                "E", "ESE", "SE", "SSE",
+                                                "S", "SSW", "SW", "WSW",
+                                                "W", "WNW", "NW", "NNW"
+                                            ];
+
+                                            const normalized = ((deg % 360) + 360) % 360;
+                                            const index = Math.round(normalized / 22.5) % 16;
+                                            return directions[index];
+                                        }
+
                                         return (
                                             <div key={index} className={`min-w-12 max-w-12 space-y-0.5 ${index < windData.length - 1 ? 'mr-0.5' : ''}`}>
                                                 <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
@@ -177,11 +206,21 @@ const MacwindComponent = () => {
                                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgLow}`}>{Math.round(low)}</span>
                                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgAvg}`}>{Math.round(avg)}</span>
                                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgHigh}`}>{Math.round(high)}</span>
-                                                <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
-                                                    <LucideMousePointer2
-                                                        className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
-                                                        style={{ transform: `rotate(${windDir - 135}deg)` }}
-                                                    />
+                                                <span
+                                                    className="flex flex-col items-center justify-center p-1.5 font-bold bg-zinc-800 cursor-pointer select-none transition-all duration-150"
+                                                    title={`${degreesToCompass(windDir)} (${Math.round(windDir)}°)`}
+                                                    onClick={toggleDirection}
+                                                >
+                                                    {showText ? (
+                                                        <span className="text-zinc-200 text-xs">
+                                                            {degreesToCompass(windDir)}
+                                                        </span>
+                                                    ) : (
+                                                        <LucideMousePointer2
+                                                            className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
+                                                            style={{ transform: `rotate(${windDir - 135}deg)` }}
+                                                        />
+                                                    )}
                                                 </span>
                                             </div>
                                         );
@@ -252,7 +291,7 @@ const MacwindComponent = () => {
                                     />
                                     <YAxis
                                         stroke="#27272A"
-                                        width={24}
+                                        width={20}
                                         tick={{
                                             fill: "#A1A1AA",
                                             fontSize: 12
