@@ -179,13 +179,13 @@ const MacwindComponent = () => {
                                         const low = parseFloat(entry.low);
                                         const avg = parseFloat(entry.avg);
                                         const high = parseFloat(entry.high);
-                                        const windDir = parseFloat(entry.dirDegrees);
+                                        const windDir = entry.dir;
 
                                         const bgLow = getWindBackgroundColor(Math.round(low));
                                         const bgAvg = getWindBackgroundColor(Math.round(avg));
                                         const bgHigh = getWindBackgroundColor(Math.round(high));
 
-                                        function degreesToCompass(deg:number):string {
+                                        function compassToDegrees(dir:string):number {
                                             const directions = [
                                                 "N", "NNE", "NE", "ENE",
                                                 "E", "ESE", "SE", "SSE",
@@ -193,9 +193,8 @@ const MacwindComponent = () => {
                                                 "W", "WNW", "NW", "NNW"
                                             ];
 
-                                            const normalized = ((deg % 360) + 360) % 360;
-                                            const index = Math.round(normalized / 22.5) % 16;
-                                            return directions[index];
+                                            const index = directions.indexOf(dir.toUpperCase());
+                                            return index * 22.5;
                                         }
 
                                         return (
@@ -208,17 +207,17 @@ const MacwindComponent = () => {
                                                 <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgHigh}`}>{Math.round(high)}</span>
                                                 <span
                                                     className="flex flex-col items-center justify-center p-1.5 font-bold bg-zinc-800 cursor-pointer select-none transition-all duration-150"
-                                                    title={`${degreesToCompass(windDir)} (${Math.round(windDir)}°)`}
+                                                    title={`${windDir}`}
                                                     onClick={toggleDirection}
                                                 >
                                                     {showText ? (
                                                         <span className="text-zinc-200 text-xs">
-                                                            {degreesToCompass(windDir)}
+                                                            {windDir}
                                                         </span>
                                                     ) : (
                                                         <LucideMousePointer2
                                                             className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
-                                                            style={{ transform: `rotate(${windDir - 135}deg)` }}
+                                                            style={{ transform: `rotate(${compassToDegrees(windDir) - 135}deg)` }}
                                                         />
                                                     )}
                                                 </span>
