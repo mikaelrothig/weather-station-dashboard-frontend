@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { getWindBackgroundColor, getGraphStrokeColor } from '../utils/ColorUtils.tsx';
+import { getCompasstoDegrees} from "../utils/DataUtils.tsx";
 import { LucideMinus, LucideMousePointer2, LucidePlus, LucideRadio, LucideRefreshCw } from 'lucide-react';
 import { XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
 
@@ -185,18 +186,6 @@ const MacwindComponent = () => {
                                         const bgAvg = getWindBackgroundColor(Math.round(avg));
                                         const bgHigh = getWindBackgroundColor(Math.round(high));
 
-                                        function compassToDegrees(dir:string):number {
-                                            const directions = [
-                                                "N", "NNE", "NE", "ENE",
-                                                "E", "ESE", "SE", "SSE",
-                                                "S", "SSW", "SW", "WSW",
-                                                "W", "WNW", "NW", "NNW"
-                                            ];
-
-                                            const index = directions.indexOf(dir.toUpperCase());
-                                            return index * 22.5;
-                                        }
-
                                         return (
                                             <div key={index} className={`min-w-12 max-w-12 space-y-0.5 ${index < windData.length - 1 ? 'mr-0.5' : ''}`}>
                                                 <span className="flex items-center justify-center p-1.5 font-bold bg-zinc-800">
@@ -217,7 +206,7 @@ const MacwindComponent = () => {
                                                     ) : (
                                                         <LucideMousePointer2
                                                             className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
-                                                            style={{ transform: `rotate(${compassToDegrees(windDir) - 135}deg)` }}
+                                                            style={{ transform: `rotate(${getCompasstoDegrees(windDir) - 135}deg)` }}
                                                         />
                                                     )}
                                                 </span>

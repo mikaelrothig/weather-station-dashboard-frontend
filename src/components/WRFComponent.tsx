@@ -1,5 +1,6 @@
 import { LucideMinus, LucidePlus, LucideMousePointer2 } from "lucide-react";
 import { getWindBackgroundColor } from "../utils/ColorUtils.tsx";
+import { getDegreesToCompass} from "../utils/DataUtils.tsx";
 import { getLocalTimeDetails } from "../utils/TimeUtils.tsx";
 import { useState, useEffect } from "react";
 
@@ -24,6 +25,18 @@ interface WRFProps {
 
 const WRFComponent = ({ windData, loading, error }: WRFProps) => {
     const [showLabels, setShowLabels] = useState<boolean>(true);
+
+    const [showWindText, setShowWindText] = useState<boolean>(() => {
+        const saved = localStorage.getItem("wrf-show-direction-text");
+        return saved === "true";
+    });
+
+    useEffect(() => {
+        localStorage.setItem(
+            "wrf-show-direction-text",
+            String(showWindText)
+        );
+    }, [showWindText]);
 
     useEffect(() => {
         const handleResize = () => setShowLabels(window.innerWidth >= 512);
@@ -84,18 +97,30 @@ const WRFComponent = ({ windData, loading, error }: WRFProps) => {
                                         <span>{localTimeDetails.date}</span>
                                         <span>{localTimeDetails.hour}</span>
                                     </div>
-                                    <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgWindSpeed}`}>
-                                    {Math.round(windSpeed)}
-                                </span>
-                                    <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgGust}`}>
-                                    {Math.round(windGust)}
-                                </span>
-                                    <span className={`flex items-center justify-center p-1.5 font-bold ${dayBackground}`}>
-                                    <LucideMousePointer2 className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" style={{ transform: `rotate(${windDir - 135}deg)` }} />
-                                </span>
+                                    <span className={`flex justify-center p-1.5 font-bold text-zinc-950 ${bgWindSpeed}`}>
+                                        {Math.round(windSpeed)}
+                                    </span>
+                                    <span className={`flex justify-center p-1.5 font-bold text-zinc-950 ${bgGust}`}>
+                                        {Math.round(windGust)}
+                                    </span>
+                                    <span className={`flex items-center justify-center p-1.5 font-bold ${dayBackground} cursor-pointer select-none`}
+                                        title={`${getDegreesToCompass(windDir)} (${Math.round(windDir)}°)`}
+                                        onClick={() => setShowWindText(prev => !prev)}
+                                    >
+                                        {showWindText ? (
+                                            <span className="text-zinc-200 text-xs">
+                                                {getDegreesToCompass(windDir)}
+                                            </span>
+                                        ) : (
+                                            <LucideMousePointer2
+                                                className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
+                                                style={{ transform: `rotate(${windDir - 135}deg)` }}
+                                            />
+                                        )}
+                                    </span>
                                     <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgTemperature}`}>
-                                    {Math.round(temperature)}
-                                </span>
+                                        {Math.round(temperature)}
+                                    </span>
                                 </div>
                             );
                         })}

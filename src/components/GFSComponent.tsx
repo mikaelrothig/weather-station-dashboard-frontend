@@ -1,6 +1,7 @@
 import { LucideMinus, LucideMousePointer2, LucidePlus } from "lucide-react";
 import { getWindBackgroundColor, getWaveBackgroundColor, getWavePeriodBackgroundColor } from "../utils/ColorUtils.tsx";
 import { getLocalTimeDetails } from "../utils/TimeUtils.tsx";
+import { getDegreesToCompass} from "../utils/DataUtils.tsx";
 import { useState, useEffect } from "react";
 
 interface GFSProps {
@@ -30,6 +31,18 @@ interface GFSProps {
 
 const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
     const [showLabels, setShowLabels] = useState<boolean>(true);
+
+    const [showWindText, setShowWindText] = useState<boolean>(() => {
+        const saved = localStorage.getItem("gfs-show-direction-text");
+        return saved === "true";
+    });
+
+    useEffect(() => {
+        localStorage.setItem(
+            "gfs-show-direction-text",
+            String(showWindText)
+        );
+    }, [showWindText]);
 
     useEffect(() => {
         const handleResize = () => setShowLabels(window.innerWidth >= 512);
@@ -118,8 +131,20 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
                                         <span className={`flex items-center justify-center p-1.5 font-bold text-zinc-950 ${bgGust}`}>
                                             {Math.round(windGust)}
                                         </span>
-                                        <span className={`flex items-center justify-center p-1.5 font-bold ${dayBackground}`}>
-                                            <LucideMousePointer2 className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4" style={{ transform: `rotate(${windDir - 135}deg)` }}/>
+                                        <span className={`flex items-center justify-center p-1.5 font-bold ${dayBackground} cursor-pointer select-none`}
+                                              title={`${getDegreesToCompass(windDir)} (${Math.round(windDir)}°)`}
+                                              onClick={() => setShowWindText(prev => !prev)}
+                                        >
+                                            {showWindText ? (
+                                                <span className="text-zinc-200 text-xs">
+                                                    {getDegreesToCompass(windDir)}
+                                                </span>
+                                            ) : (
+                                                <LucideMousePointer2
+                                                    className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
+                                                    style={{ transform: `rotate(${windDir - 135}deg)` }}
+                                                />
+                                            )}
                                         </span>
 
                                         {waveData && (
