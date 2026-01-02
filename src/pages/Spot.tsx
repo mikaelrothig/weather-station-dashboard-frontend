@@ -7,7 +7,6 @@ import GFSComponent from "../components/GFSComponent.tsx";
 import DesktopNavigation from "../components/DesktopNavigation.tsx";
 import MobileNavigation from "../components/MobileNavigation.tsx";
 import Footer from "../components/Footer.tsx";
-import Snowfall from 'react-snowfall'
 import { useWRFData } from "../hooks/useWRFData.ts";
 import { useGFSData } from "../hooks/useGFSData.ts";
 import { useGFSWData } from "../hooks/useGFSWData.ts";
@@ -25,9 +24,6 @@ function Spot({ spotName, spotSubHeading, showMacwind = false }: SpotProps) {
 
     return (
         <div className="flex flex-col lg:flex-row w-full lg:h-screen">
-            <div className="hidden lg:block">
-                <Snowfall />
-            </div>
             <div className="hidden lg:block py-8 pl-8 h-screen">
                 <DesktopNavigation />
             </div>
