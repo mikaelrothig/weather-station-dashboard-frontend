@@ -10,6 +10,7 @@ export function getDegreesToCompass (deg: number):string {
     return directions[Math.round(normalized / 22.5) % 16];
 
 }
+
 export function getCompasstoDegrees (dir: string):number {
     const index = directions.indexOf(dir.toUpperCase());
     return index * 22.5;
