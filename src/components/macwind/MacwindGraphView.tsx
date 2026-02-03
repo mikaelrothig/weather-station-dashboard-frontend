@@ -11,8 +11,9 @@ interface MacwindGraphViewProps {
 
 export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps) => {
     // For 1min timeframe, only show the most recent 30 minutes
+    // API returns 60min of data in newest-first order, we want the first 30 (most recent)
     const dataToDisplay = timeFrame === '1min' 
-        ? windData.slice(-30) 
+        ? windData.slice(0, 30) 
         : windData;
     
     const graphData = dataToDisplay
