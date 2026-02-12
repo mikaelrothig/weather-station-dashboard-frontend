@@ -21,7 +21,7 @@ function Footer() {
                     v2.0
                 </a>
                 <span className="px-3 py-2 bg-zinc-800 text-zinc-500">{new Date().getFullYear()}</span>
-                <span className="flex flex-grow px-3 py-2 bg-zinc-800 text-zinc-500">Mikael Röthig</span>
+                <span className="flex flex-grow px-3 py-2 bg-zinc-800 text-zinc-500">Mikael Röthig and Rob</span>
                 <div className="flex gap-x-2 px-3 py-2 items-center bg-zinc-800 text-zinc-500 rounded-r-md">
                     <a href="mailto:mrrothig@gmail.com">
                         <Mail className="stroke-zinc-500 hover:stroke-zinc-200 h-4 w-4"/>
