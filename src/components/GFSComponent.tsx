@@ -63,21 +63,21 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
 
     return (
         <div className="space-y-0.5">
-            <div className="flex gap-x-0.5 pb-3">
+            <div className="flex gap-x-2 p-3">
                 <button
-                    className="px-2.5 p-1.5 bg-zinc-800 hover:bg-zinc-700 rounded-tl-md"
+                    className="px-3 bg-zinc-800 lg:hover:bg-zinc-700 rounded-md h-9"
                     onClick={() => setShowLabels(!showLabels)}
                 >
                     {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
                 </button>
-                <span className="flex justify-center w-full bg-zinc-800 text-zinc-500 font-bold p-1.5 rounded-tr-md">
+                <span className="flex w-full px-3 py-2 bg-zinc-800 text-zinc-500 font-bold items-center rounded-md h-9">
                     {windData.fcst.model_name}
                 </span>
             </div>
 
-            <div className="flex bg-zinc-900 overflow-hidden gap-x-0.5">
+            <div className="flex bg-zinc-900 overflow-hidden gap-x-3 px-3">
                 {showLabels && (
-                    <div className="flex flex-col gap-y-0.5 min-w-44 max-w-44 pl-3 pb-3">
+                    <div className="flex flex-col gap-y-0.5 min-w-40 max-w-40">
                         <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs rounded-t-md">
                             <span className="flex justify-center text-zinc-500">Last updated: </span>
                             <span className="flex justify-center text-zinc-500">{windData.fcst.init_d}</span>
@@ -96,7 +96,7 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
                     </div>
                 )}
 
-                <div className="px-3 pb-3 overflow-x-hidden">
+                <div className="pb-3 overflow-x-hidden">
                     <div className="flex overflow-x-scroll no-scrollbar rounded-md">
                         {windData.fcst.hours
                             .map((time, index) => ({ time, index }))
