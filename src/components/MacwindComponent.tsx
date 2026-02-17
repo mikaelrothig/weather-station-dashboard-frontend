@@ -3,7 +3,6 @@ import { LucideRefreshCw } from 'lucide-react';
 import { useMacwindData } from '../hooks/useMacwindData';
 import { useResponsiveView } from '../hooks/useResponsiveView';
 import { useDirectionToggle } from '../hooks/useDirectionToggle';
-import { MacwindHeader } from './macwind/MacwindHeader';
 import { MacwindControls } from './macwind/MacwindControls';
 import { MacwindTableView } from './macwind/MacwindTableView';
 import { MacwindGraphView } from './macwind/MacwindGraphView';
@@ -20,15 +19,11 @@ const MacwindComponent = () => {
             {error && <p className="p-4 font-bold text-rose-600 text-wrap">{error}</p>}
             
             {!error && (
-                <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md">
-                    <MacwindHeader
+                <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md p-3">
+                    <MacwindControls
                         showLabels={showLabels}
                         graphView={graphView}
                         onToggleLabels={toggleLabels}
-                    />
-
-                    <MacwindControls
-                        graphView={graphView}
                         onToggleView={toggleGraphView}
                         loading={loading}
                         onRefresh={refetch}

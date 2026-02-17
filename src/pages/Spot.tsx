@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import SunsetComponent from "../components/SunsetComponent.tsx";
 import TemperatureComponent from "../components/TemperatureComponent.tsx";
 import SpotInfoComponent from "../components/SpotInfoComponent.tsx";
@@ -15,9 +16,10 @@ interface SpotProps {
     spotName: string;
     spotSubHeading: string;
     showMacwind?: boolean;
+    extraComponent?: ReactNode;
 }
 
-function Spot({ spotName, spotSubHeading, showMacwind = false }: SpotProps) {
+function Spot({ spotName, spotSubHeading, showMacwind = false, extraComponent }: SpotProps) {
     const { data: windDataWRF, loading: loadingWRF, error: errorWRF } = useWRFData(spotName);
     const { data: windDataGFS, loading: loadingGFS, error: errorGFS } = useGFSData(spotName);
     const { data: waveDataGFSW } = useGFSWData(spotName);
@@ -34,13 +36,13 @@ function Spot({ spotName, spotSubHeading, showMacwind = false }: SpotProps) {
                 <div className="flex flex-col mx-auto h-full max-w-[1536px]">
                     <div className="space-y-8 flex-grow">
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                            <div className="col-span-2 bg-zinc-900 rounded-md h-40 xl:h-48">
+                            <div className="col-span-2 bg-zinc-900 rounded-md h-44 md:h-48 xl:h-52">
                                 <SpotInfoComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} spotName={spotName} spotSubHeading={spotSubHeading} />
                             </div>
-                            <div className="col-span-1 bg-zinc-900 rounded-md h-40 xl:h-48">
+                            <div className="col-span-1 bg-zinc-900 rounded-md h-44 md:h-48 xl:h-52">
                                 <TemperatureComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
                             </div>
-                            <div className="col-span-1 bg-zinc-900 rounded-md h-40 xl:h-48">
+                            <div className="col-span-1 bg-zinc-900 rounded-md h-44 md:h-48 xl:h-52">
                                 <SunsetComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
                             </div>
                         </div>
@@ -59,6 +61,8 @@ function Spot({ spotName, spotSubHeading, showMacwind = false }: SpotProps) {
                             <div className="overflow-hidden w-full bg-zinc-900 rounded-md">
                                 <GFSComponent windData={windDataGFS} waveData={waveDataGFSW} loading={loadingGFS} error={errorGFS} />
                             </div>
+
+                            {extraComponent}
                         </div>
                     </div>
 

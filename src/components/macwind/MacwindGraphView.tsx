@@ -33,7 +33,7 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
     const highStops = createGradientStops(graphData.map(d => d.high));
 
     return (
-        <div className="px-3 pb-2 h-64">
+        <div className="h-64">
             <ResponsiveContainer>
                 <LineChart data={graphData}>
                     <defs>

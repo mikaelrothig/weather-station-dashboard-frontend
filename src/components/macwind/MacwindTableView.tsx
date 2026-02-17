@@ -19,9 +19,9 @@ export const MacwindTableView = ({ windData, showLabels, showText, onToggleDirec
     }, [windData]);
 
     return (
-        <div className="flex bg-zinc-900 gap-x-0.5">
+        <div className="flex gap-x-3 bg-zinc-900">
             {showLabels && (
-                <div className="flex flex-col gap-y-0.5 min-w-44 max-w-44 pl-3 pb-3">
+                <div className="flex flex-col gap-y-0.5 min-w-40 max-w-40">
                     <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 rounded-t-md">Time</span>
                     <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Low (knots)</span>
                     <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Average (knots)</span>
@@ -29,7 +29,7 @@ export const MacwindTableView = ({ windData, showLabels, showText, onToggleDirec
                     <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 rounded-b-md">Wind Direction</span>
                 </div>
             )}
-            <div className="px-3 pb-3 overflow-x-hidden">
+            <div className="overflow-x-hidden">
                 <div ref={scrollContainerRef} className="flex overflow-x-scroll no-scrollbar rounded-md">
                     {windData.slice().reverse().map((entry, index) => (
                         <WindDataColumn
