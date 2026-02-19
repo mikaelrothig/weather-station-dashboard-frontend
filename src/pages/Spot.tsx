@@ -34,8 +34,8 @@ function Spot({ spotName, spotSubHeading, showMacwind = false, extraComponent }:
 
             <div className="w-full lg:overflow-y-auto px-4 md:px-8 pt-0 md:pt-4 lg:pt-8">
                 <div className="flex flex-col mx-auto h-full max-w-[1536px]">
-                    <div className="space-y-8 flex-grow">
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="flex-grow space-y-4 md:space-y-8">
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                             <div className="col-span-2 bg-zinc-900 rounded-md h-44 md:h-48 xl:h-52">
                                 <SpotInfoComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} spotName={spotName} spotSubHeading={spotSubHeading} />
                             </div>
@@ -47,9 +47,9 @@ function Spot({ spotName, spotSubHeading, showMacwind = false, extraComponent }:
                             </div>
                         </div>
 
-                        <div className="grid gap-8">
+                        <div className="grid gap-4 md:gap-8">
                             {showMacwind && (
-                                <div className="space-y-5 overflow-hidden w-full min-h-56">
+                                <div className="overflow-hidden w-full">
                                     <MacwindComponent />
                                 </div>
                             )}
@@ -66,7 +66,7 @@ function Spot({ spotName, spotSubHeading, showMacwind = false, extraComponent }:
                         </div>
                     </div>
 
-                    <div className="mt-auto py-8">
+                    <div className="mt-auto py-4 md:py-8">
                         <Footer />
                     </div>
                 </div>
