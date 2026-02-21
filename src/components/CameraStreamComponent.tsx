@@ -62,8 +62,8 @@ const CameraStreamComponent = ({ streamUrl, title = "Live Camera Feed" }: Camera
     }, [streamUrl]);
 
     return (
-        <div className="hidden md:block w-full bg-zinc-900 rounded-md overflow-hidden p-3">
-            <span className="flex gap-x-2 bg-zinc-800 text-zinc-500 font-bold p-3 rounded-md h-9 items-center">
+        <div className="hidden md:block w-full bg-zinc-100 dark:bg-zinc-900 rounded-md overflow-hidden p-3">
+            <span className="flex gap-x-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-500 font-bold p-3 rounded-md h-9 items-center">
                 {title}
                 <div className="relative">
                     <div className="flex w-2 h-2 bg-rose-500 rounded-full">

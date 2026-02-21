@@ -19,14 +19,14 @@ export const MacwindTableView = ({ windData, showLabels, showText, onToggleDirec
     }, [windData]);
 
     return (
-        <div className="flex gap-x-3 bg-zinc-900">
+        <div className="flex gap-x-3 bg-zinc-100 dark:bg-zinc-900">
             {showLabels && (
                 <div className="flex flex-col gap-y-0.5 min-w-40 max-w-40">
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 rounded-t-md">Time</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Low (knots)</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Average (knots)</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">High (knots)</span>
-                    <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 rounded-b-md">Wind Direction</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500 rounded-t-md">Time</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Low (knots)</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Average (knots)</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">High (knots)</span>
+                    <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500 rounded-b-md">Wind Direction</span>
                 </div>
             )}
             <div className="overflow-x-hidden">

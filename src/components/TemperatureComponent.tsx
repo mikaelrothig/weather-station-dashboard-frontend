@@ -39,7 +39,7 @@ const TemperatureComponent = ({ windData, loading, error }: TemperatureProps) =>
 
     return (
         <div className="flex flex-col h-full p-3 rounded-md overflow-hidden">
-             <span className="flex px-3 py-2 min-h-9 max-h-9 items-center bg-zinc-800 text-zinc-500 font-bold p-1.5 uppercase gap-x-2 rounded-md">
+             <span className="flex px-3 py-2 min-h-9 max-h-9 items-center bg-zinc-200 dark:bg-zinc-800 text-zinc-500 font-bold p-1.5 uppercase gap-x-2 rounded-md">
                 <Thermometer className="stroke-zinc-500 h-4 w-4" />
                 TEMPERATURE
             </span>
@@ -53,7 +53,7 @@ const TemperatureComponent = ({ windData, loading, error }: TemperatureProps) =>
                      style={{background: "linear-gradient(to right, #0891b2 0%, #ca8a04 50%, #e11d48 100%)",}}
                 >
                     <div
-                        className="absolute top-[-5px] h-4 w-4 rounded-full bg-zinc-200 border-4 border-zinc-900"
+                        className="absolute top-[-5px] h-4 w-4 rounded-full bg-zinc-800 dark:bg-zinc-200 border-4 border-zinc-100 dark:border-zinc-900"
                         style={{left: `${(Math.min(Math.max(currentTemperature, 0), 45) / 45) * 100}%`, transform: "translateX(-50%)",}}
                     />
                 </div>

@@ -32,6 +32,15 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
     const avgStops = createGradientStops(graphData.map(d => d.avg));
     const highStops = createGradientStops(graphData.map(d => d.high));
 
+    // Detect current theme via the class Tailwind applies to <html>
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#27272A' : '#d4d4d8'; // zinc-800 dark / zinc-300 light
+    const tickColor = isDark ? '#A1A1AA' : '#52525b'; // zinc-400 dark / zinc-600 light
+    const tooltipBg = isDark ? '#27272A' : '#f4f4f5'; // zinc-800 dark / zinc-100 light
+    const tooltipText = isDark ? '#e4e4e7' : '#18181b'; // zinc-200 dark / zinc-900 light
+    const tooltipBorder = isDark ? '#3f3f46' : '#d4d4d8'; // zinc-700 dark / zinc-300 light
+    const windIconFill = isDark ? '#a1a1aa' : '#52525b'; // zinc-400 dark / zinc-600 light
+
     return (
         <div className="h-64">
             <ResponsiveContainer>
@@ -54,10 +63,10 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
                         </linearGradient>
                     </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" stroke="#27272A" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                     <XAxis
                         dataKey="time"
-                        stroke="#27272A"
+                        stroke={gridColor}
                         tick={({ x, y, payload, index }) => {
                             const time = payload.value;
                             const [, minutes] = time.split(':').map(Number);
@@ -81,7 +90,7 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
                                 <text
                                     x={x}
                                     y={y + 15}
-                                    fill="#A1A1AA"
+                                    fill={tickColor}
                                     fontSize={12}
                                     fontWeight="bold"
                                     textAnchor="middle"
@@ -94,11 +103,11 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
                         minTickGap={25}
                     />
                     <YAxis
-                        stroke="#27272A"
+                        stroke={gridColor}
                         width={20}
                         fontWeight="bold"
                         tick={{
-                            fill: "#A1A1AA",
+                            fill: tickColor,
                             fontSize: 12
                         }}
                     />
@@ -112,7 +121,7 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
                             const rotation = windDir ? getCompasstoDegrees(windDir) - 135 : 0;
                             
                             return (
-                                <div className="bg-zinc-800 text-zinc-200 px-3 py-2 rounded-md shadow">
+                                <div style={{ backgroundColor: tooltipBg, color: tooltipText, border: `1px solid ${tooltipBorder}` }} className="px-3 py-2 rounded-md shadow">
                                     <div className="font-bold text-sm mb-1">{label}</div>
                                     {payload.map((entry, idx) => {
                                         // Skip the wind direction entry in the list since we'll show it separately
@@ -126,13 +135,12 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
                                         );
                                     })}
                                     {windDir && (
-                                        <div className="flex items-center gap-x-2 mt-1 pt-1 border-t border-zinc-700">
-                                            <span className="text-zinc-200">Wind Direction:</span>
+                                        <div style={{ borderTopColor: tooltipBorder }} className="flex items-center gap-x-2 mt-1 pt-1 border-t">
+                                            <span>Wind Direction:</span>
                                             <div className="flex items-center gap-x-1">
                                                 <LucideMousePointer2
-                                                    className="fill-zinc-200"
                                                     size={14}
-                                                    style={{ transform: `rotate(${rotation}deg)` }}
+                                                    style={{ transform: `rotate(${rotation}deg)`, fill: tooltipText }}
                                                 />
                                                 <span>{windDir}</span>
                                             </div>
@@ -173,8 +181,8 @@ export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps)
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
                                         <LucideMousePointer2
-                                            className="fill-zinc-500 stroke-none w-4 h-4"
-                                            style={{ transform: `rotate(${rotation}deg)` }}
+                                            className="stroke-none w-4 h-4"
+                                            style={{ fill: windIconFill, transform: `rotate(${rotation}deg)` }}
                                         />
                                     </div>
                                 </foreignObject>

@@ -65,34 +65,34 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
         <div className="space-y-0.5">
             <div className="flex gap-x-2 p-3">
                 <button
-                    className="px-3 bg-zinc-800 lg:hover:bg-zinc-700 rounded-md h-9"
+                    className="px-3 bg-zinc-200 dark:bg-zinc-800 lg:hover:bg-zinc-300 dark:lg:hover:bg-zinc-700 rounded-md h-9"
                     onClick={() => setShowLabels(!showLabels)}
                 >
                     {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
                 </button>
-                <span className="flex w-full px-3 py-2 bg-zinc-800 text-zinc-500 font-bold items-center rounded-md h-9">
+                <span className="flex w-full px-3 py-2 bg-zinc-200 dark:bg-zinc-800 text-zinc-500 font-bold items-center rounded-md h-9">
                     {windData.fcst.model_name}
                 </span>
             </div>
 
-            <div className="flex bg-zinc-900 overflow-hidden gap-x-3 px-3">
+            <div className="flex bg-zinc-100 dark:bg-zinc-900 overflow-hidden gap-x-3 px-3">
                 {showLabels && (
                     <div className="flex flex-col gap-y-0.5 min-w-40 max-w-40">
-                        <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs rounded-t-md">
+                        <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500 text-xs rounded-t-md">
                             <span className="flex justify-center text-zinc-500">Last updated: </span>
                             <span className="flex justify-center text-zinc-500">{windData.fcst.init_d}</span>
                             <span className="flex justify-center text-zinc-500">{windData.fcst.init_h + " UTC"}</span>
                         </div>
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind speed (knots)</span>
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind gusts (knots)</span>
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Wind speed (knots)</span>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Wind gusts (knots)</span>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Wind Direction</span>
                         {waveData && (
                             <>
-                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wave height (m)</span>
-                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wave period (s)</span>
+                                <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Wave height (m)</span>
+                                <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">Wave period (s)</span>
                             </>
                         )}
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 rounded-b-md">Temperature (°C)</span>
+                        <span className="flex justify-center p-1.5 font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500 rounded-b-md">Temperature (°C)</span>
                     </div>
                 )}
 
@@ -116,7 +116,7 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
                                 const bgWave = getWaveBackgroundColor(Math.round(wave * 10) / 10);
                                 const bgWavePeriod = getWavePeriodBackgroundColor(Math.round(wavePeriod));
 
-                                const dayBackground = localTimeDetails.date % 2 === 0 ? "bg-zinc-700" : "bg-zinc-800";
+                                const dayBackground = localTimeDetails.date % 2 === 0 ? "bg-zinc-300 dark:bg-zinc-700" : "bg-zinc-200 dark:bg-zinc-800";
 
                                 return (
                                     <div key={index} className={`min-w-9 max-w-9 space-y-0.5 ${index < windData.fcst.hours.length - 1 ? "mr-0.5" : ""}`}>
@@ -136,12 +136,12 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
                                               onClick={() => setShowWindText(prev => !prev)}
                                         >
                                             {showWindText ? (
-                                                <span className="text-zinc-200 text-xs">
+                                                <span className="text-zinc-800 dark:text-zinc-200 text-xs">
                                                     {getDegreesToCompass(windDir)}
                                                 </span>
                                             ) : (
                                                 <LucideMousePointer2
-                                                    className="fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
+                                                    className="fill-zinc-800 dark:fill-zinc-200 min-w-4 min-h-4 max-w-4 max-h-4"
                                                     style={{ transform: `rotate(${windDir - 135}deg)` }}
                                                 />
                                             )}

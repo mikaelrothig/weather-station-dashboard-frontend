@@ -3,49 +3,49 @@ export function getWindBackgroundColor(entry: number): string {
 
     switch (true) {
         case entry >= 42:
-            bgColor = 'bg-indigo-600';
+            bgColor = 'bg-indigo-500 dark:bg-indigo-600';
             break;
         case entry >= 39:
-            bgColor = 'bg-violet-600';
+            bgColor = 'bg-violet-500 dark:bg-violet-600';
             break;
         case entry >= 36:
-            bgColor = 'bg-purple-600';
+            bgColor = 'bg-purple-500 dark:bg-purple-600';
             break;
         case entry >= 33:
-            bgColor = 'bg-fuchsia-600';
+            bgColor = 'bg-fuchsia-500 dark:bg-fuchsia-600';
             break;
         case entry >= 30:
-            bgColor = 'bg-pink-600';
+            bgColor = 'bg-pink-500 dark:bg-pink-600';
             break;
         case entry >= 27:
-            bgColor = 'bg-rose-600';
+            bgColor = 'bg-rose-500 dark:bg-rose-600';
             break;
         case entry >= 24:
-            bgColor = 'bg-orange-600';
+            bgColor = 'bg-orange-500 dark:bg-orange-600';
             break;
         case entry >= 21:
-            bgColor = 'bg-amber-600';
+            bgColor = 'bg-amber-500 dark:bg-amber-600';
             break;
         case entry >= 18:
-            bgColor = 'bg-yellow-600';
+            bgColor = 'bg-yellow-500 dark:bg-yellow-600';
             break;
         case entry >= 15:
-            bgColor = 'bg-lime-600';
+            bgColor = 'bg-lime-500 dark:bg-lime-600';
             break;
         case entry >= 12:
-            bgColor = 'bg-green-600';
+            bgColor = 'bg-green-500 dark:bg-green-600';
             break;
         case entry >= 9:
-            bgColor = 'bg-emerald-600';
+            bgColor = 'bg-emerald-500 dark:bg-emerald-600';
             break;
         case entry >= 6:
-            bgColor = 'bg-teal-600';
+            bgColor = 'bg-teal-500 dark:bg-teal-600';
             break;
         case entry >= 3:
-            bgColor = 'bg-cyan-600';
+            bgColor = 'bg-cyan-500 dark:bg-cyan-600';
             break;
         default:
-            bgColor = 'bg-sky-600';
+            bgColor = 'bg-sky-500 dark:bg-sky-600';
     }
 
     return bgColor;
@@ -56,22 +56,22 @@ export function getWaveBackgroundColor(entry: number): string {
 
     switch (true) {
         case entry >= 3:
-            bgColor = 'bg-indigo-600';
+            bgColor = 'bg-indigo-500 dark:bg-indigo-600';
             break;
         case entry >= 2.5:
-            bgColor = 'bg-blue-600';
+            bgColor = 'bg-blue-500 dark:bg-blue-600';
             break;
         case entry >= 2:
-            bgColor = 'bg-sky-600';
+            bgColor = 'bg-sky-500 dark:bg-sky-600';
             break;
         case entry >= 1.5:
-            bgColor = 'bg-cyan-600';
+            bgColor = 'bg-cyan-500 dark:bg-cyan-600';
             break;
         case entry >= 1:
-            bgColor = 'bg-teal-600';
+            bgColor = 'bg-teal-500 dark:bg-teal-600';
             break;
         default:
-            bgColor = 'bg-emerald-600';
+            bgColor = 'bg-emerald-500 dark:bg-emerald-600';
     }
 
     return bgColor;
@@ -82,22 +82,22 @@ export function getWavePeriodBackgroundColor(entry: number): string {
 
     switch (true) {
         case entry >= 20:
-            bgColor = 'bg-rose-600';
+            bgColor = 'bg-rose-500 dark:bg-rose-600';
             break;
         case entry >= 18:
-            bgColor = 'bg-pink-600';
+            bgColor = 'bg-pink-500 dark:bg-pink-600';
             break;
         case entry >= 16:
-            bgColor = 'bg-fuchsia-600';
+            bgColor = 'bg-fuchsia-500 dark:bg-fuchsia-600';
             break;
         case entry >= 14:
-            bgColor = 'bg-purple-600';
+            bgColor = 'bg-purple-500 dark:bg-purple-600';
             break;
         case entry >= 12:
-            bgColor = 'bg-violet-600';
+            bgColor = 'bg-violet-500 dark:bg-violet-600';
             break;
         default:
-            bgColor = 'bg-indigo-600';
+            bgColor = 'bg-indigo-500 dark:bg-indigo-600';
     }
 
     return bgColor;

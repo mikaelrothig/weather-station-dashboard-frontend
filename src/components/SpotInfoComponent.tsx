@@ -37,7 +37,7 @@ const SpotInfoComponent = ({ windData, loading, error, spotName, spotSubHeading 
 
     return (
         <div className="flex flex-col h-full p-3 space-y-3 rounded-md overflow-hidden">
-             <span className="flex px-3 py-2 min-h-9 max-h-9 items-center bg-zinc-800 text-zinc-500 font-bold uppercase gap-x-2 rounded-md">
+             <span className="flex px-3 py-2 min-h-9 max-h-9 items-center bg-zinc-200 dark:bg-zinc-800 text-zinc-500 font-bold uppercase gap-x-2 rounded-md">
                 <Info className="stroke-zinc-500 h-4 w-4" />
                 SPOT INFO
             </span>
@@ -49,9 +49,9 @@ const SpotInfoComponent = ({ windData, loading, error, spotName, spotSubHeading 
                 </div>
 
                 <div className="flex gap-2">
-                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-800 font-bold">{formattedDate}</span>
-                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-800 font-bold">{formattedTime}</span>
-                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-800 font-bold">{windData.lat}, {windData.lon}</span>
+                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-200 dark:bg-zinc-800 font-bold">{formattedDate}</span>
+                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-200 dark:bg-zinc-800 font-bold">{formattedTime}</span>
+                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-200 dark:bg-zinc-800 font-bold">{windData.lat}, {windData.lon}</span>
                 </div>
             </div>
         </div>

@@ -19,7 +19,7 @@ const MacwindComponent = () => {
             {error && <p className="p-4 font-bold text-rose-600 text-wrap">{error}</p>}
             
             {!error && (
-                <div className="overflow-hidden w-full min-h-36 bg-zinc-900 rounded-md p-3">
+                <div className="overflow-hidden w-full min-h-36 bg-zinc-100 dark:bg-zinc-900 rounded-md p-3">
                     <MacwindControls
                         showLabels={showLabels}
                         graphView={graphView}
