@@ -1,0 +1,212 @@
+#!/bin/bash
+
+set -euo pipefail
+
+#  Helpers
+function info () {
+    echo -e "${GREEN}>>>${RESET} ${BOLD}$@${RESET}"
+}
+
+function error () {
+    echo -e "${RED}>>>${RESET} ${BOLD}$@${RESET}"
+}
+
+function warn () {
+    echo -e "${YELLOW}>>>${RESET} ${BOLD}$@${RESET}"
+}
+
+function on_exit {
+  local exit_code=$?
+  if [ $exit_code -ne 0 ]; then
+    error "Script exited with a non-zero status: $exit_code"
+  fi
+}
+trap on_exit EXIT
+
+#  Paths
+SCRIPT_DIR=$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null 2>&1 && pwd )
+FRONTEND_DIR="$SCRIPT_DIR"
+BACKEND_DIR="$(dirname "$SCRIPT_DIR")/weather-station-dashboard-backend"
+
+#  Colors
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+ORANGE="\033[0;38;5;214m"
+RED="\033[0;31m"
+BOLD="\033[1;37m"
+RESET="\033[0m"
+
+FRONTEND_PREFIX="${ORANGE}[FRONTEND]${RESET} "
+BACKEND_PREFIX="${RED}[BACKEND]${RESET}  "
+
+#  Validation
+function check_backend_dir () {
+    if [ ! -d "$BACKEND_DIR" ]; then
+        error "Backend directory not found at: $BACKEND_DIR"
+        error "Expected: weather-station-dashboard-backend alongside this project"
+        exit 1
+    fi
+}
+
+function check_node () {
+    if ! command -v node > /dev/null; then
+        error "Node.js is not installed. Please install it first."
+        exit 1
+    fi
+    if ! command -v npm > /dev/null; then
+        error "npm is not installed. Please install it first."
+        exit 1
+    fi
+}
+
+#  Readiness checks
+function wait_for_backend () {
+    local host="localhost"
+    local port="4000"
+    local timeout="${1:-30}"
+    local elapsed=0
+    info "Waiting for backend to be ready on http://${host}:${port} ..."
+    until nc -z "$host" "$port" 2>/dev/null; do
+        if [ $elapsed -ge $timeout ]; then
+            error "Backend did not become ready within ${timeout}s. Starting frontend anyway."
+            return 1
+        fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    info "Backend is ready (${elapsed}s)."
+}
+
+function wait_for_frontend () {
+    local host="localhost"
+    local port="5173"
+    local timeout="${1:-30}"
+    local elapsed=0
+    info "Waiting for frontend to be ready on http://${host}:${port} ..."
+    until nc -z "$host" "$port" 2>/dev/null; do
+        if [ $elapsed -ge $timeout ]; then
+            error "Frontend did not become ready within ${timeout}s."
+            return 1
+        fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    info "Frontend is ready (${elapsed}s)."
+}
+
+#  Commands
+function help () {
+    script=$(basename "$0")
+    echo ""
+    echo -e "${ORANGE}[WEATHER STATION DASHBOARD]${RESET}"
+    echo ""
+    echo "Commands:"
+    echo "  start                   Start both servers in the foreground with prefixed logs"
+    echo "  start frontend          Start only the frontend dev server"
+    echo "  start backend           Start only the backend dev server"
+    echo ""
+    echo "  install                 Run npm install in both frontend and backend"
+    echo ""
+    echo "  status                  Show whether the dev servers are currently running"
+    echo ""
+    echo "  help                    Show this help message"
+    echo ""
+
+    if [ -n "${1:-""}" ]; then
+        exit "$1"
+    else
+        exit 0
+    fi
+}
+
+function show_status () {
+    echo ""
+    echo "Service Status"
+    echo ""
+
+    if pgrep -f "vite" > /dev/null 2>&1; then
+        echo -e "  ${ORANGE}[FRONTEND]${RESET}  \033[0;32m● running\033[0m  — http://localhost:5173"
+    else
+        echo -e "  ${ORANGE}[FRONTEND]${RESET}  \033[0;31m○ stopped\033[0m"
+    fi
+
+    if pgrep -f "ts-node" > /dev/null 2>&1 || pgrep -f "tsx" > /dev/null 2>&1 || pgrep -f "nodemon" > /dev/null 2>&1; then
+        echo -e "  ${RED}[BACKEND]${RESET}   \033[0;32m● running\033[0m  — http://localhost:4000"
+    else
+        echo -e "  ${RED}[BACKEND]${RESET}   \033[0;31m○ stopped\033[0m"
+    fi
+
+    echo ""
+}
+
+#  Entry point
+if [ $# -eq 0 ]; then
+    help 1
+fi
+
+case $1 in
+    start)
+        shift
+        case ${1:-""} in
+            frontend)
+                check_node
+                info "Starting frontend (Vite) on http://localhost:5173 ..."
+                cd "$FRONTEND_DIR"
+                npm run dev 2>&1 | while IFS= read -r line; do
+                    echo -e "${FRONTEND_PREFIX}${line}"
+                done
+                ;;
+            backend)
+                check_node
+                check_backend_dir
+                info "Starting backend (ts-node) on http://localhost:4000 ..."
+                cd "$BACKEND_DIR"
+                npm run dev 2>&1 | while IFS= read -r line; do
+                    echo -e "${BACKEND_PREFIX}${line}"
+                done
+                ;;
+            "")
+                check_node
+                check_backend_dir
+                info "Starting both servers (Ctrl-C to stop)..."
+                echo ""
+
+                cd "$BACKEND_DIR"
+                npm run dev 2>&1 | while IFS= read -r line; do
+                    echo -e "${BACKEND_PREFIX}${line}"
+                done &
+                BACKEND_FG_PID=$!
+
+                wait_for_backend 30
+
+                cd "$FRONTEND_DIR"
+                npm run dev 2>&1 | while IFS= read -r line; do
+                    echo -e "${FRONTEND_PREFIX}${line}"
+                done &
+                FRONTEND_FG_PID=$!
+
+                wait_for_frontend 30
+
+                trap 'kill $BACKEND_FG_PID $FRONTEND_FG_PID 2>/dev/null; exit 0' INT TERM
+                wait
+                ;;
+            *)
+                help 1 ;;
+        esac
+        ;;
+    install)
+        shift
+        check_node
+        info "Installing frontend dependencies..."
+        cd "$FRONTEND_DIR" && npm install
+        check_backend_dir
+        info "Installing backend dependencies..."
+        cd "$BACKEND_DIR" && npm install
+        ;;
+    status)
+        show_status ;;
+    help)
+        help ;;
+    *)
+        help 1 ;;
+esac
