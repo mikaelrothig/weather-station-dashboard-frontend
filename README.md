@@ -8,7 +8,8 @@
     Frontend for a Kite Beach, Cape Town weather app that aggregates data from multiple sources.
 </p>
 
-![demo](https://raw.githubusercontent.com/MikaelRothig/weather-station-dashboard-frontend/main/src/assets/images/demo.png)
+<div align="center">
+  <img alt="Logo" src="https://raw.githubusercontent.com/MikaelRothig/weather-station-dashboard-frontend/main/src/assets/images/demo.png" width="75%" />
 
 ## 🛠 Installation & Set Up
 *This project relies on the <a href="https://github.com/mikaelrothig/weather-station-dashboard-backend">Weather Station Dashboard Backend</a> to recieve weather data. Please make sure to follow it's installation and setup steps.*
