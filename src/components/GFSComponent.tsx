@@ -1,4 +1,4 @@
-import { LucideMinus, LucideMousePointer2, LucidePlus } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, LucideMousePointer2, Wind, Zap, Navigation2, Waves, Timer, Thermometer } from "lucide-react";
 import { getWindBackgroundColor, getWaveBackgroundColor, getWavePeriodBackgroundColor } from "../utils/ColorUtils.tsx";
 import { getLocalTimeDetails } from "../utils/TimeUtils.tsx";
 import { getDegreesToCompass} from "../utils/DataUtils.tsx";
@@ -68,7 +68,7 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
                     className="px-3 bg-zinc-800 lg:hover:bg-zinc-700 rounded-md h-9"
                     onClick={() => setShowLabels(!showLabels)}
                 >
-                    {showLabels ? <LucideMinus className="w-4 h-4" /> : <LucidePlus className="w-4 h-4" />}
+                    {showLabels ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeftOpen className="w-4 h-4" />}
                 </button>
                 <span className="flex w-full px-3 py-2 bg-zinc-800 text-zinc-500 font-bold items-center rounded-md h-9">
                     {windData.fcst.model_name}
@@ -78,21 +78,41 @@ const GFSComponent = ({ windData, waveData, loading, error }: GFSProps) => {
             <div className="flex bg-zinc-900 overflow-hidden gap-x-3 px-3">
                 {showLabels && (
                     <div className="flex flex-col gap-y-0.5 min-w-40 max-w-40">
-                        <div className="flex flex-col justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 text-xs rounded-t-md">
-                            <span className="flex justify-center text-zinc-500">Last updated: </span>
-                            <span className="flex justify-center text-zinc-500">{windData.fcst.init_d}</span>
-                            <span className="flex justify-center text-zinc-500">{windData.fcst.init_h + " UTC"}</span>
+                        <div className="flex flex-col justify-center items-start px-3 py-1.5 bg-zinc-800 rounded-t-md">
+                            <span className="text-[10px] font-semibold uppercase tracking-wide text-zinc-600">Updated</span>
+                            <span className="text-xs font-semibold text-zinc-400">{windData.fcst.init_d}</span>
+                            <span className="text-xs text-zinc-600">{windData.fcst.init_h} UTC</span>
                         </div>
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind speed (knots)</span>
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind gusts (knots)</span>
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wind Direction</span>
+                        {[
+                            { icon: Wind,        label: "Speed",     unit: "knots" },
+                            { icon: Zap,         label: "Gusts",     unit: "knots" },
+                            { icon: Navigation2, label: "Direction", unit: ""      },
+                        ].map(({ icon: Icon, label, unit }) => (
+                            <div key={label} className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800">
+                                <Icon className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+                                <span className="text-xs font-semibold text-zinc-400">{label}</span>
+                                {unit && <span className="text-xs text-zinc-600">({unit})</span>}
+                            </div>
+                        ))}
                         {waveData && (
                             <>
-                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wave height (m)</span>
-                                <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500">Wave period (s)</span>
+                                {[
+                                    { icon: Waves, label: "Height", unit: "m" },
+                                    { icon: Timer, label: "Period", unit: "s" },
+                                ].map(({ icon: Icon, label, unit }) => (
+                                    <div key={label} className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800">
+                                        <Icon className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+                                        <span className="text-xs font-semibold text-zinc-400">{label}</span>
+                                        <span className="text-xs text-zinc-600">({unit})</span>
+                                    </div>
+                                ))}
                             </>
                         )}
-                        <span className="flex justify-center p-1.5 font-bold bg-zinc-800 text-zinc-500 rounded-b-md">Temperature (°C)</span>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 rounded-b-md">
+                            <Thermometer className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+                            <span className="text-xs font-semibold text-zinc-400">Temp</span>
+                            <span className="text-xs text-zinc-600">(°C)</span>
+                        </div>
                     </div>
                 )}
 

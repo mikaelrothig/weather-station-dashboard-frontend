@@ -25,49 +25,51 @@ function Spot({ spotName, spotSubHeading, showMacwind = false, extraComponent }:
     const { data: waveDataGFSW } = useGFSWData(spotName);
 
     return (
-        <div className="flex flex-col lg:flex-row w-full lg:h-screen">
-            <div className="hidden lg:block py-8 pl-8 h-screen">
+        <div className="flex flex-col w-full lg:flex-row lg:h-screen bg-zinc-900">
+            <div className="flex-col hidden h-screen py-6 pl-4 pr-2 lg:flex shrink-0">
                 <DesktopNavigation />
             </div>
 
             <MobileNavigation />
 
-            <div className="w-full lg:overflow-y-auto px-4 md:px-8 pt-0 md:pt-4 lg:pt-8">
-                <div className="flex flex-col mx-auto h-full max-w-[1536px]">
-                    <div className="flex-grow space-y-4 md:space-y-8">
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
-                            <div className="col-span-2 bg-zinc-900 rounded-md h-44 md:h-48 xl:h-52">
-                                <SpotInfoComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} spotName={spotName} spotSubHeading={spotSubHeading} />
-                            </div>
-                            <div className="col-span-1 bg-zinc-900 rounded-md h-44 md:h-48 xl:h-52">
-                                <TemperatureComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
-                            </div>
-                            <div className="col-span-1 bg-zinc-900 rounded-md h-44 md:h-48 xl:h-52">
-                                <SunsetComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
-                            </div>
-                        </div>
-
-                        <div className="grid gap-4 md:gap-8">
-                            {showMacwind && (
-                                <div className="overflow-hidden w-full">
-                                    <MacwindComponent />
+            <div className="flex-1 min-w-0 lg:overflow-hidden lg:py-4 lg:pl-2 lg:pr-4">
+                <div className="lg:border-4 lg:border-zinc-950 bg-zinc-950 lg:rounded-2xl lg:h-full lg:overflow-y-auto lg:shadow-lg">
+                    <div className="flex flex-col mx-auto h-full max-w-[1536px] px-4 md:px-8 pt-0 md:pt-8">
+                        <div className="flex-grow space-y-4 md:space-y-8">
+                            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 md:gap-8">
+                                <div className="col-span-2 rounded-md bg-zinc-900 h-44 md:h-48 xl:h-52">
+                                    <SpotInfoComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} spotName={spotName} spotSubHeading={spotSubHeading} />
                                 </div>
-                            )}
-
-                            <div className="overflow-hidden w-full bg-zinc-900 rounded-md">
-                                <WRFComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
+                                <div className="col-span-1 rounded-md bg-zinc-900 h-44 md:h-48 xl:h-52">
+                                    <TemperatureComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
+                                </div>
+                                <div className="col-span-1 rounded-md bg-zinc-900 h-44 md:h-48 xl:h-52">
+                                    <SunsetComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
+                                </div>
                             </div>
 
-                            <div className="overflow-hidden w-full bg-zinc-900 rounded-md">
-                                <GFSComponent windData={windDataGFS} waveData={waveDataGFSW} loading={loadingGFS} error={errorGFS} />
-                            </div>
+                            <div className="grid gap-4 md:gap-8">
+                                {showMacwind && (
+                                    <div className="w-full overflow-hidden">
+                                        <MacwindComponent />
+                                    </div>
+                                )}
 
-                            {extraComponent}
+                                <div className="w-full overflow-hidden rounded-md bg-zinc-900">
+                                    <WRFComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
+                                </div>
+
+                                <div className="w-full overflow-hidden rounded-md bg-zinc-900">
+                                    <GFSComponent windData={windDataGFS} waveData={waveDataGFSW} loading={loadingGFS} error={errorGFS} />
+                                </div>
+
+                                {extraComponent}
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="mt-auto py-4 md:py-8">
-                        <Footer />
+                        <div className="py-4 mt-auto md:py-8">
+                            <Footer />
+                        </div>
                     </div>
                 </div>
             </div>

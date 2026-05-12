@@ -51,7 +51,7 @@ const SpotInfoComponent = ({ windData, loading, error, spotName, spotSubHeading 
                 <div className="flex gap-2">
                     <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-800 font-bold">{formattedDate}</span>
                     <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-800 font-bold">{formattedTime}</span>
-                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-800 font-bold">{windData.lat}, {windData.lon}</span>
+                    <span className="flex items-center px-3 py-2 h-9 rounded-md bg-zinc-800 font-bold">{windData.lat.toFixed(2)}, {windData.lon.toFixed(2)}</span>
                 </div>
             </div>
         </div>
