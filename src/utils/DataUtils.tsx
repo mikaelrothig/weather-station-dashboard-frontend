@@ -11,7 +11,5 @@ export function getDegreesToCompass (deg: number):string {
 
 }
 
-export function getCompasstoDegrees (dir: string):number {
-    const index = directions.indexOf(dir.toUpperCase());
-    return index * 22.5;
-}
+/** "–" when there's no direction, which a station reports in calm conditions */
+export const getCompassLabel = (deg: number | null): string => (deg === null ? "–" : getDegreesToCompass(deg));
