@@ -2,30 +2,163 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
 @layer base {
-
-    h1 {
-        @apply text-3xl md:text-4xl text-zinc-200 font-bold;
+    html {
+        color-scheme: dark;
+        scroll-padding-top: 4.5rem; /* in-page links land below the sticky header */
+        -webkit-tap-highlight-color: transparent;
+        -webkit-text-size-adjust: 100%;
     }
 
-    p {
-        @apply text-xs text-zinc-500;
+    body {
+        @apply bg-canvas font-sans text-zinc-200 antialiased;
     }
 
-    a {
-        @apply text-zinc-200 text-xs font-bold;
+    button, a, [role="button"] {
+        touch-action: manipulation;
     }
 
-    span {
-        @apply text-zinc-200 text-xs;
+    button, [role="button"], [role="radio"], [role="option"] {
+        user-select: none;
+        -webkit-user-select: none;
+        /* No iOS long-press callout on controls; content links keep theirs */
+        -webkit-touch-callout: none;
     }
 
-    button {
-        @apply text-zinc-200 text-xs font-bold;
+    /* iOS zooms into inputs under 16px; this covers iPads using the desktop popover too */
+    @media (pointer: coarse) {
+        input, textarea, select {
+            font-size: 16px;
+        }
+    }
+
+    /* Landscape phones: keep content clear of the notch while the background runs edge to edge */
+    body {
+        padding-left: env(safe-area-inset-left, 0px);
+        padding-right: env(safe-area-inset-right, 0px);
+    }
+
+    :focus-visible {
+        outline: 2px solid theme("colors.rose.500");
+        outline-offset: 2px;
     }
 }
 
-/*Webkit scrollbar customization*/
+@layer components {
+    /* Surfaces get a translucent ring instead of a solid border so they sit on any background */
+    .card {
+        @apply rounded-2xl bg-surface;
+        box-shadow:
+            0 0 0 1px rgb(255 255 255 / 0.06),
+            0 1px 2px rgb(0 0 0 / 0.5),
+            inset 0 1px 0 rgb(255 255 255 / 0.03);
+    }
+
+    .eyebrow {
+        @apply flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-zinc-500;
+    }
+
+    .pressable {
+        transition:
+            transform 160ms var(--ease-out),
+            background-color 150ms ease,
+            color 150ms ease;
+    }
+
+    .pressable:active:not(:disabled) {
+        transform: scale(0.97);
+    }
+
+    .btn-icon {
+        @apply pressable inline-flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-zinc-300 hover:bg-white/10 hover:text-zinc-100 disabled:opacity-50;
+    }
+
+    .live-dot {
+        @apply relative inline-block size-1.5 shrink-0 rounded-full bg-rose-500;
+    }
+
+    .live-dot::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: inherit;
+        animation: live-ring 2s var(--ease-out) infinite;
+    }
+
+    /* Hint that a horizontal scroller continues past the right edge */
+    .scroll-fade {
+        mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+    }
+}
+
+@layer utilities {
+    .animate-enter {
+        animation: enter 300ms var(--ease-out) both;
+        /* Capped so cards far down the page (or reordered on phones) never wait long */
+        animation-delay: calc(min(var(--i, 0), 3) * 50ms);
+    }
+
+    .animate-fade {
+        animation: fade 200ms ease both;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+@keyframes enter {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+}
+
+@keyframes live-ring {
+    from {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+    to {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .animate-enter {
+        animation-name: fade;
+    }
+
+    .live-dot::after {
+        animation: none;
+    }
+}
+
+/* Webkit scrollbar customization */
 *::-webkit-scrollbar {
     width: 14px;
     height: 14px;
@@ -36,20 +169,87 @@
 }
 
 *::-webkit-scrollbar-thumb {
-    background-color: #71717A;
+    background-color: #3f3f46;
     border-radius: 10px;
     border: 4px solid transparent;
     background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-    background-color: #a1a1aa;
+    background-color: #52525b;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
+/* Translucent chrome turns solid when the system asks for less transparency */
+@media (prefers-reduced-transparency: reduce) {
+    .glass-chrome {
+        background-color: theme("colors.canvas");
+        backdrop-filter: none;
+    }
 }
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+/* Share dialog. Phones: rises like a sheet. Desktop: a centred modal that scales in (modals stay centred).
+   Exit is faster than the entrance; reduced motion keeps only the fade. */
+.share-scrim {
+    transition: opacity 200ms ease;
+}
+
+.share-dialog {
+    transition:
+        transform 400ms var(--ease-drawer),
+        opacity 200ms var(--ease-out);
+}
+
+.share-dialog[data-closing] {
+    transform: translateY(100%);
+    transition-duration: 200ms;
+}
+
+@starting-style {
+    .share-scrim {
+        opacity: 0;
+    }
+
+    .share-dialog {
+        transform: translateY(100%);
+    }
+}
+
+@media (min-width: 768px) {
+    .share-dialog {
+        transition:
+            transform 200ms var(--ease-out),
+            opacity 200ms var(--ease-out);
+    }
+
+    .share-dialog[data-closing] {
+        transform: scale(0.96);
+        opacity: 0;
+        transition-duration: 150ms;
+    }
+
+    @starting-style {
+        .share-dialog {
+            transform: scale(0.96);
+            opacity: 0;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .share-dialog,
+    .share-dialog[data-closing] {
+        transform: none;
+        transition: opacity 200ms ease;
+    }
+
+    .share-dialog[data-closing] {
+        opacity: 0;
+    }
+
+    @starting-style {
+        .share-dialog {
+            transform: none;
+            opacity: 0;
+        }
+    }
 }
