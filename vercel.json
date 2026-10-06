@@ -3,6 +3,16 @@
     { "source": "/hermanus", "destination": "/hermanus.html" },
     { "source": "/langebaan", "destination": "/langebaan.html" },
     { "source": "/misty-cliffs", "destination": "/misty-cliffs.html" },
-    { "source": "/witsand", "destination": "/witsand.html" }
+    { "source": "/witsand", "destination": "/witsand.html" },
+    { "source": "/wijk-aan-zee", "destination": "/wijk-aan-zee.html" },
+    { "source": "/ijmuiden", "destination": "/ijmuiden.html" },
+    { "source": "/zandvoort", "destination": "/zandvoort.html" },
+    { "source": "/noordwijk", "destination": "/noordwijk.html" },
+    { "source": "/scheveningen", "destination": "/scheveningen.html" },
+    { "source": "/brouwersdam", "destination": "/brouwersdam.html" },
+    { "source": "/domburg", "destination": "/domburg.html" },
+    { "source": "/workum", "destination": "/workum.html" },
+    { "source": "/mirns", "destination": "/mirns.html" },
+    { "source": "/makkum", "destination": "/makkum.html" }
   ]
 }
