@@ -1,16 +1,25 @@
-import { ReactNode } from "react";
-import SunsetComponent from "../components/SunsetComponent.tsx";
-import TemperatureComponent from "../components/TemperatureComponent.tsx";
-import SpotInfoComponent from "../components/SpotInfoComponent.tsx";
+import { ReactNode, useMemo, useState } from "react";
+import SpotHeader from "../components/SpotHeader.tsx";
+import ConditionsStrip from "../components/ConditionsStrip.tsx";
+import KiteWindowComponent from "../components/KiteWindowComponent.tsx";
+import TideComponent from "../components/TideComponent.tsx";
 import MacwindComponent from "../components/MacwindComponent.tsx";
-import WRFComponent from "../components/WRFComponent.tsx";
-import GFSComponent from "../components/GFSComponent.tsx";
-import DesktopNavigation from "../components/DesktopNavigation.tsx";
-import MobileNavigation from "../components/MobileNavigation.tsx";
+import ForecastComponent, { ForecastModel } from "../components/ForecastComponent.tsx";
+import ShareDayDialog from "../components/share/ShareDayDialog.tsx";
+import { buildShareDay } from "../utils/shareUtils.ts";
+import Header from "../components/Header.tsx";
 import Footer from "../components/Footer.tsx";
-import { useWRFData } from "../hooks/useWRFData.ts";
-import { useGFSData } from "../hooks/useGFSData.ts";
-import { useGFSWData } from "../hooks/useGFSWData.ts";
+import { useForecast, useSpotInfo, useWaveForecast } from "../api/hooks.ts";
+import { getSpotByName, getSpotTimeZone } from "../utils/spotUtils.ts";
+import { setActiveTimeZone } from "../utils/TimeUtils.tsx";
+import { useLiveWind } from "../hooks/useLiveWind.ts";
+import SessionComponent from "../components/SessionComponent.tsx";
+import { DataNotice } from "../components/ui/DataNotice.tsx";
+import { installDevFixtures } from "../dev/fixtures.ts";
+import DevDataToggle from "../dev/DevDataToggle.tsx";
+
+// Dev only: ?data=demo|storm|calm|worst swaps API responses for stress-test scenarios
+if (import.meta.env.DEV) installDevFixtures();
 
 interface SpotProps {
     spotName: string;
@@ -20,59 +29,113 @@ interface SpotProps {
 }
 
 function Spot({ spotName, spotSubHeading, showMacwind = false, extraComponent }: SpotProps) {
-    const { data: windDataWRF, loading: loadingWRF, error: errorWRF } = useWRFData(spotName);
-    const { data: windDataGFS, loading: loadingGFS, error: errorGFS } = useGFSData(spotName);
-    const { data: waveDataGFSW } = useGFSWData(spotName);
+    // Every time on this page is shown in the spot's own timezone, whatever the viewer's device uses
+    const spot = getSpotByName(spotName);
+    const timeZone = getSpotTimeZone(spot);
+    if (timeZone) setActiveTimeZone(timeZone);
 
+    const { data: hires, loading: loadingHires, error: errorHires } = useForecast(spotName, "hires");
+    const { data: global, loading: loadingGlobal, error: errorGlobal } = useForecast(spotName, "global");
+    const { data: waves } = useWaveForecast(spotName);
+    const { data: spotData, loading: loadingSpot, error: errorSpot } = useSpotInfo(spotName);
+
+    // Prefer the regional high-res model, but fall back to the global one so the page still works when it's down
+    const forecast = hires ?? global;
+    const forecastLoading = !forecast && (loadingHires || loadingGlobal);
+    const forecastError = !forecast && !forecastLoading ? errorHires ?? errorGlobal : null;
+
+    const live = useLiveWind(showMacwind);
+    const liveData = showMacwind ? live.windData : null;
+    const offshore = spot?.offshore;
+    // Lake spots have no tide; once that's known, Kite windows takes the whole row instead of sitting next to an empty card
+    const noTide = !!spotData && !spotData.tide;
+
+    // Sharing a day of whichever model is on screen; built only when someone asks for it
+    const [shareTarget, setShareTarget] = useState<{ dayKey: string; model: ForecastModel } | null>(null);
+    const shareData = useMemo(() => {
+        if (!shareTarget) return null;
+        const model = shareTarget.model === "hires" ? hires : global;
+        if (!model) return null;
+        return buildShareDay({
+            dayKey: shareTarget.dayKey,
+            spotName,
+            region: spotSubHeading,
+            model,
+            step: shareTarget.model === "gfs" ? 2 : 1, // matches the forecast table's columns
+            waves,
+            spotData,
+        });
+    }, [shareTarget, hires, global, waves, spotData, spotName, spotSubHeading]);
+
+    // DOM order is the desktop order (planning at home: overview, kite windows, tide, forecast, then live).
+    // On phones the same cards are reordered for the beach: right now, live wind, kite windows, forecast, tide.
     return (
-        <div className="flex flex-col w-full lg:flex-row lg:h-screen bg-zinc-900">
-            <div className="flex-col hidden h-screen py-6 pl-4 pr-2 lg:flex shrink-0">
-                <DesktopNavigation />
-            </div>
+        <div className="flex min-h-dvh flex-col">
+            <Header />
 
-            <MobileNavigation />
+            <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-3 px-4 py-4 md:gap-4 md:px-6 md:py-6 lg:px-8">
+                {errorHires && <DataNotice hasLiveStation={showMacwind} gfsAvailable={!errorGlobal} />}
 
-            <div className="flex-1 min-w-0 lg:overflow-hidden lg:py-4 lg:pl-2 lg:pr-4">
-                <div className="lg:border-4 lg:border-zinc-950 bg-zinc-950 lg:rounded-2xl lg:h-full lg:overflow-y-auto lg:shadow-lg">
-                    <div className="flex flex-col mx-auto h-full max-w-[1536px] px-4 md:px-8 pt-0 md:pt-8">
-                        <div className="flex-grow space-y-4 md:space-y-8">
-                            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 md:gap-8">
-                                <div className="col-span-2 rounded-md bg-zinc-900 h-44 md:h-48 xl:h-52">
-                                    <SpotInfoComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} spotName={spotName} spotSubHeading={spotSubHeading} />
-                                </div>
-                                <div className="col-span-1 rounded-md bg-zinc-900 h-44 md:h-48 xl:h-52">
-                                    <TemperatureComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
-                                </div>
-                                <div className="col-span-1 rounded-md bg-zinc-900 h-44 md:h-48 xl:h-52">
-                                    <SunsetComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
-                                </div>
-                            </div>
-
-                            <div className="grid gap-4 md:gap-8">
-                                {showMacwind && (
-                                    <div className="w-full overflow-hidden">
-                                        <MacwindComponent />
-                                    </div>
-                                )}
-
-                                <div className="w-full overflow-hidden rounded-md bg-zinc-900">
-                                    <WRFComponent windData={windDataWRF} loading={loadingWRF} error={errorWRF} />
-                                </div>
-
-                                <div className="w-full overflow-hidden rounded-md bg-zinc-900">
-                                    <GFSComponent windData={windDataGFS} waveData={waveDataGFSW} loading={loadingGFS} error={errorGFS} />
-                                </div>
-
-                                {extraComponent}
-                            </div>
-                        </div>
-
-                        <div className="py-4 mt-auto md:py-8">
-                            <Footer />
-                        </div>
-                    </div>
+                <div className="order-1 md:hidden">
+                    <SessionComponent
+                        spotName={spotName}
+                        offshore={offshore}
+                        forecast={forecast}
+                        forecastLoading={forecastLoading}
+                        live={liveData}
+                        spotData={spotData}
+                    />
                 </div>
-            </div>
+
+                {/* Desktop: the spot as the page title, then one compact strip of current conditions */}
+                <div className="hidden flex-col gap-4 md:flex">
+                    <SpotHeader spotName={spotName} spotSubHeading={spotSubHeading} coordinates={forecast?.location ?? null} />
+                    <ConditionsStrip
+                        forecast={forecast}
+                        forecastLoading={forecastLoading}
+                        live={liveData}
+                        spotData={spotData}
+                        spotLoading={loadingSpot}
+                        offshore={offshore}
+                    />
+                </div>
+
+                {/* On phones this wrapper dissolves so its two cards can be ordered independently */}
+                <div className="contents md:grid md:gap-4 lg:grid-cols-3">
+                    <KiteWindowComponent
+                        windData={forecast}
+                        outlook={global}
+                        loading={forecastLoading}
+                        error={forecastError}
+                        offshore={offshore}
+                        index={2}
+                        className={`order-3 md:order-none ${noTide ? "lg:col-span-3" : "lg:col-span-2"}`}
+                    />
+                    {!noTide && <TideComponent spotData={spotData} loading={loadingSpot} error={errorSpot} index={3} className="order-5 md:order-none" />}
+                </div>
+
+                <div className="order-4 md:order-none">
+                    <ForecastComponent
+                        hires={{ data: hires, loading: loadingHires, error: errorHires }}
+                        gfs={{ data: global, loading: loadingGlobal, error: errorGlobal }}
+                        waves={waves}
+                        index={7}
+                        onShareDay={(dayKey, model) => setShareTarget({ dayKey, model })}
+                    />
+                </div>
+
+                {showMacwind && (
+                    <div className="order-2 md:order-none">
+                        <MacwindComponent live={live} index={8} />
+                    </div>
+                )}
+
+                {extraComponent && <div className="order-6 md:order-none">{extraComponent}</div>}
+            </main>
+
+            <Footer />
+            <ShareDayDialog data={shareData} onClose={() => setShareTarget(null)} />
+            {import.meta.env.DEV && <DevDataToggle />}
         </div>
     );
 }
