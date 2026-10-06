@@ -1,188 +1,190 @@
-import { XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
-import { LucideMousePointer2 } from 'lucide-react';
-import { LiveWind } from '../../hooks/useMacwindData';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ComposedChart, Area, Line } from 'recharts';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { LiveInterval, LiveReading } from '../../api/types';
 import { createGradientStops } from '../../utils/gradientUtils';
-import { getCompasstoDegrees } from '../../utils/DataUtils';
+import { getCompassLabel } from '../../utils/DataUtils';
+import { formatReadingTime, getReadingTime } from '../../utils/conditionsUtils';
+import { getMinutesOfDay } from '../../utils/TimeUtils';
+import { getGraphStrokeColor } from '../../utils/ColorUtils';
+import { DirectionArrow } from '../ui/DirectionArrow';
 
 interface MacwindGraphViewProps {
-    windData: LiveWind[];
-    timeFrame: '1min' | '15min';
+    windData: LiveReading[];
+    timeFrame: LiveInterval;
 }
 
+const AXIS_TICK = { fill: '#71717a', fontSize: 11, fontWeight: 500 };
+
+interface Point {
+    time: string;
+    low: number;
+    avg: number;
+    high: number;
+    direction: number | null;
+}
+
+// One fixed line above the chart: the latest reading, or whichever point is being scrubbed.
+// Pinned instead of floating so a finger on a phone never covers it.
+const Readout = ({ point, label, overlay = false }: { point: Point; label: string; overlay?: boolean }) => (
+    <div className={`flex h-9 items-center gap-x-3 text-xs ${overlay ? 'absolute inset-0 bg-surface' : ''}`}>
+        <span className="w-14 shrink-0 font-medium tabular-nums text-zinc-400">{label}</span>
+        <span className="flex items-center gap-1.5">
+            <span className="size-2 rounded-full" style={{ background: getGraphStrokeColor(point.avg) }} aria-hidden="true" />
+            <span className="text-base font-semibold tabular-nums text-zinc-50">{Math.round(point.avg)}</span>
+            <span className="text-zinc-500">kn</span>
+        </span>
+        <span className="tabular-nums text-zinc-400">
+            {Math.round(point.low)}–{Math.round(point.high)} kn
+        </span>
+        <span className="ml-auto flex items-center gap-1 font-medium text-zinc-200">
+            {point.direction !== null && <DirectionArrow degrees={point.direction} className="size-3 fill-zinc-300 stroke-none" />}
+            {getCompassLabel(point.direction)}
+        </span>
+    </div>
+);
+
 export const MacwindGraphView = ({ windData, timeFrame }: MacwindGraphViewProps) => {
+    const isDesktop = useMediaQuery('(min-width: 768px)');
+    const [readoutSlot, setReadoutSlot] = useState<HTMLDivElement | null>(null);
+
     // For 1min timeframe, only show the most recent 30 minutes
     // API returns 60min of data in newest-first order, we want the first 30 (most recent)
-    const dataToDisplay = timeFrame === '1min' 
-        ? windData.slice(0, 30) 
-        : windData;
-    
+    // On a phone at the beach only the recent trend matters, so 15-minute data is cut to the last 4 hours
+    const dataToDisplay = timeFrame === '1min'
+        ? windData.slice(0, 30)
+        : isDesktop ? windData : windData.slice(0, 16);
+
     const graphData = dataToDisplay
         .slice()
         .reverse()
-        .map(entry => ({
-            time: entry.time,
-            low: parseFloat(entry.low),
-            avg: parseFloat(entry.avg),
-            high: parseFloat(entry.high),
-            dir: entry.dir,
+        .map((entry) => ({
+            time: formatReadingTime(entry),
+            minutes: getMinutesOfDay(getReadingTime(entry)),
+            low: entry.lull,
+            avg: entry.speed,
+            high: entry.gust,
+            // Area draws a band when its value is a [bottom, top] pair
+            range: [entry.lull, entry.gust] as [number, number],
+            direction: entry.direction,
             windDirection: 0, // Constant value for flat line
         }));
 
-    const lowStops = createGradientStops(graphData.map(d => d.low));
     const avgStops = createGradientStops(graphData.map(d => d.avg));
-    const highStops = createGradientStops(graphData.map(d => d.high));
+
+    // Label whole hours (15m) or every 10 minutes (1m); Recharts drops labels that would collide on narrow screens
+    const ticks = graphData
+        .filter(({ minutes }) => (timeFrame === '1min' ? minutes % 10 === 0 : minutes % 60 === 0))
+        .map((d) => d.time);
+
+    // Thin out the direction arrows so they don't collide on dense series
+    const arrowEvery = graphData.length > 40 ? 2 : 1;
+
+    const latest = graphData[graphData.length - 1];
 
     return (
-        <div className="h-64">
-            <ResponsiveContainer>
-                <LineChart data={graphData}>
-                    <defs>
-                        <linearGradient id="gradLow" x1="0" y1="0" x2="1" y2="0">
-                            {lowStops.map((s, i) => (
-                                <stop key={i} offset={s.offset} stopColor={s.color} />
-                            ))}
-                        </linearGradient>
-                        <linearGradient id="gradAvg" x1="0" y1="0" x2="1" y2="0">
-                            {avgStops.map((s, i) => (
-                                <stop key={i} offset={s.offset} stopColor={s.color} />
-                            ))}
-                        </linearGradient>
-                        <linearGradient id="gradHigh" x1="0" y1="0" x2="1" y2="0">
-                            {highStops.map((s, i) => (
-                                <stop key={i} offset={s.offset} stopColor={s.color} />
-                            ))}
-                        </linearGradient>
-                    </defs>
+        <div className="px-2 md:px-3">
+            <div ref={setReadoutSlot} className="relative mx-2 mb-1" aria-live="off">
+                {latest && <Readout point={latest} label={latest.time} />}
+            </div>
+            <div className="h-56 touch-pan-y md:h-72">
+                <ResponsiveContainer>
+                    <ComposedChart data={graphData} margin={{ top: 8, right: 12, bottom: 0, left: 0 }}>
+                        <defs>
+                            <linearGradient id="macwind-avg" x1="0" y1="0" x2="1" y2="0">
+                                {avgStops.map((s, i) => (
+                                    <stop key={i} offset={s.offset} stopColor={s.color} />
+                                ))}
+                            </linearGradient>
+                        </defs>
 
-                    <CartesianGrid strokeDasharray="3 3" stroke="#27272A" />
-                    <XAxis
-                        dataKey="time"
-                        stroke="#27272A"
-                        tick={({ x, y, payload, index }) => {
-                            const time = payload.value;
-                            const [, minutes] = time.split(':').map(Number);
-                            const isLastTick = index === graphData.length - 1;
+                        <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />
+                        <XAxis
+                            dataKey="time"
+                            axisLine={false}
+                            tickLine={false}
+                            tick={AXIS_TICK}
+                            ticks={ticks}
+                            interval="preserveStartEnd"
+                            minTickGap={28}
+                        />
+                        <YAxis axisLine={false} tickLine={false} width={28} tick={AXIS_TICK} />
+                        <Tooltip
+                            isAnimationActive={false}
+                            cursor={{ stroke: 'rgba(255,255,255,0.3)' }}
+                            wrapperStyle={{ display: 'none' }}
+                            content={({ active, payload, label }) => {
+                                const point = payload?.[0]?.payload as Point | undefined;
+                                if (!active || !point || !readoutSlot) return null;
+                                return createPortal(<Readout point={point} label={String(label)} overlay />, readoutSlot);
+                            }}
+                        />
+                        <Area
+                            type="monotone"
+                            dataKey="range"
+                            name="Low–high"
+                            fill="rgba(255,255,255,0.07)"
+                            stroke="rgba(255,255,255,0.12)"
+                            strokeWidth={1}
+                            activeDot={false}
+                            isAnimationActive={false}
+                        />
+                        <Line
+                            type="monotone"
+                            dataKey="avg"
+                            name="Average"
+                            stroke="url(#macwind-avg)"
+                            strokeWidth={2.5}
+                            strokeLinecap="round"
+                            dot={false}
+                            activeDot={{ r: 4, fill: '#fafafa', stroke: '#111113', strokeWidth: 2 }}
+                            isAnimationActive={false}
+                        />
+                        {isDesktop && <Line
+                            dataKey="windDirection"
+                            stroke="transparent"
+                            name="Wind Direction"
+                            strokeWidth={0}
+                            isAnimationActive={false}
+                            activeDot={false}
+                            dot={(props) => {
+                                const { cx, cy, index } = props;
+                                if (cx === undefined || cy === undefined || index === undefined || index % arrowEvery !== 0) {
+                                    return <g key={`wind-${index}`} />;
+                                }
 
-                            // Determine tick interval rule based on timeframe
-                            const showEvery10Min = timeFrame === '1min';
-                            const showEveryHour = timeFrame === '15min';
+                                const degrees = graphData[index]?.direction;
+                                if (degrees === null || degrees === undefined) return <g key={`wind-${index}`} />;
+                                const rotation = degrees + 180;
 
-                            let shouldShow = false;
-                            if (showEvery10Min) {
-                                shouldShow = minutes % 10 === 0;
-                            } else if (showEveryHour) {
-                                shouldShow = minutes === 0;
-                            }
+                                return (
+                                    <path
+                                        key={`wind-${index}`}
+                                        d="M0,-5 L3.5,4 L0,2 L-3.5,4 Z"
+                                        fill="#52525b"
+                                        transform={`translate(${cx},${cy - 8}) rotate(${rotation})`}
+                                    />
+                                );
+                            }}
+                        />}
+                    </ComposedChart>
+                </ResponsiveContainer>
+            </div>
 
-                            if (!shouldShow && !isLastTick) return null;
-                            if (isLastTick && !shouldShow) return null;
-
-                            return (
-                                <text
-                                    x={x}
-                                    y={y + 15}
-                                    fill="#A1A1AA"
-                                    fontSize={12}
-                                    fontWeight="bold"
-                                    textAnchor="middle"
-                                >
-                                    {time}
-                                </text>
-                            );
-                        }}
-                        interval={0}
-                        minTickGap={25}
-                    />
-                    <YAxis
-                        stroke="#27272A"
-                        width={20}
-                        fontWeight="bold"
-                        tick={{
-                            fill: "#A1A1AA",
-                            fontSize: 12
-                        }}
-                    />
-                    <Tooltip
-                        content={({ active, payload, label }) => {
-                            if (!active || !payload || payload.length === 0) return null;
-                            
-                            // Find the wind direction data from the payload
-                            const windDirEntry = payload.find(entry => entry.dataKey === 'windDirection');
-                            const windDir = windDirEntry?.payload?.dir;
-                            const rotation = windDir ? getCompasstoDegrees(windDir) - 135 : 0;
-                            
-                            return (
-                                <div className="bg-zinc-800 text-zinc-200 px-3 py-2 rounded-md shadow">
-                                    <div className="font-bold text-sm mb-1">{label}</div>
-                                    {payload.map((entry, idx) => {
-                                        // Skip the wind direction entry in the list since we'll show it separately
-                                        if (entry.dataKey === 'windDirection') return null;
-                                        
-                                        return (
-                                            <div key={idx} className="flex justify-between gap-x-2">
-                                                <span style={{ color: entry.color }}>{entry.name}:</span>
-                                                <span>{entry.value} knots</span>
-                                            </div>
-                                        );
-                                    })}
-                                    {windDir && (
-                                        <div className="flex items-center gap-x-2 mt-1 pt-1 border-t border-zinc-700">
-                                            <span className="text-zinc-200">Wind Direction:</span>
-                                            <div className="flex items-center gap-x-1">
-                                                <LucideMousePointer2
-                                                    className="fill-zinc-200"
-                                                    size={14}
-                                                    style={{ transform: `rotate(${rotation}deg)` }}
-                                                />
-                                                <span>{windDir}</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        }}
-                    />
-                    {/* <Legend /> */}
-                    <Line type="monotone" dataKey="high" stroke="url(#gradHigh)" name="High" strokeWidth={2.5} dot={false} />
-                    <Line type="monotone" dataKey="avg" stroke="url(#gradAvg)" name="Average" strokeWidth={2.5} dot={false} />
-                    <Line type="monotone" dataKey="low" stroke="url(#gradLow)" name="Low" strokeWidth={2.5} dot={false} />
-                    <Line 
-                        type="monotone" 
-                        dataKey="windDirection" 
-                        stroke="transparent" 
-                        name="Wind Direction" 
-                        strokeWidth={0}
-                        dot={(props) => {
-                            const { cx, cy, index } = props;
-                            
-                            // Type guard: ensure cx and cy are defined
-                            if (cx === undefined || cy === undefined || index === undefined) {
-                                return null;
-                            }
-                            
-                            const windDir = graphData[index]?.dir || 'N';
-                            const rotation = getCompasstoDegrees(windDir) - 135;
-                            
-                            return (
-                                <foreignObject
-                                    x={cx - 10}
-                                    y={cy - 10}
-                                    width={20}
-                                    height={20}
-                                    key={`wind-${index}`}
-                                >
-                                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
-                                        <LucideMousePointer2
-                                            className="fill-zinc-500 stroke-none w-4 h-4"
-                                            style={{ transform: `rotate(${rotation}deg)` }}
-                                        />
-                                    </div>
-                                </foreignObject>
-                            );
-                        }}
-                    />
-                </LineChart>
-            </ResponsiveContainer>
+            <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 px-2 pt-2 text-xs text-zinc-500">
+                <li className="flex items-center gap-1.5">
+                    <svg width="16" height="6" aria-hidden="true">
+                        <line x1="1" y1="3" x2="15" y2="3" stroke="#a1a1aa" strokeWidth={2.5} strokeLinecap="round" />
+                    </svg>
+                    Average
+                </li>
+                <li className="flex items-center gap-1.5">
+                    <span className="h-2.5 w-4 rounded-sm bg-white/[0.12] ring-1 ring-inset ring-white/[0.15]" aria-hidden="true" />
+                    Low–high range
+                </li>
+                <li className="ml-auto">Knots</li>
+            </ul>
         </div>
     );
 };
