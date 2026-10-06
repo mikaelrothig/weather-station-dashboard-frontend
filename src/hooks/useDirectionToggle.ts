@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 
-export const useDirectionToggle = () => {
+export const useDirectionToggle = (storageKey: string) => {
     const [showText, setShowText] = useState<boolean>(() => {
-        const saved = localStorage.getItem('macwind-show-direction-text');
-        return saved === 'true';
+        try {
+            return localStorage.getItem(storageKey) === 'true';
+        } catch {
+            return false;
+        }
     });
 
     useEffect(() => {
-        localStorage.setItem(
-            'macwind-show-direction-text',
-            String(showText)
-        );
-    }, [showText]);
+        try {
+            localStorage.setItem(storageKey, String(showText));
+        } catch {
+            // Storage unavailable (private mode); the toggle still works for this visit
+        }
+    }, [storageKey, showText]);
 
     const toggleDirection = () => setShowText(prev => !prev);
 

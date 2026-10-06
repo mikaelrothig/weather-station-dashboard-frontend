@@ -1,0 +1,14 @@
+{
+  "name": "Kite Beach Forecast",
+  "short_name": "Kite Forecast",
+  "description": "Live wind and forecasts for kite spots in South Africa and the Netherlands.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
