@@ -45,6 +45,7 @@ interface ForecastTableProps {
 // Sticky label column: short text on phones, icon + label + unit from sm up
 const LABEL_COLUMN = "sticky left-0 z-10 bg-surface pl-4 pr-1.5 md:pl-5 w-[54px] min-w-[54px] sm:w-[148px] sm:min-w-[148px] md:w-[152px] md:min-w-[152px]";
 const DAY_LABEL_STICKY = "sticky left-[54px] sm:left-[148px] md:left-[152px]";
+const SHARE_LABEL_MIN_SPAN = 4;
 
 export const ForecastTable = ({ columns, rows, cellWidth = "w-9", scrollToEndKey, onShareDay }: ForecastTableProps) => {
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -75,7 +76,7 @@ export const ForecastTable = ({ columns, rows, cellWidth = "w-9", scrollToEndKey
         dayIndexes[i] % 2 === 0 ? "bg-white/[0.04] text-zinc-300" : "bg-white/[0.08] text-zinc-200";
 
     return (
-        <div ref={scrollRef} className="no-scrollbar scroll-fade overflow-x-auto overscroll-x-contain">
+        <div ref={scrollRef} className="scrollbar-subtle scroll-fade overflow-x-auto overscroll-x-contain">
             <div className="w-max pr-6">
                 <table className="border-separate border-spacing-0">
                     <thead>
@@ -83,11 +84,13 @@ export const ForecastTable = ({ columns, rows, cellWidth = "w-9", scrollToEndKey
                             <tr>
                                 <td className={LABEL_COLUMN} />
                                 {dayGroups.map((group, g) => (
+                                    // overflow-x-clip (not hidden, which would break sticky) keeps each label inside its own
+                                    // day, so the day boundary wipes the old label away instead of the next one sliding under it
                                     <th
                                         key={group.key}
                                         scope="colgroup"
                                         colSpan={group.span}
-                                        className={`pb-1 text-left ${g > 0 ? "pl-[7px]" : "pl-px"}`}
+                                        className={`overflow-x-clip pb-1 text-left ${g > 0 ? "pl-[7px]" : "pl-px"}`}
                                     >
                                         <span className={`${DAY_LABEL_STICKY} flex w-0 items-center gap-1.5 whitespace-nowrap text-[11px] font-medium text-zinc-300`}>
                                             {group.label}
@@ -96,10 +99,13 @@ export const ForecastTable = ({ columns, rows, cellWidth = "w-9", scrollToEndKey
                                                     type="button"
                                                     onClick={() => onShareDay(group.key)}
                                                     aria-label={`Share ${group.label} forecast as an image`}
-                                                    className="pressable inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium text-zinc-500 hover:bg-white/[0.06] hover:text-zinc-200"
+                                                    // The cell clips sideways, so the focus ring sits inside the button; the after: layer grows the tap
+                                                    // target vertically (not clipped) from ~20px towards 40px
+                                                    className="pressable relative inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium text-zinc-500 outline-offset-[-2px] after:absolute after:-inset-y-2.5 after:inset-x-0 hover:bg-white/[0.06] hover:text-zinc-200"
                                                 >
                                                     <Share2 className="size-3" aria-hidden="true" />
-                                                    Share
+                                                    {/* A late-evening "today" is too narrow for the word; the icon still fits */}
+                                                    {group.span >= SHARE_LABEL_MIN_SPAN && "Share"}
                                                 </button>
                                             )}
                                         </span>

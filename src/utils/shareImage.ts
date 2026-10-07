@@ -231,7 +231,7 @@ export const renderShareImage = async (data: ShareDayData): Promise<Blob> => {
 
     // Hourly: the readable version of the table people usually screenshot
     const tableY = 638;
-    const tableH = 360;
+    const tableH = 376;
     card(ctx, P, tableY, W - 2 * P, tableH);
     eyebrow(ctx, "Hourly · daylight", P + 40, tableY + 56);
     eyebrow(ctx, "knots", W - P - 40, tableY + 56, "right");
@@ -242,9 +242,9 @@ export const renderShareImage = async (data: ShareDayData): Promise<Blob> => {
     const columns = data.hours.slice(0, 14);
     const colW = width / columns.length;
     const chipW = Math.min(colW - 12, 96);
-    const rows = { time: tableY + 124, chip: tableY + 150, gust: tableY + 270, dir: tableY + 320 };
+    const rows = { time: tableY + 124, chip: tableY + 150, gust: tableY + 226, dir: tableY + 334 };
 
-    for (const [label, y] of [["Time", rows.time], ["Wind", rows.chip + 47], ["Gusts", rows.gust], ["Dir", rows.dir + 8]] as const) {
+    for (const [label, y] of [["Time", rows.time], ["Wind", rows.chip + 47], ["Gusts", rows.gust + 47], ["Dir", rows.dir + 8]] as const) {
         drawText(ctx, label, P + 40, y, { size: 22, weight: 500, color: C.z500 });
     }
 
@@ -259,12 +259,18 @@ export const renderShareImage = async (data: ShareDayData): Promise<Blob> => {
         ctx.fill();
         drawText(ctx, `${speed}`, cx, rows.chip + 44, { size: 32, weight: 600, color: C.dark, align: "center" });
 
-        drawText(ctx, `${Math.round(hour.gust)}`, cx, rows.gust, { size: 28, weight: 500, color: C.z300, align: "center" });
+        // Gusts get the same chip and colour scale as the wind, like the app's table
+        const gust = Math.round(hour.gust);
+        ctx.beginPath();
+        ctx.roundRect(cx - chipW / 2, rows.gust, chipW, 64, 14);
+        ctx.fillStyle = getGraphStrokeColor(gust);
+        ctx.fill();
+        drawText(ctx, `${gust}`, cx, rows.gust + 44, { size: 32, weight: 600, color: C.dark, align: "center" });
         arrow(ctx, cx, rows.dir, 28, hour.direction, C.z300);
     });
 
     // Conditions: four small reading cards
-    const statY = 1022;
+    const statY = 1038;
     const gap = 16;
     const statW = (W - 2 * P - gap * 3) / 4;
     const tideDay = data.tides?.filter((t) => {

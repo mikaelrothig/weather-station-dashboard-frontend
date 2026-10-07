@@ -113,7 +113,7 @@ const describeNoWindow = (hours: KiteHour[], profile: ExperienceProfile, quiver:
 
 /** Splits the forecast into daylight days and finds the longest run of kiteable hours in each */
 export const findKiteWindows = (
-    forecast: Forecast,
+    forecast: Pick<Forecast, "hours">,
     sunrise: string,
     sunset: string,
     offshore: [number, number],
@@ -228,3 +228,7 @@ export const chooseKite = (weightKg: number, windKnots: number, profile: Experie
 
 export const describeKites = (kites: number[]): string =>
     kites.length === 0 ? "No kites added" : kites.length <= 3 ? `${kites.join(", ")} m²` : `${kites.length} kites`;
+
+/** "12–18", or just "18" when the wind barely changes */
+export const windRange = (min: number, max: number) =>
+    Math.round(min) === Math.round(max) ? `${Math.round(max)}` : `${Math.round(min)}–${Math.round(max)}`;

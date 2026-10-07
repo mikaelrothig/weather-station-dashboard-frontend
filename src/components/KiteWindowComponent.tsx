@@ -1,13 +1,13 @@
-import { CSSProperties, useId, useState } from "react";
-import { ChevronDown, Minus, Plus, SlidersHorizontal, TriangleAlert } from "lucide-react";
-import { getWindBackgroundColor } from "../utils/ColorUtils.tsx";
+import { CSSProperties, useState } from "react";
 import { getDegreesToCompass } from "../utils/DataUtils.tsx";
 import { formatClock, formatDate, getDayKey } from "../utils/TimeUtils.tsx";
 import { getRelativeDayName } from "../utils/forecastUtils.ts";
-import { chooseKite, describeKites, EXPERIENCE_PROFILES, Experience, ExperienceProfile, findKiteWindows, KiteDay, OWNABLE_KITE_SIZES } from "../utils/kiteUtils.ts";
-import { MAX_WEIGHT, MIN_WEIGHT, useRiderSettings } from "../hooks/useRiderSettings.ts";
+import { chooseKite, ExperienceProfile, findKiteWindows, KiteDay, windRange } from "../utils/kiteUtils.ts";
+import { useRiderSettings } from "../hooks/useRiderSettings.ts";
+import { RiderSettingsMenu } from "./RiderSettings.tsx";
 import { DirectionArrow } from "./ui/DirectionArrow.tsx";
-import { SegmentedControl } from "./ui/SegmentedControl.tsx";
+import { WindStrip } from "./ui/WindStrip.tsx";
+import { KiteWindowDetails } from "./ui/KiteWindowDetails.tsx";
 import { Forecast } from "../api/types.ts";
 
 interface KiteWindowProps {
@@ -37,7 +37,6 @@ const daysBetween = (fromKey: string, toKey: string) => {
 const KiteWindowComponent = ({ windData, outlook, loading, error, offshore, index, className = "" }: KiteWindowProps) => {
     const { weight, kites, profile } = useRiderSettings();
     const [settingsOpen, setSettingsOpen] = useState(false);
-    const panelId = useId();
 
     const days = windData && offshore
         ? findKiteWindows(windData, windData.sunrise, windData.sunset, offshore, profile, weight, kites)
@@ -60,8 +59,8 @@ const KiteWindowComponent = ({ windData, outlook, loading, error, offshore, inde
         <section
             id="kite-windows"
             aria-label="Kite windows"
-            // Without a next window to show, a quiet week shouldn't stretch to match the Tide card next to it
-            className={`card animate-enter flex min-w-0 flex-col p-4 md:p-5 ${allQuiet && !nextWindow ? "lg:self-start" : ""} ${className}`}
+            // z-10: the cards after this one animate in with a transform, so without it they'd paint over the settings popover
+            className={`card animate-enter relative z-10 flex min-w-0 flex-col p-4 md:p-5 ${className}`}
             style={{ "--i": index } as CSSProperties}
         >
             <header className="flex flex-wrap items-center gap-3">
@@ -74,25 +73,8 @@ const KiteWindowComponent = ({ windData, outlook, loading, error, offshore, inde
                     </p>
                 </div>
 
-                <button
-                    type="button"
-                    onClick={() => setSettingsOpen((open) => !open)}
-                    aria-expanded={settingsOpen}
-                    aria-controls={panelId}
-                    className={`pressable flex h-9 min-w-0 items-center gap-2 rounded-lg px-3 text-xs font-medium text-zinc-200 hover:bg-white/10 ${
-                        settingsOpen ? "bg-white/10" : "bg-white/[0.06]"
-                    }`}
-                >
-                    <SlidersHorizontal className="size-3.5 shrink-0 text-zinc-400" aria-hidden="true" />
-                    <span className="truncate">{profile.label} · {weight} kg · {describeKites(kites)}</span>
-                    <ChevronDown
-                        className={`size-3.5 shrink-0 text-zinc-500 transition-transform duration-200 ease-out ${settingsOpen ? "rotate-180" : ""}`}
-                        aria-hidden="true"
-                    />
-                </button>
+                <RiderSettingsMenu open={settingsOpen} onOpenChange={setSettingsOpen} />
             </header>
-
-            {settingsOpen && <RiderSettingsPanel id={panelId} onDone={() => setSettingsOpen(false)} />}
 
             {!settingsOpen && kites.length === 0 && (
                 <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl bg-white/[0.03] px-3.5 py-3 ring-1 ring-inset ring-white/[0.04]">
@@ -142,94 +124,11 @@ const KiteWindowComponent = ({ windData, outlook, loading, error, offshore, inde
                 </>
             )}
 
-            <p className="mt-3 text-[11px] leading-relaxed text-zinc-500">
+            {/* mt-auto keeps the disclaimer at the bottom when the card stretches to match the Tide card */}
+            <p className="mt-auto pt-3 text-[11px] leading-relaxed text-zinc-500">
                 A forecast-based suggestion. Always check conditions on the beach before you ride.
             </p>
         </section>
-    );
-};
-
-// Saved on the device and shared by every spot, so it only needs setting up once
-const RiderSettingsPanel = ({ id, onDone }: { id: string; onDone: () => void }) => {
-    const { weight, experience, kites, setWeight, setExperience, toggleKite } = useRiderSettings();
-
-    return (
-        <div id={id} className="animate-fade mt-4 flex flex-col gap-4 rounded-xl bg-white/[0.03] p-3.5 ring-1 ring-inset ring-white/[0.06]">
-            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-                <span className="text-xs font-medium text-zinc-400">Experience</span>
-                <SegmentedControl
-                    label="Rider experience"
-                    value={experience}
-                    onChange={setExperience}
-                    options={(Object.keys(EXPERIENCE_PROFILES) as Experience[]).map((level) => ({
-                        value: level,
-                        label: EXPERIENCE_PROFILES[level].label,
-                    }))}
-                />
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-                <span className="text-xs font-medium text-zinc-400">Weight</span>
-                <div className="flex h-9 items-center rounded-lg bg-white/[0.06]" role="group" aria-label="Rider weight">
-                    <button
-                        type="button"
-                        onClick={() => setWeight(weight - 5)}
-                        disabled={weight <= MIN_WEIGHT}
-                        aria-label="Decrease rider weight"
-                        className="pressable grid size-9 place-items-center rounded-lg text-zinc-400 hover:text-zinc-100 disabled:opacity-40"
-                    >
-                        <Minus className="size-3.5" />
-                    </button>
-                    <span className="w-14 text-center text-xs font-medium tabular-nums text-zinc-200" aria-live="polite">{weight} kg</span>
-                    <button
-                        type="button"
-                        onClick={() => setWeight(weight + 5)}
-                        disabled={weight >= MAX_WEIGHT}
-                        aria-label="Increase rider weight"
-                        className="pressable grid size-9 place-items-center rounded-lg text-zinc-400 hover:text-zinc-100 disabled:opacity-40"
-                    >
-                        <Plus className="size-3.5" />
-                    </button>
-                </div>
-            </div>
-
-            <fieldset>
-                <legend className="text-xs font-medium text-zinc-400">Your kites</legend>
-                <p className="mt-0.5 text-[11px] text-zinc-500">Select every size you own, in m².</p>
-                <div className="mt-2.5 grid grid-cols-5 gap-1.5 sm:grid-cols-10">
-                    {OWNABLE_KITE_SIZES.map((size) => {
-                        const owned = kites.includes(size);
-                        return (
-                            <button
-                                key={size}
-                                type="button"
-                                aria-pressed={owned}
-                                aria-label={`${size} square metre kite`}
-                                onClick={() => toggleKite(size)}
-                                className={`pressable h-10 rounded-lg text-sm font-semibold tabular-nums ring-1 ring-inset ${
-                                    owned
-                                        ? "bg-rose-500/15 text-rose-200 ring-rose-500/40"
-                                        : "bg-white/[0.04] text-zinc-400 ring-transparent hover:bg-white/[0.08] hover:text-zinc-200"
-                                }`}
-                            >
-                                {size}
-                            </button>
-                        );
-                    })}
-                </div>
-            </fieldset>
-
-            <div className="flex items-center justify-between gap-3 border-t border-white/[0.06] pt-3">
-                <p className="text-[11px] text-zinc-500">Saved on this device and used for every spot.</p>
-                <button
-                    type="button"
-                    onClick={onDone}
-                    className="pressable h-8 rounded-lg bg-white/10 px-3 text-xs font-medium text-zinc-100 hover:bg-white/[0.14]"
-                >
-                    Done
-                </button>
-            </div>
-        </div>
     );
 };
 
@@ -273,44 +172,8 @@ const OutlookPanel = ({ day, daysAway, shownDays, modelName, weight, profile }: 
     );
 };
 
-const windRange = (min: number, max: number) =>
-    Math.round(min) === Math.round(max) ? `${Math.round(max)}` : `${Math.round(min)}–${Math.round(max)}`;
-
 const DayPanel = ({ day, weight, profile, best }: { day: KiteDay; weight: number; profile: ExperienceProfile; best: boolean }) => {
     const { window } = day;
-    const inWindow = (time: Date) => !!window && time >= window.start && time < window.end;
-
-    // With the rider's kites: lead with the one you rig first, and list switches as the wind changes.
-    // Without them: one suggested size for the average wind plus the range, since every 1 m² step isn't a real switch.
-    const suggestedOnly = window?.hours[0]?.kite.fit === "suggested";
-    const plan = window?.plan ?? [];
-    const mainKite = window ? (suggestedOnly ? chooseKite(weight, window.avgSpeed, profile, []).size : plan[0].size) : 0;
-    const switches = suggestedOnly ? [] : plan.slice(1, 3);
-    const sizes = window ? window.hours.map((h) => h.kite.size) : [];
-    const range = suggestedOnly && Math.min(...sizes) !== Math.max(...sizes) ? `${Math.min(...sizes)}–${Math.max(...sizes)} m²` : null;
-    const gusty = window ? window.maxGust - window.avgSpeed >= profile.gustyAt : false;
-
-    const strip = day.hours.length > 0 && (
-        <div>
-            <div className={`flex gap-px ${window ? "h-5" : "h-2.5"}`} aria-hidden="true">
-                {day.hours.map((hour) => (
-                    <div
-                        key={hour.time.getTime()}
-                        title={`${formatTime(hour.time)} · ${Math.round(hour.speed)} kn ${getDegreesToCompass(hour.direction)}${hour.offshore ? " (offshore)" : ""}`}
-                        className={`flex-1 first:rounded-l-md last:rounded-r-md ${getWindBackgroundColor(Math.round(hour.speed))} ${
-                            hour.past ? "opacity-10" : inWindow(hour.time) ? "" : "opacity-25"
-                        }`}
-                    />
-                ))}
-            </div>
-            {window && (
-                <div className="mt-1 flex justify-between text-[10px] tabular-nums text-zinc-500">
-                    <span>{formatTime(day.hours[0].time)}</span>
-                    <span>{formatTime(new Date(day.hours[day.hours.length - 1].time.getTime() + 60 * 60 * 1000))}</span>
-                </div>
-            )}
-        </div>
-    );
 
     // No window: a quiet one-liner with the reason, so the days worth going stand out
     if (!window) {
@@ -320,7 +183,7 @@ const DayPanel = ({ day, weight, profile, best }: { day: KiteDay; weight: number
                     <h3 className="text-xs font-medium text-zinc-400">{getRelativeDayName(day.date)}</h3>
                     <p className="text-sm font-medium text-zinc-500">{day.reason}</p>
                 </div>
-                {strip}
+                <WindStrip hours={day.hours} window={null} />
             </article>
         );
     }
@@ -331,71 +194,18 @@ const DayPanel = ({ day, weight, profile, best }: { day: KiteDay; weight: number
                 best ? "bg-rose-500/[0.06] ring-rose-500/25" : "bg-white/[0.03] ring-white/[0.06]"
             }`}
         >
-            {/* The answer first: when, and what to rig */}
-            <header className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                    <p className="flex items-center gap-2">
+            <KiteWindowDetails
+                window={window}
+                hours={day.hours}
+                weight={weight}
+                profile={profile}
+                label={
+                    <>
                         <span className="text-xs font-medium text-zinc-400">{getRelativeDayName(day.date)}</span>
                         {best && <span className="rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-300">Best</span>}
-                    </p>
-                    <h3 className="mt-1 flex items-baseline gap-2">
-                        <span className="text-xl font-semibold tabular-nums tracking-tight text-zinc-50">
-                            {formatTime(window.start)}–{formatTime(window.end)}
-                        </span>
-                        <span className="text-xs text-zinc-500">{window.duration}h</span>
-                    </h3>
-                </div>
-                <div className="shrink-0 text-right">
-                    <p className="text-[11px] text-zinc-500">{suggestedOnly ? "Suggested" : "Your kite"}</p>
-                    <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight text-zinc-50">{mainKite} m²</p>
-                </div>
-            </header>
-
-            {strip}
-
-            {/* Phones: one line. Desktop: the labelled breakdown for planning. */}
-            <p className="flex flex-wrap items-center gap-x-1.5 text-xs text-zinc-400 md:hidden">
-                <span className="font-medium tabular-nums text-zinc-100">{windRange(window.minSpeed, window.maxSpeed)} kn</span>
-                · gusts <span className="font-medium tabular-nums text-zinc-100">{Math.round(window.maxGust)}</span>
-                ·
-                <DirectionArrow degrees={window.direction} className="size-3 fill-zinc-300 stroke-none" />
-                <span className="font-medium text-zinc-100">{getDegreesToCompass(window.direction)}</span>
-            </p>
-            <dl className="hidden grid-cols-3 gap-2 text-xs md:grid">
-                <div>
-                    <dt className="text-zinc-500">Wind</dt>
-                    <dd className="font-medium tabular-nums text-zinc-100">{windRange(window.minSpeed, window.maxSpeed)} kn</dd>
-                </div>
-                <div>
-                    <dt className="text-zinc-500">Gusts</dt>
-                    <dd className="font-medium tabular-nums text-zinc-100">{Math.round(window.maxGust)} kn</dd>
-                </div>
-                <div>
-                    <dt className="text-zinc-500">Direction</dt>
-                    <dd className="flex items-center gap-1 font-medium text-zinc-100">
-                        <DirectionArrow degrees={window.direction} className="size-3 fill-zinc-300 stroke-none" />
-                        {getDegreesToCompass(window.direction)}
-                    </dd>
-                </div>
-            </dl>
-
-            {(switches.length > 0 || range || gusty) && (
-                <ul className="space-y-1 border-t border-white/[0.06] pt-2.5 text-[11px] text-zinc-400">
-                    {range && <li>Size range over the window: <span className="font-medium tabular-nums text-zinc-200">{range}</span></li>}
-                    {switches.map((step) => (
-                        <li key={step.from.getTime()}>
-                            Switch to <span className="font-medium tabular-nums text-zinc-200">{step.size} m²</span> at{" "}
-                            <span className="tabular-nums">{formatTime(step.from)}</span>
-                        </li>
-                    ))}
-                    {gusty && (
-                        <li className="flex items-center gap-1.5 text-amber-300">
-                            <TriangleAlert className="size-3 shrink-0" aria-hidden="true" />
-                            Gusty, consider sizing down
-                        </li>
-                    )}
-                </ul>
-            )}
+                    </>
+                }
+            />
         </article>
     );
 };
