@@ -5,6 +5,8 @@
 :root {
     --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
     --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    --scrollbar-thumb: rgb(255 255 255 / 0.14);
+    --scrollbar-thumb-hover: rgb(255 255 255 / 0.24);
 }
 
 @layer base {
@@ -108,13 +110,20 @@
         animation: fade 200ms ease both;
     }
 
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
+    /* For scrollers inside cards and popovers: a thin thumb that only shows while the pointer is over it */
+    .scrollbar-subtle {
+        scrollbar-width: thin;
     }
 
-    .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
+    @media (hover: hover) and (pointer: fine) {
+        .scrollbar-subtle {
+            scrollbar-color: transparent transparent;
+            transition: scrollbar-color 200ms ease;
+        }
+
+        .scrollbar-subtle:hover {
+            scrollbar-color: var(--scrollbar-thumb) transparent;
+        }
     }
 }
 
@@ -158,25 +167,57 @@
     }
 }
 
-/* Webkit scrollbar customization */
-*::-webkit-scrollbar {
-    width: 14px;
-    height: 14px;
+/*
+ * Scrollbars: no track, a white-alpha thumb so it sits on the canvas and on cards alike.
+ * Chrome and Firefox use the standard properties (scrollbar-color is inherited, so this covers every scroller).
+ * Safari falls back to the -webkit- pseudo-elements below. Chrome ignores those once scrollbar-color is set.
+ */
+html {
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+    /* Always reserve the scrollbar's width, so a page short enough not to scroll (the home page on a tall screen,
+       or any page while it loads) is laid out at the same width as one that does, and nothing shifts sideways */
+    scrollbar-gutter: stable;
 }
 
-*::-webkit-scrollbar-track {
-    background-color: transparent;
-}
+@supports not (scrollbar-color: auto) {
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+    }
 
-*::-webkit-scrollbar-thumb {
-    background-color: #3f3f46;
-    border-radius: 10px;
-    border: 4px solid transparent;
-    background-clip: content-box;
-}
+    ::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
 
-*::-webkit-scrollbar-thumb:hover {
-    background-color: #52525b;
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--scrollbar-thumb);
+        border-radius: 999px;
+        border: 3px solid transparent;
+        background-clip: content-box;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--scrollbar-thumb-hover);
+    }
+
+    .scrollbar-subtle::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .scrollbar-subtle::-webkit-scrollbar-thumb {
+            background-color: transparent;
+        }
+
+        .scrollbar-subtle:hover::-webkit-scrollbar-thumb {
+            background-color: var(--scrollbar-thumb);
+        }
+
+        .scrollbar-subtle:hover::-webkit-scrollbar-thumb:hover {
+            background-color: var(--scrollbar-thumb-hover);
+        }
+    }
 }
 
 /* Translucent chrome turns solid when the system asks for less transparency */
@@ -184,6 +225,83 @@
     .glass-chrome {
         background-color: theme("colors.canvas");
         backdrop-filter: none;
+    }
+}
+
+/* Home page wind streaks: constant motion, so linear; transform and opacity only, so it stays off the main thread.
+   The mask fades them out towards every edge, so they drift in and out instead of popping at the card's border. */
+.wind-streaks {
+    -webkit-mask-image:
+        linear-gradient(to right, transparent, black 12%, black 88%, transparent),
+        linear-gradient(to bottom, transparent, black 14%, black 78%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to right, transparent, black 12%, black 88%, transparent),
+        linear-gradient(to bottom, transparent, black 14%, black 78%, transparent);
+    mask-composite: intersect;
+}
+
+.wind-streak {
+    opacity: 0;
+    animation: wind-streak var(--duration) linear var(--delay) infinite;
+}
+
+@keyframes wind-streak {
+    0% {
+        transform: translateX(-15%);
+        opacity: 0;
+    }
+    15%,
+    80% {
+        opacity: var(--peak);
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Gusty air doesn't run on rails: each streak drifts gently across its path while it travels.
+   A continuous back-and-forth wants a sine (easeInOutSine); the stronger UI curves snap at each end. */
+.wind-sway {
+    animation: wind-sway var(--sway-duration) cubic-bezier(0.37, 0, 0.63, 1) var(--sway-delay) infinite alternate;
+}
+
+@keyframes wind-sway {
+    from {
+        transform: translateY(calc(var(--sway) * -1));
+    }
+    to {
+        transform: translateY(var(--sway));
+    }
+}
+
+/* The map stops animating while it's off screen, which saves battery */
+.wind-streaks[data-paused] .wind-streak,
+.wind-streaks[data-paused] .wind-sway {
+    animation-play-state: paused;
+}
+
+/* Reduced motion: no drifting lines; the arrows next to each spot still give the direction */
+@media (prefers-reduced-motion: reduce) {
+    .wind-streaks {
+        display: none;
+    }
+}
+
+/* On phones, the spot name that appears over the map for the spot you touched */
+/* Position comes in through variables: an inline transform would also override the starting style */
+.spot-tag {
+    transform: var(--tag-to);
+    transition:
+        opacity 150ms ease,
+        transform 150ms var(--ease-out);
+}
+
+@starting-style {
+    .spot-tag {
+        opacity: 0;
+        transform: var(--tag-from);
     }
 }
 
@@ -251,5 +369,30 @@
             transform: none;
             opacity: 0;
         }
+    }
+}
+
+/* Moving between pages: the header's current-spot pill slides to the next spot while that page loads (a cross-document
+   view transition). Only the pill moves; the rest of the page swaps instantly, as a normal navigation would. Browsers
+   without support just navigate. The entry scripts block rendering until the header is in place, so the new page's
+   pill exists when the transition captures it. */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+}
+
+::view-transition-group(spot-pill) {
+    animation-duration: 200ms;
+    animation-timing-function: var(--ease-out);
+}
+
+/* Reduced motion: no slide; the old pill fades out where it was and the new one fades in */
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(spot-pill) {
+        animation-name: none;
     }
 }
