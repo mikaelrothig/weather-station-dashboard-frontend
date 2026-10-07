@@ -81,3 +81,26 @@ export interface LiveReading {
     /** null when the station can't name a direction, which happens in calm conditions */
     direction: number | null;
 }
+
+/** One spot's wind for the home page: hourly from the start of today to the end of tomorrow, spot time */
+export interface SpotSummary {
+    /** The spot's URL name, e.g. "mistycliffs" (see getSpotSlug) */
+    spot: string;
+    /** Name of the high-resolution model the hours come from */
+    model: string;
+    /** Spot-local clock times, "HH:MM" */
+    sunrise: string;
+    sunset: string;
+    hours: ForecastPoint[];
+}
+
+/** A spot whose forecast couldn't be loaded; the rest of the summary still comes back */
+export interface SpotSummaryError {
+    spot: string;
+    error: string;
+}
+
+/** GET /summary: every spot at once, so the home page needs one small request instead of one forecast per spot */
+export interface Summary {
+    spots: (SpotSummary | SpotSummaryError)[];
+}

@@ -1,9 +1,9 @@
-import type { Forecast, LiveReading, SpotInfo, WaveForecast } from "../api/types";
+import type { Forecast, ForecastPoint, LiveReading, SpotInfo, Summary, WaveForecast } from "../api/types";
 
 /**
  * Dev-only data scenarios for stress-testing the UI without calling the backend.
- * Add ?data=demo | storm | calm | worst to any spot URL. Never included in production builds:
- * the only import is behind `import.meta.env.DEV`, which Vite strips from the bundle.
+ * Add ?data=showcase | demo | storm | calm | glassy | worst to any URL. Never included in production builds:
+ * the only calls are behind `import.meta.env.DEV`, which Vite strips from the bundle.
  */
 
 export const SCENARIOS = ["showcase", "demo", "storm", "calm", "glassy", "worst"] as const;
@@ -173,6 +173,52 @@ const spotInfo = (shape: ScenarioShape): SpotInfo => ({
     tide_datums: shape.tide ? TIDE_DATUMS : null,
 });
 
+// --- Home page summary ---------------------------------------------------------------------------
+
+/** Each spot's own character, so the home page has a real mix: a nuking peninsula, a lagoon in the teens, a light town */
+const SPOT_WINDS: Record<string, { morning: number; peak: number; peakAt: number; direction: number; gustSpread: number }> = {
+    blouberg: { morning: 9, peak: 26, peakAt: 15, direction: 155, gustSpread: 7 },
+    melkbos: { morning: 9, peak: 24, peakAt: 15, direction: 160, gustSpread: 6 },
+    langebaan: { morning: 6, peak: 19, peakAt: 14, direction: 170, gustSpread: 5 },
+    mistycliffs: { morning: 14, peak: 34, peakAt: 14, direction: 140, gustSpread: 12 },
+    hermanus: { morning: 4, peak: 11, peakAt: 15, direction: 120, gustSpread: 4 },
+    witsand: { morning: 7, peak: 17, peakAt: 16, direction: 95, gustSpread: 5 },
+};
+
+// How hard each scenario blows across the board
+const SUMMARY_SCALE: Record<Scenario, number> = { showcase: 1, demo: 1, storm: 1.4, calm: 0.35, glassy: 0.15, worst: 1 };
+
+const buildSummary = (scenario: Scenario): Summary => {
+    const scale = SUMMARY_SCALE[scenario];
+    // Today and tomorrow from midnight in South Africa (UTC+2), like the real summary
+    const midnight = Math.floor((Date.now() + 2 * HOUR_MS) / (24 * HOUR_MS)) * 24 * HOUR_MS - 2 * HOUR_MS;
+
+    return {
+        spots: Object.entries(SPOT_WINDS).map(([spot, w], s) => {
+            // "worst": one spot without a forecast
+            if (scenario === "worst" && spot === "witsand") return { spot, error: "Forecast unavailable" };
+            const hours: ForecastPoint[] = Array.from({ length: 48 }, (_, i) => {
+                const hour = i % 24;
+                const peak = (i < 24 ? w.peak : w.peak * 0.85) * scale;
+                const morning = w.morning * scale;
+                const base = hour < 8 ? morning
+                    : hour < w.peakAt ? morning + (peak - morning) * smoothstep((hour - 8) / (w.peakAt - 8))
+                    : hour < 18 ? peak
+                    : peak - (peak - morning) * smoothstep((hour - 18) / 5);
+                const speed = Math.max(0, base + noise(s * 100 + i) * 1.4);
+                return {
+                    time: new Date(midnight + i * HOUR_MS).toISOString(),
+                    speed: Math.round(speed * 10) / 10,
+                    gust: Math.round((speed + w.gustSpread * (0.6 + 0.4 * Math.abs(noise(s * 100 + i + 7)))) * 10) / 10,
+                    direction: (w.direction + noise(s * 100 + i + 3) * 10 + 360) % 360,
+                    temperature: Math.round((19 + Math.sin(((hour - 8) / 24) * 2 * Math.PI) * 5) * 10) / 10,
+                };
+            });
+            return { spot, model: "WRF 9 km", sunrise: "06:36", sunset: "19:10", hours };
+        }),
+    };
+};
+
 export const getScenario = (): Scenario | null => {
     const value = new URLSearchParams(window.location.search).get("data");
     return SCENARIOS.includes(value as Scenario) ? (value as Scenario) : null;
@@ -196,6 +242,8 @@ export const installDevFixtures = (): void => {
 
         // A little latency so loading states are visible
         await new Promise((resolve) => setTimeout(resolve, 400));
+
+        if (path === "/summary") return json(buildSummary(scenario));
 
         const route = path.match(/^\/(forecast|spots|live)\/([^/]+)(?:\/([^/]+))?$/);
         const [, resource, first, second] = route ?? [];
