@@ -19,30 +19,8 @@ export interface TidePrediction {
     datum: "LAT" | "MSL";
 }
 
-// A turning point less than this far from both neighbours is a wobble, not a tide
-const MIN_TIDE_STEP_M = 0.15;
-
-/**
- * The Dutch coast has a "double low water": the level dips, rises a few cm and dips again.
- * Tide tables report that as one low, so the wobble is folded into the deeper of the two lows.
- */
-const mergeShallowExtremes = (extremes: TideExtreme[]): TideExtreme[] => {
-    const result = [...extremes];
-    for (let i = 1; i < result.length - 1; i++) {
-        const [before, middle, after] = [result[i - 1], result[i], result[i + 1]];
-        if (Math.abs(middle.level - before.level) < MIN_TIDE_STEP_M && Math.abs(middle.level - after.level) < MIN_TIDE_STEP_M) {
-            const keepBefore = middle.high ? before.level <= after.level : before.level >= after.level;
-            result.splice(i, 2, keepBefore ? before : after);
-            result.splice(i - 1, 1);
-            i -= 1;
-        }
-    }
-    return result;
-};
-
 // Windguru's constituents are amplitudes in cm and phases in degrees relative to UTC.
-// Checked against published tide tables: Cape Town within ~10 min and ~10 cm;
-// Scheveningen within ~20–45 min and ~20 cm, so treat Dutch times as approximate.
+// Checked against published tide tables: Cape Town within ~10 min and ~10 cm.
 export const predictTides = (spot: SpotInfo, start: Date, end: Date): TidePrediction | null => {
     if (!spot.tide) return null;
 
@@ -55,11 +33,9 @@ export const predictTides = (spot: SpotInfo, start: Date, end: Date): TidePredic
         .getTimelinePrediction({ start, end, timeFidelity: 900 })
         .map((p) => ({ time: p.time.getTime(), level: toMetres(p.level) }));
 
-    const extremes = mergeShallowExtremes(
-        predictor
-            .getExtremesPrediction({ start, end })
-            .map((e) => ({ time: e.time.getTime(), level: toMetres(e.level), high: e.high })),
-    );
+    const extremes = predictor
+        .getExtremesPrediction({ start, end })
+        .map((e) => ({ time: e.time.getTime(), level: toMetres(e.level), high: e.high }));
 
     const now = new Date();
     const current = predictor.getWaterLevelAtTime({ time: now }).level;

@@ -1,27 +1,19 @@
+import { TIME_ZONE } from "../config/spots";
+
 // --- Spot-local time ------------------------------------------------------------------------
-// Every page shows one spot, and all clock times, days and daylight logic follow that spot's
-// timezone rather than the viewer's device, so planning a trip abroad shows the times you'll kite at.
+// All clock times, days and daylight logic follow South African time rather than the viewer's device,
+// so planning a trip from abroad shows the times you'll kite at.
 
 const deviceTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-let activeTimeZone = deviceTimeZone;
 
-export const setActiveTimeZone = (timeZone: string): void => {
-    activeTimeZone = timeZone;
-};
-
-const partsFormatters = new Map<string, Intl.DateTimeFormat>();
+const partsFormatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIME_ZONE,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23", weekday: "short",
+});
 
 const getParts = (date: Date) => {
-    let formatter = partsFormatters.get(activeTimeZone);
-    if (!formatter) {
-        formatter = new Intl.DateTimeFormat("en-US", {
-            timeZone: activeTimeZone,
-            year: "numeric", month: "2-digit", day: "2-digit",
-            hour: "2-digit", minute: "2-digit", hourCycle: "h23", weekday: "short",
-        });
-        partsFormatters.set(activeTimeZone, formatter);
-    }
-    const parts = Object.fromEntries(formatter.formatToParts(date).map((p) => [p.type, p.value]));
+    const parts = Object.fromEntries(partsFormatter.formatToParts(date).map((p) => [p.type, p.value]));
     return {
         year: Number(parts.year),
         month: Number(parts.month),
@@ -47,7 +39,7 @@ export const atMinutesOfDay = (date: Date, minutes: number): Date => {
     return new Date(sameMinute.getTime() + (minutes - getMinutesOfDay(date)) * 60 * 1000);
 };
 
-/** Start of the current hour. Spot timezones use whole-hour offsets, so UTC hour boundaries line up. */
+/** Start of the current hour. South African time is a whole-hour offset, so UTC hour boundaries line up. */
 export const startOfHour = (date = new Date()): Date => {
     const start = new Date(date);
     start.setUTCMinutes(0, 0, 0);
@@ -55,14 +47,14 @@ export const startOfHour = (date = new Date()): Date => {
 };
 
 export const formatClock = (date: Date | number): string =>
-    new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: activeTimeZone });
+    new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", timeZone: TIME_ZONE });
 
 export const formatDate = (date: Date | number, options: Intl.DateTimeFormatOptions): string =>
-    new Date(date).toLocaleDateString([], { ...options, timeZone: activeTimeZone });
+    new Date(date).toLocaleDateString([], { ...options, timeZone: TIME_ZONE });
 
 /** True when the viewer's device clock currently reads the same as the spot's */
 export const isDeviceOnSpotTime = (date = new Date()): boolean =>
-    date.toLocaleString("en-US", { timeZone: deviceTimeZone }) === date.toLocaleString("en-US", { timeZone: activeTimeZone });
+    date.toLocaleString("en-US", { timeZone: deviceTimeZone }) === date.toLocaleString("en-US", { timeZone: TIME_ZONE });
 
 export const getDayKey = (date: Date): string => {
     const { year, month, day } = getParts(date);

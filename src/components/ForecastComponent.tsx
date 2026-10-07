@@ -23,7 +23,7 @@ interface ModelSource {
 }
 
 interface ForecastProps {
-    /** The region's high-resolution model: WRF 9 km (Southern Africa or Europe run) */
+    /** The high-resolution model: WRF 9 km Southern Africa */
     hires: ModelSource;
     gfs: ModelSource;
     waves: WaveForecast | null;

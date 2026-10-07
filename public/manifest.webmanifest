@@ -1,7 +1,7 @@
 {
   "name": "Kite Beach Forecast",
   "short_name": "Kite Forecast",
-  "description": "Live wind and forecasts for kite spots in South Africa and the Netherlands.",
+  "description": "Live wind and forecasts for kite spots in the Western Cape, South Africa.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
