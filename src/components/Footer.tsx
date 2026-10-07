@@ -1,6 +1,6 @@
 import { ArrowUp, ArrowUpRight, Github, Instagram, Linkedin, Mail, Tag } from "lucide-react";
 import { getCurrentSpot, spots } from "../utils/spotUtils";
-import { getWindBackgroundColor } from "../utils/ColorUtils";
+import { getWindBackgroundColor, WIND_SCALE } from "../utils/ColorUtils";
 import { Logo } from "./ui/Logo";
 
 const socialLinks = [
@@ -16,9 +16,6 @@ const sourceLinks = [
     { href: "https://github.com/mikaelrothig/weather-station-dashboard-frontend", label: "Frontend", note: "Source on GitHub" },
     { href: "https://github.com/mikaelrothig/weather-station-dashboard-backend", label: "Backend", note: "Source on GitHub" },
 ];
-
-// Lower bound of each band in getWindBackgroundColor
-const WIND_SCALE = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42];
 
 const scrollToTop = () => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

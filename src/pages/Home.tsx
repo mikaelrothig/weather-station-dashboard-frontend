@@ -37,7 +37,7 @@ function Home() {
                 <div className="min-w-0">
                     <p className="eyebrow">
                         <Wind className="size-3.5" aria-hidden="true" />
-                        Western Cape
+                        Kite & wind forecast
                     </p>
                     <h1 className="mt-1.5 text-[1.75rem] font-semibold leading-[1.1] tracking-tight text-zinc-50 md:text-4xl lg:text-5xl">
                         Today's conditions

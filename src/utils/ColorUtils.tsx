@@ -1,3 +1,6 @@
+/** Lower bound of each band in getWindBackgroundColor, in knots: the wind scale legends draw one swatch per band */
+export const WIND_SCALE = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42];
+
 export function getWindBackgroundColor(entry: number): string {
     let bgColor;
 
