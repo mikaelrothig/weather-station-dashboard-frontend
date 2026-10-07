@@ -21,13 +21,13 @@ export interface Spot {
 
 /**
  * The source of truth for the spot list: the home page, navigation, the generated spot pages and the map outline all
- * read it. In order along the coast, from the West Coast round to the south coast, so lists read like the map.
+ * read it.
  */
 export const spots: Spot[] = [
+    { name: "Blouberg", url: "/blouberg", region: "Western Cape", offshore: [20, 110], coordinates: [18.47, -33.82], liveStation: true },
+    { name: "Hermanus", url: "/hermanus", region: "Western Cape", offshore: [300, 60], coordinates: [19.231, -34.431] },
     { name: "Langebaan", url: "/langebaan", region: "Western Cape", offshore: [30, 120], coordinates: [18.03, -33.08] },
     { name: "Melkbos", url: "/melkbos", region: "Western Cape", offshore: [20, 110], coordinates: [18.44, -33.7] },
-    { name: "Blouberg", url: "/blouberg", region: "Western Cape", offshore: [20, 110], coordinates: [18.47, -33.82], liveStation: true },
     { name: "Misty Cliffs", url: "/misty-cliffs", region: "Western Cape", offshore: [40, 120], coordinates: [18.36, -34.18] },
-    { name: "Hermanus", url: "/hermanus", region: "Western Cape", offshore: [300, 60], coordinates: [19.231, -34.431] },
     { name: "Witsand", url: "/witsand", region: "Western Cape", offshore: [300, 60], coordinates: [20.854, -34.404] },
 ];

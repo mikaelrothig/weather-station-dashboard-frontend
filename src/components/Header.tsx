@@ -64,8 +64,7 @@ function Header() {
                     <ChevronsUpDown className="size-4 shrink-0 text-zinc-500" aria-hidden="true" />
                 </button>
 
-                {/* Tablet and up: every spot, in coast order */}
-                <nav aria-label="Spots" className="hidden md:block">
+                <nav aria-label="Spots" className="ml-auto hidden md:block">
                     <ul className="flex items-center gap-0.5">
                         {spots.map((spot, i) => {
                             const isCurrent = spot === current;

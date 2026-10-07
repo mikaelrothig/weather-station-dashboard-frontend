@@ -5,7 +5,7 @@ import { getSpotSlug, spots } from "../utils/spotUtils";
 import { useRiderSettings } from "./useRiderSettings";
 
 /**
- * Every spot in coast order, each with its wind now and the rider's kite window when the summary has it. A spot the
+ * Every spot, each with its wind now and the rider's kite window when the summary has it. A spot the
  * summary has no forecast for (or the whole summary failing) gets a null status.
  */
 export const useSpotEntries = () => {

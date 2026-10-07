@@ -57,7 +57,6 @@ function Footer() {
                         </ul>
                     </div>
 
-                    {/* Every spot, in coast order like the header, so the footer is the same on every page */}
                     <nav aria-labelledby="footer-spots">
                         <h2 id="footer-spots" className="eyebrow mb-3">Spots</h2>
                         <ul className="flex flex-col gap-0.5">

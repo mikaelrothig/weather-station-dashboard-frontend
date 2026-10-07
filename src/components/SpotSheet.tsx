@@ -10,7 +10,6 @@ interface SpotSheetProps {
     current?: Spot;
 }
 
-/** The phone spot picker: every spot in coast order */
 function SpotSheet({ open, onClose, returnFocusRef, current }: SpotSheetProps) {
     return (
         <BottomSheet open={open} onClose={onClose} returnFocusRef={returnFocusRef} title="Choose a spot">
