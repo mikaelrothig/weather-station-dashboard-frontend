@@ -1,10 +1,7 @@
 import { ArrowUp, ArrowUpRight, Github, Instagram, Linkedin, Mail, Tag } from "lucide-react";
-import { getCurrentSpot } from "../utils/spotUtils";
-import { useRecentSpots } from "../hooks/useRecentSpots";
+import { getCurrentSpot, spots } from "../utils/spotUtils";
 import { getWindBackgroundColor } from "../utils/ColorUtils";
 import { Logo } from "./ui/Logo";
-
-const MAX_RECENT_LINKS = 5;
 
 const socialLinks = [
     { href: "mailto:mrrothig@gmail.com", icon: Mail, label: "Email" },
@@ -29,7 +26,7 @@ const scrollToTop = () => {
 };
 
 function Footer() {
-    const recent = useRecentSpots(getCurrentSpot());
+    const current = getCurrentSpot();
 
     return (
         <footer className="mx-auto w-full max-w-[1440px] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-6 md:px-6 md:pt-10 lg:px-8">
@@ -41,7 +38,7 @@ function Footer() {
                             <span className="text-sm font-semibold tracking-tight text-zinc-100">Kite Beach Forecast</span>
                         </div>
                         <p className="max-w-xs text-sm leading-relaxed text-zinc-500">
-                            Live wind and model forecasts for kite spots in South Africa and the Netherlands.
+                            Live wind and model forecasts for kite spots in the Western Cape, South Africa.
                         </p>
                         <ul className="-ml-2 flex items-center gap-1">
                             {socialLinks.map(({ href, icon: Icon, label }) => (
@@ -60,21 +57,23 @@ function Footer() {
                         </ul>
                     </div>
 
-                    {/* Only recently visited spots, so the footer stays short however many spots exist; hidden on a first visit */}
-                    {recent.length > 0 && (
-                        <nav aria-labelledby="footer-spots">
-                            <h2 id="footer-spots" className="eyebrow mb-3">Recent spots</h2>
-                            <ul className="flex flex-col gap-0.5">
-                                {recent.slice(0, MAX_RECENT_LINKS).map(({ name, url }) => (
-                                    <li key={url}>
-                                        <a href={url} className="flex h-8 items-center text-sm text-zinc-400 transition-colors hover:text-zinc-100">
-                                            {name}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    )}
+                    {/* Every spot, in coast order like the header, so the footer is the same on every page */}
+                    <nav aria-labelledby="footer-spots">
+                        <h2 id="footer-spots" className="eyebrow mb-3">Spots</h2>
+                        <ul className="flex flex-col gap-0.5">
+                            {spots.map((spot) => (
+                                <li key={spot.url}>
+                                    <a
+                                        href={spot.url}
+                                        aria-current={spot === current ? "page" : undefined}
+                                        className="flex h-8 items-center text-sm text-zinc-400 transition-colors hover:text-zinc-100 aria-[current=page]:text-zinc-100"
+                                    >
+                                        {spot.name}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
 
                     <div>
                         <h2 className="eyebrow mb-3">Data</h2>
