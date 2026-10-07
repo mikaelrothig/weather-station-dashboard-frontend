@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Template for every spot page: vite.config.ts fills in the spot name and region per spot -->
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -16,15 +17,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet" />
-    <title>Kite Beach Forecast | Misty Cliffs</title>
-    <meta name="description" content="Get live wind data and weather forecasts for kite spots in South Africa and the Netherlands." />
-    <meta property="og:title" content="Kite Beach Forecast | Misty Cliffs" />
-    <meta property="og:description" content="Get live wind data and weather forecasts for kite spots in South Africa and the Netherlands." />
+    <title>Kite Beach Forecast | {{SPOT_NAME}}</title>
+    <meta name="description" content="Live wind, kite windows and forecasts for {{SPOT_NAME}}, {{SPOT_REGION}}, South Africa." />
+    <meta property="og:title" content="Kite Beach Forecast | {{SPOT_NAME}}" />
+    <meta property="og:description" content="Live wind, kite windows and forecasts for {{SPOT_NAME}}, {{SPOT_REGION}}, South Africa." />
     <meta property="og:type" content="website" />
     <meta property="og:image" itemprop="image" content="https://kitebeachforecast.vercel.app/meta-image.png" />
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/entries/misty-cliffs.tsx"></script>
+    <script type="module" src="/src/entries/spot.tsx"></script>
   </body>
 </html>
