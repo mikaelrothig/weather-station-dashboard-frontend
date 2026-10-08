@@ -32,8 +32,8 @@ const [WEST, , EAST] = OUTLINE.bbox;
 const SCALE_KM = 50;
 const SCALE_WIDTH = SCALE_KM / ((EAST - WEST) * 111.32 * Math.cos((33.75 * Math.PI) / 180));
 
-// Solid in the middle, gone in the corners; the middle of each edge keeps about half its strength
-const EDGE_FADE = "radial-gradient(ellipse farthest-corner at center, black 50%, transparent 100%)";
+// Solid in the middle, gone in the corners; the middle of each edge keeps about three quarters of its strength
+const EDGE_FADE = "radial-gradient(ellipse farthest-corner at center, black 60%, transparent 100%)";
 
 // Dark outline around the ocean names, so they stay legible over the streaks
 const HALO = "[text-shadow:0_0_2px_#09090b,0_0_4px_#09090b,0_0_8px_#09090b]";
@@ -183,10 +183,18 @@ export const MapCard = ({ entries, featured, hovered, onHover, className = "" }:
                     )}
                 </div>
 
-                {/* How far is far: the spots run about 300 km of coast */}
-                <div className="pointer-events-none absolute bottom-2.5 left-2.5 hidden text-[11px] font-medium text-zinc-500 sm:block" style={{ width: `${SCALE_WIDTH * 100}%` }}>
-                    <div className="h-1 border-x border-b border-zinc-500" />
-                    <span className="mt-1 block">{SCALE_KM} km</span>
+                {/* How far is far: the spots run about 300 km of coast. Styled like the wind legend; the padding is added to
+                    the width, so the bar itself still spans the true distance */}
+                <div
+                    className="pointer-events-none absolute bottom-2.5 left-2.5 hidden rounded-lg bg-surface/80 px-2 pb-1 pt-2 ring-1 ring-inset ring-white/[0.06] backdrop-blur-md sm:block"
+                    style={{ width: `calc(${SCALE_WIDTH * 100}% + 1rem)` }}
+                    aria-hidden="true"
+                >
+                    <div className="h-1.5 border-x border-b border-zinc-500" />
+                    <div className="mt-1 flex justify-between font-mono text-[10px] tabular-nums leading-4 text-zinc-500">
+                        <span>0</span>
+                        <span>{SCALE_KM} km</span>
+                    </div>
                 </div>
 
                 {/* What the dot colours mean: the footer's wind scale, condensed */}
