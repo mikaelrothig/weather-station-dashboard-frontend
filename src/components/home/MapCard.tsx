@@ -32,6 +32,9 @@ const [WEST, , EAST] = OUTLINE.bbox;
 const SCALE_KM = 50;
 const SCALE_WIDTH = SCALE_KM / ((EAST - WEST) * 111.32 * Math.cos((33.75 * Math.PI) / 180));
 
+// Solid in the middle, gone in the corners; the middle of each edge keeps about half its strength
+const EDGE_FADE = "radial-gradient(ellipse farthest-corner at center, black 50%, transparent 100%)";
+
 // Dark outline around the ocean names, so they stay legible over the streaks
 const HALO = "[text-shadow:0_0_2px_#09090b,0_0_4px_#09090b,0_0_8px_#09090b]";
 
@@ -90,36 +93,39 @@ export const MapCard = ({ entries, featured, hovered, onHover, className = "" }:
                 ref={artRef}
                 // Never shorter than the artwork, and grows to fill the card when the column beside it is taller.
                 // The artwork stays centred at its own ratio, so the extra room shows more land north and sea south.
-                className="relative mt-3 min-h-0 flex-[1_0_auto] overflow-hidden rounded-xl bg-canvas ring-1 ring-inset ring-white/[0.06]"
+                className="relative mt-3 min-h-0 flex-[1_0_auto] overflow-hidden rounded-xl bg-canvas ring-1 ring-inset ring-white/[0.04]"
                 style={{ aspectRatio: ASPECT }}
             >
-                {/* The sea: a faint dot grid that the land covers, so the water has texture and the coast an edge */}
-                <div className="absolute inset-0 bg-[radial-gradient(rgb(255_255_255/0.07)_1px,transparent_1.5px)] bg-[length:14px_14px]" />
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2" style={{ aspectRatio: ASPECT }}>
-                    {/* overflow-visible: the outline runs past its frame inland, so a taller card shows more land, not a cut edge */}
-                    <svg viewBox={`0 0 ${OUTLINE.width} ${OUTLINE.height}`} className="absolute inset-0 size-full overflow-visible" aria-hidden="true">
-                        <defs>
-                            <clipPath id={landClip}><path d={OUTLINE.land} /></clipPath>
-                        </defs>
-                        <path d={OUTLINE.land} fill="#1c1c20" />
-                        {/* Shaded relief, lit from the north-west: mid grey leaves the land as it is, lighter and darker light and
-                            shade the slopes (hard-light). Kept to the coastline, and drawn up past the frame like the land is */}
-                        <image
-                            href={terrain}
-                            x={0}
-                            y={-OUTLINE.height * OUTLINE.terrainAbove}
-                            width={OUTLINE.width}
-                            height={OUTLINE.height * (1 + OUTLINE.terrainAbove)}
-                            preserveAspectRatio="none"
-                            clipPath={`url(#${landClip})`}
-                            opacity={0.55}
-                            style={{ mixBlendMode: "hard-light" }}
-                        />
-                        <path d={OUTLINE.land} fill="none" stroke="rgb(255 255 255 / 0.16)" strokeWidth={1} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                        <path d={OUTLINE.borders} fill="none" stroke="rgb(255 255 255 / 0.1)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                    </svg>
+                {/* The artwork fades out toward the frame, so the map trails off rather than ending at a hard edge */}
+                <div className="absolute inset-0" style={{ maskImage: EDGE_FADE, WebkitMaskImage: EDGE_FADE }}>
+                    {/* The sea: a faint dot grid that the land covers, so the water has texture and the coast an edge */}
+                    <div className="absolute inset-0 bg-[radial-gradient(rgb(255_255_255/0.07)_1px,transparent_1.5px)] bg-[length:14px_14px]" />
+                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2" style={{ aspectRatio: ASPECT }}>
+                        {/* overflow-visible: the outline runs past its frame inland, so a taller card shows more land, not a cut edge */}
+                        <svg viewBox={`0 0 ${OUTLINE.width} ${OUTLINE.height}`} className="absolute inset-0 size-full overflow-visible" aria-hidden="true">
+                            <defs>
+                                <clipPath id={landClip}><path d={OUTLINE.land} /></clipPath>
+                            </defs>
+                            <path d={OUTLINE.land} fill="#1c1c20" />
+                            {/* Shaded relief, lit from the north-west: mid grey leaves the land as it is, lighter and darker light and
+                                shade the slopes (hard-light). Kept to the coastline, and drawn up past the frame like the land is */}
+                            <image
+                                href={terrain}
+                                x={0}
+                                y={-OUTLINE.height * OUTLINE.terrainAbove}
+                                width={OUTLINE.width}
+                                height={OUTLINE.height * (1 + OUTLINE.terrainAbove)}
+                                preserveAspectRatio="none"
+                                clipPath={`url(#${landClip})`}
+                                opacity={0.55}
+                                style={{ mixBlendMode: "hard-light" }}
+                            />
+                            <path d={OUTLINE.land} fill="none" stroke="rgb(255 255 255 / 0.09)" strokeWidth={1} strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                            <path d={OUTLINE.borders} fill="none" stroke="rgb(255 255 255 / 0.1)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                        </svg>
 
-                    {OCEANS.map((ocean) => <OceanLabel key={ocean.name} {...ocean} />)}
+                        {OCEANS.map((ocean) => <OceanLabel key={ocean.name} {...ocean} />)}
+                    </div>
                 </div>
 
                 {statuses.length > 0 && <WindStreaks direction={wind.direction} speed={wind.speed} paused={!visible} />}
