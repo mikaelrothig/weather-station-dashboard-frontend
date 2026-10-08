@@ -159,14 +159,12 @@ export const MapCard = ({ entries, featured, hovered, onHover, className = "" }:
                                 </span>
 
                                 <span
-                                    className={`absolute hidden items-center gap-1.5 whitespace-nowrap rounded-[9px] py-1 pl-2.5 pr-1 text-xs font-medium ring-1 ring-inset backdrop-blur-md transition-[background-color,box-shadow,color] duration-150 ease-[ease] sm:flex ${
+                                    className={`absolute hidden items-center whitespace-nowrap rounded-[9px] py-1 px-2 text-xs font-medium ring-1 ring-inset backdrop-blur-md transition-[background-color,box-shadow,color] duration-150 ease-[ease] sm:flex ${
                                         active ? "bg-zinc-800/95 text-zinc-50 ring-white/20" : "bg-surface/80 text-zinc-300 ring-white/10"
                                     }`}
                                     style={{ transform: labelTransform }}
                                 >
                                     {spot.name}
-                                    {/* Knots as a chip, like the spot list beside the map */}
-                                    {status ? <WindChip speed={status.now.speed} className="h-5 min-w-7 rounded-[5px]" /> : <span className="text-zinc-500">–</span>}
                                 </span>
                             </a>
                         );
