@@ -1,7 +1,7 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
-import { spots, type Spot } from './src/config/spots'
+import { spots, type Spot } from './src/config/spots.ts'
 
 const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
@@ -66,8 +66,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        spot: resolve(__dirname, 'spot.html'),
+        main: resolve(import.meta.dirname, 'index.html'),
+        spot: resolve(import.meta.dirname, 'spot.html'),
       },
     },
   },
