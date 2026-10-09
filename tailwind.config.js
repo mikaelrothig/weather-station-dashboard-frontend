@@ -17,8 +17,8 @@ export default {
         surface: "#111113",
       },
       fontFamily: {
-        sans: ["Geist", ...defaultTheme.fontFamily.sans],
-        mono: ["'Geist Mono'", ...defaultTheme.fontFamily.mono],
+        sans: ["'Geist Variable'", ...defaultTheme.fontFamily.sans],
+        mono: ["'Geist Mono Variable'", ...defaultTheme.fontFamily.mono],
       },
       transitionTimingFunction: {
         out: "cubic-bezier(0.23, 1, 0.32, 1)",

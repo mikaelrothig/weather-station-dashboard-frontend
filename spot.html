@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Template for every spot page: vite.config.ts fills in the spot name and region per spot -->
+    <!-- Template for every spot page: vite.config.ts fills in the spot name, region and URL per spot -->
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" sizes="32x32">
@@ -14,15 +14,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
     <meta name="theme-color" content="#09090b" />
     <meta name="color-scheme" content="dark" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet" />
     <title>Kite Beach Forecast | {{SPOT_NAME}}</title>
     <meta name="description" content="Live wind, kite windows and forecasts for {{SPOT_NAME}}, {{SPOT_REGION}}, South Africa." />
     <meta property="og:title" content="Kite Beach Forecast | {{SPOT_NAME}}" />
     <meta property="og:description" content="Live wind, kite windows and forecasts for {{SPOT_NAME}}, {{SPOT_REGION}}, South Africa." />
+    <link rel="canonical" href="https://kitebeachforecast.vercel.app{{SPOT_URL}}" />
+    <meta property="og:url" content="https://kitebeachforecast.vercel.app{{SPOT_URL}}" />
     <meta property="og:type" content="website" />
     <meta property="og:image" itemprop="image" content="https://kitebeachforecast.vercel.app/meta-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

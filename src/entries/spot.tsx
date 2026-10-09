@@ -1,6 +1,8 @@
 import { StrictMode } from 'react'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
+import '@fontsource-variable/geist'
+import '@fontsource-variable/geist-mono'
 import '../index.css'
 import Spot from '../pages/Spot.tsx'
 import { Analytics } from "@vercel/analytics/react";

@@ -12,7 +12,7 @@ import { formatClock, getHourLabel } from "./timeUtils";
 const W = 1080;
 const H = 1350;
 const P = 64;
-const FONT = "Geist, system-ui, -apple-system, sans-serif";
+const FONT = "'Geist Variable', system-ui, -apple-system, sans-serif";
 const SITE = "kitebeachforecast.vercel.app";
 
 const C = {
@@ -175,7 +175,7 @@ const statCell = (ctx: Ctx, x: number, y: number, w: number, label: string, valu
 
 const loadFonts = async () => {
     try {
-        await Promise.all(["600 96px Geist", "500 24px Geist", "400 24px Geist"].map((f) => document.fonts.load(f)));
+        await Promise.all(["600 96px 'Geist Variable'", "500 24px 'Geist Variable'", "400 24px 'Geist Variable'"].map((f) => document.fonts.load(f)));
     } catch {
         // Falls back to the system font
     }

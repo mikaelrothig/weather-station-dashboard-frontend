@@ -7,7 +7,7 @@ const escapeHtml = (value: string) =>
   value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
 
 const fillSpot = (html: string, spot: Spot) =>
-  html.replaceAll('{{SPOT_NAME}}', escapeHtml(spot.name)).replaceAll('{{SPOT_REGION}}', escapeHtml(spot.region))
+  html.replaceAll('{{SPOT_NAME}}', escapeHtml(spot.name)).replaceAll('{{SPOT_REGION}}', escapeHtml(spot.region)).replaceAll('{{SPOT_URL}}', escapeHtml(spot.url))
 
 const spotAt = (url = '') => spots.find((spot) => spot.url === url.split('?')[0])
 
