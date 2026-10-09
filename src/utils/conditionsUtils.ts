@@ -1,6 +1,6 @@
 import { Forecast, LiveReading } from "../api/types";
 import { getNearestPoint } from "./forecastUtils";
-import { formatClock, formatDuration, getMinutesOfDay, parseClockMinutes } from "./TimeUtils";
+import { formatClock, formatDuration, getMinutesOfDay, parseClockMinutes } from "./timeUtils";
 import { isInSector } from "./spotUtils";
 
 const MINUTE_MS = 60 * 1000;

@@ -1,5 +1,5 @@
 import { Forecast } from "../api/types";
-import { atMinutesOfDay, getDayKey, parseClockMinutes, getZonedHour, startOfHour } from "./TimeUtils";
+import { atMinutesOfDay, getDayKey, parseClockMinutes, getZonedHour, startOfHour } from "./timeUtils";
 import { isInSector } from "./spotUtils";
 
 const HOUR_MS = 60 * 60 * 1000;

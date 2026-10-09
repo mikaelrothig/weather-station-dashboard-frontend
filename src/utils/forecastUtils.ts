@@ -1,5 +1,5 @@
 import { Forecast, ModelRun, WaveForecast } from "../api/types";
-import { getDayKey, getDayLabel, getZonedHour, parseClockMinutes, startOfHour } from "./TimeUtils";
+import { getDayKey, getDayLabel, getZonedHour, parseClockMinutes, startOfHour } from "./timeUtils";
 
 export interface ForecastHour {
     time: Date;

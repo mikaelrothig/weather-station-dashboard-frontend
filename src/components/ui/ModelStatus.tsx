@@ -1,7 +1,7 @@
 import { TriangleAlert } from "lucide-react";
 import { ModelRun } from "../../api/types";
 import { getRunLabel } from "../../utils/forecastUtils";
-import { formatClock, formatDuration } from "../../utils/TimeUtils";
+import { formatClock, formatDuration } from "../../utils/timeUtils";
 
 // A run counts as late once it's this far past the provider's own expected update time
 const LATE_AFTER_MINUTES = 30;

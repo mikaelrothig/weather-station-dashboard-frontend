@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { Area, AreaChart, ReferenceDot, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { SpotInfo } from "../api/types";
 import { predictTides } from "../utils/tideUtils";
-import { formatClock, getZonedHour, startOfHour } from "../utils/TimeUtils";
+import { formatClock, getZonedHour, startOfHour } from "../utils/timeUtils";
 
 interface TideProps {
     spotData: SpotInfo | null;

@@ -1,6 +1,6 @@
 import { CSSProperties, useState } from "react";
-import { getDegreesToCompass } from "../utils/DataUtils.tsx";
-import { formatClock, formatDate, getDayKey } from "../utils/TimeUtils.tsx";
+import { getDegreesToCompass } from "../utils/dataUtils";
+import { formatClock, formatDate, getDayKey } from "../utils/timeUtils";
 import { getRelativeDayName } from "../utils/forecastUtils.ts";
 import { chooseKite, ExperienceProfile, findKiteWindows, KiteDay, windRange } from "../utils/kiteUtils.ts";
 import { useRiderSettings } from "../hooks/useRiderSettings.ts";

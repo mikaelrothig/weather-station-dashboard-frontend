@@ -1,6 +1,6 @@
 import { ArrowUp, ArrowUpRight, Github, Instagram, Linkedin, Mail, Tag } from "lucide-react";
 import { getCurrentSpot, spots } from "../utils/spotUtils";
-import { getWindBackgroundColor, WIND_SCALE } from "../utils/ColorUtils";
+import { getWindBackgroundColor, WIND_SCALE } from "../utils/colorUtils";
 import { Logo } from "./ui/Logo";
 
 const socialLinks = [

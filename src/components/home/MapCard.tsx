@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useId, useRef, useState } from "react";
-import { getGraphStrokeColor, getWindBackgroundColor, WIND_SCALE } from "../../utils/ColorUtils";
-import { getDegreesToCompass } from "../../utils/DataUtils";
+import { getGraphStrokeColor, getWindBackgroundColor, WIND_SCALE } from "../../utils/colorUtils";
+import { getDegreesToCompass } from "../../utils/dataUtils";
 import { getSpotSlug } from "../../utils/spotUtils";
 import { DirectionArrow } from "../ui/DirectionArrow";
 import { WindChip } from "../ui/WindChip";

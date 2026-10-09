@@ -1,7 +1,7 @@
 import { ForecastPoint, SpotSummary } from "../../api/types";
 import { Spot } from "../../utils/spotUtils";
 import { ExperienceProfile, findKiteWindows, KiteHour, KiteWindow } from "../../utils/kiteUtils";
-import { formatClock } from "../../utils/TimeUtils";
+import { formatClock } from "../../utils/timeUtils";
 import outline from "./outline.json";
 
 export interface SpotStatus {

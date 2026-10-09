@@ -3,9 +3,9 @@ import { ArrowDownRight, ArrowRight, ArrowUpRight, ChartLine, RefreshCw, Table2,
 import { LiveReading } from '../api/types';
 import { LiveWindState } from '../hooks/useLiveWind';
 import { useDirectionToggle } from '../hooks/useDirectionToggle';
-import { getWindBackgroundColor } from '../utils/ColorUtils';
-import { getCompassLabel } from '../utils/DataUtils';
-import { formatDuration } from '../utils/TimeUtils';
+import { getWindBackgroundColor } from '../utils/colorUtils';
+import { getCompassLabel } from '../utils/dataUtils';
+import { formatDuration } from '../utils/timeUtils';
 import { formatReadingTime, getMinutesSince, getReadingTime, LIVE_STALE_AFTER_MINUTES } from '../utils/conditionsUtils';
 import { MacwindGraphView } from './macwind/MacwindGraphView';
 import { MacwindTableView } from './macwind/MacwindTableView';

@@ -1,6 +1,6 @@
-import { getWindBackgroundColor } from "../../utils/ColorUtils";
-import { getDegreesToCompass } from "../../utils/DataUtils";
-import { formatClock } from "../../utils/TimeUtils";
+import { getWindBackgroundColor } from "../../utils/colorUtils";
+import { getDegreesToCompass } from "../../utils/dataUtils";
+import { formatClock } from "../../utils/timeUtils";
 import { KiteHour, KiteWindow } from "../../utils/kiteUtils";
 
 interface WindStripProps {

@@ -1,4 +1,4 @@
-import { getGraphStrokeColor } from './ColorUtils';
+import { getGraphStrokeColor } from './colorUtils';
 
 export const createGradientStops = (data: number[]) => {
     if (data.length === 0) return [{ offset: '0%', color: '#0284c7' }];

@@ -1,9 +1,9 @@
 import { CSSProperties, ReactNode, useEffect, useState } from "react";
 import { LucideIcon, Sun, Thermometer, Waves, Wind } from "lucide-react";
 import { Forecast, LiveReading, SpotInfo } from "../api/types";
-import { getWindBackgroundColor } from "../utils/ColorUtils";
-import { getCompassLabel } from "../utils/DataUtils";
-import { formatDuration, getMinutesOfDay, parseClockMinutes } from "../utils/TimeUtils";
+import { getWindBackgroundColor } from "../utils/colorUtils";
+import { getCompassLabel } from "../utils/dataUtils";
+import { formatDuration, getMinutesOfDay, parseClockMinutes } from "../utils/timeUtils";
 import { getNearestPoint } from "../utils/forecastUtils";
 import { getCurrentWind, getDaylight, getShoreRelation, getWetsuit, ShoreRelation } from "../utils/conditionsUtils";
 import { DirectionArrow } from "./ui/DirectionArrow";

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Navigation2, Thermometer, Timer, Waves, Wind, Zap } from "lucide-react";
-import { getWaveBackgroundColor, getWavePeriodBackgroundColor, getWindBackgroundColor } from "../utils/ColorUtils.tsx";
-import { getDegreesToCompass } from "../utils/DataUtils.tsx";
-import { getDayLabel, getHourLabel } from "../utils/TimeUtils.tsx";
+import { getWaveBackgroundColor, getWavePeriodBackgroundColor, getWindBackgroundColor } from "../utils/colorUtils";
+import { getDegreesToCompass } from "../utils/dataUtils";
+import { getDayLabel, getHourLabel } from "../utils/timeUtils";
 import { buildForecastHours, groupByDay } from "../utils/forecastUtils.ts";
 import { Forecast, WaveForecast } from "../api/types.ts";
 import { useDirectionToggle } from "../hooks/useDirectionToggle.ts";

@@ -1,4 +1,4 @@
-import { getWindBackgroundColor } from "../../utils/ColorUtils";
+import { getWindBackgroundColor } from "../../utils/colorUtils";
 
 /** Knots on the wind scale's colour, as used in lists and map labels */
 export const WindChip = ({ speed, className = "" }: { speed: number; className?: string }) => (

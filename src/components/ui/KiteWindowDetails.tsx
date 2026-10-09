@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { TriangleAlert } from "lucide-react";
-import { getDegreesToCompass } from "../../utils/DataUtils";
-import { formatClock } from "../../utils/TimeUtils";
+import { getDegreesToCompass } from "../../utils/dataUtils";
+import { formatClock } from "../../utils/timeUtils";
 import { chooseKite, ExperienceProfile, KiteHour, KiteWindow, windRange } from "../../utils/kiteUtils";
 import { DirectionArrow } from "./DirectionArrow";
 import { WindStrip } from "./WindStrip";

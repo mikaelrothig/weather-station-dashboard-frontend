@@ -4,10 +4,10 @@ import { XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ComposedChar
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import { LiveInterval, LiveReading } from '../../api/types';
 import { createGradientStops } from '../../utils/gradientUtils';
-import { getCompassLabel } from '../../utils/DataUtils';
+import { getCompassLabel } from '../../utils/dataUtils';
 import { formatReadingTime, getReadingTime } from '../../utils/conditionsUtils';
-import { getMinutesOfDay } from '../../utils/TimeUtils';
-import { getGraphStrokeColor } from '../../utils/ColorUtils';
+import { getMinutesOfDay } from '../../utils/timeUtils';
+import { getGraphStrokeColor } from '../../utils/colorUtils';
 import { DirectionArrow } from '../ui/DirectionArrow';
 
 interface MacwindGraphViewProps {

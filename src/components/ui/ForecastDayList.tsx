@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ChevronDown, Share2 } from "lucide-react";
-import { getWindBackgroundColor } from "../../utils/ColorUtils";
-import { getDegreesToCompass } from "../../utils/DataUtils";
-import { getHourLabel } from "../../utils/TimeUtils";
+import { getWindBackgroundColor } from "../../utils/colorUtils";
+import { getDegreesToCompass } from "../../utils/dataUtils";
+import { getHourLabel } from "../../utils/timeUtils";
 import { ForecastDay, getRelativeDayName } from "../../utils/forecastUtils";
 import { DirectionArrow } from "./DirectionArrow";
 

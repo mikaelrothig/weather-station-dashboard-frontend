@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, Clock, Crosshair, MapPin } from "lucide-react";
-import { formatClock, formatDate, isDeviceOnSpotTime } from "../utils/TimeUtils";
+import { formatClock, formatDate, isDeviceOnSpotTime } from "../utils/timeUtils";
 
 interface SpotHeaderProps {
     spotName: string;

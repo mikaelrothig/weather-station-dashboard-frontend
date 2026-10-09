@@ -7,7 +7,7 @@ import { MapCard } from "../components/home/MapCard.tsx";
 import { SpotListCard } from "../components/home/SpotListCard.tsx";
 import { pickBestWindow, pickWindiest, windowScore } from "../components/home/spotStatus.ts";
 import { useSpotEntries } from "../hooks/useSpotEntries.ts";
-import { formatDate } from "../utils/TimeUtils.tsx";
+import { formatDate } from "../utils/timeUtils";
 import { spots } from "../utils/spotUtils.ts";
 import DevDataToggle from "../dev/DevDataToggle.tsx";
 

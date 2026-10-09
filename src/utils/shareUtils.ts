@@ -1,9 +1,9 @@
 import { Forecast, SpotInfo, WaveForecast } from "../api/types";
 import { buildForecastHours, ForecastHour, getRunLabel } from "./forecastUtils";
-import { atMinutesOfDay, formatClock, formatDate } from "./TimeUtils";
+import { atMinutesOfDay, formatClock, formatDate } from "./timeUtils";
 import { predictTides, TideExtreme } from "./tideUtils";
 import { getWetsuit } from "./conditionsUtils";
-import { getDegreesToCompass } from "./DataUtils";
+import { getDegreesToCompass } from "./dataUtils";
 
 /**
  * One day of one forecast model, condensed for a share image. Deliberately nothing rider-specific

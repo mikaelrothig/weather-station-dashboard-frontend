@@ -24,7 +24,7 @@ const CameraStreamComponent = ({ streamUrl, title = "Live Camera Feed" }: Camera
 
             hls.on(Hls.Events.MANIFEST_PARSED, () => {
                 video.play().catch(err => {
-                    console.log('Autoplay prevented:', err);
+                    console.warn('Autoplay prevented:', err);
                 });
             });
 
@@ -32,15 +32,15 @@ const CameraStreamComponent = ({ streamUrl, title = "Live Camera Feed" }: Camera
                 if (data.fatal) {
                     switch (data.type) {
                         case Hls.ErrorTypes.NETWORK_ERROR:
-                            console.log('Network error, trying to recover...');
+                            console.warn('Network error, trying to recover...');
                             hls.startLoad();
                             break;
                         case Hls.ErrorTypes.MEDIA_ERROR:
-                            console.log('Media error, trying to recover...');
+                            console.warn('Media error, trying to recover...');
                             hls.recoverMediaError();
                             break;
                         default:
-                            console.log('Fatal error, destroying HLS instance');
+                            console.error('Fatal error, destroying HLS instance');
                             hls.destroy();
                             break;
                     }
@@ -55,7 +55,7 @@ const CameraStreamComponent = ({ streamUrl, title = "Live Camera Feed" }: Camera
             video.src = streamUrl;
             video.addEventListener('loadedmetadata', () => {
                 video.play().catch(err => {
-                    console.log('Autoplay prevented:', err);
+                    console.warn('Autoplay prevented:', err);
                 });
             });
         }

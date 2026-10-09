@@ -1,7 +1,7 @@
 import { ComponentPropsWithoutRef } from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { Spot } from "../utils/spotUtils";
-import { getDegreesToCompass } from "../utils/DataUtils";
+import { getDegreesToCompass } from "../utils/dataUtils";
 import { DirectionArrow } from "./ui/DirectionArrow";
 import { WindChip } from "./ui/WindChip";
 import type { SpotStatus } from "./home/spotStatus";

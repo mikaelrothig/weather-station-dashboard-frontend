@@ -1,7 +1,7 @@
 import { ShareDayData } from "./shareUtils";
-import { getGraphStrokeColor } from "./ColorUtils";
-import { getDegreesToCompass } from "./DataUtils";
-import { formatClock, getHourLabel } from "./TimeUtils";
+import { getGraphStrokeColor } from "./colorUtils";
+import { getDegreesToCompass } from "./dataUtils";
+import { formatClock, getHourLabel } from "./timeUtils";
 
 /**
  * Draws a day's forecast as a 1080×1350 PNG (4:5, the shape WhatsApp and Instagram show largest).

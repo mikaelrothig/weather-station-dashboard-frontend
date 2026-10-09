@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Navigation2, TrendingDown, Wind, Zap } from 'lucide-react';
 import { LiveReading } from '../../api/types';
-import { getWindBackgroundColor } from '../../utils/ColorUtils';
-import { getCompassLabel } from '../../utils/DataUtils';
+import { getWindBackgroundColor } from '../../utils/colorUtils';
+import { getCompassLabel } from '../../utils/dataUtils';
 import { formatReadingTime, getReadingTime } from '../../utils/conditionsUtils';
-import { getDayKey } from '../../utils/TimeUtils';
+import { getDayKey } from '../../utils/timeUtils';
 import { ForecastColumn, ForecastRow, ForecastTable } from '../ui/ForecastTable';
 import { DirectionArrow } from '../ui/DirectionArrow';
 
