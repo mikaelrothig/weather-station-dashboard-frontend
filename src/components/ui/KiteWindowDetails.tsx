@@ -2,56 +2,61 @@ import { ReactNode } from "react";
 import { TriangleAlert } from "lucide-react";
 import { getDegreesToCompass } from "../../utils/dataUtils";
 import { formatClock } from "../../utils/timeUtils";
-import { chooseKite, ExperienceProfile, KiteHour, KiteWindow, windRange } from "../../utils/kiteUtils";
+import { ExperienceProfile, KiteHour, KiteWindow, leadKite, windRange } from "../../utils/kiteUtils";
 import { DirectionArrow } from "./DirectionArrow";
 import { WindStrip } from "./WindStrip";
 
-interface KiteWindowDetailsProps {
-    /** The line above the times, e.g. the day name and a "Best" badge */
-    label: ReactNode;
+interface KiteWindowPartProps {
     window: KiteWindow;
-    /** The day's daylight hours, for the strip */
-    hours: KiteHour[];
     weight: number;
     profile: ExperienceProfile;
     /** Clock times; pass one bound to the spot's timezone when several are on screen */
     formatTime?: (date: Date) => string;
 }
 
-/**
- * A kite window laid out the same way everywhere: when and what to rig first, the day's strip, the wind in the
- * window, then any kite switches or a gust warning. Used by the spot page's Kite windows card and the home page.
- */
-export const KiteWindowDetails = ({ label, window, hours, weight, profile, formatTime = formatClock }: KiteWindowDetailsProps) => {
-    // With the rider's kites: lead with the one you rig first, and list switches as the wind changes.
-    // Without them: one suggested size for the average wind plus the range, since every 1 m² step isn't a real switch.
+interface KiteWindowSummaryProps extends KiteWindowPartProps {
+    /** The line above the times, e.g. the day name and a "Best" badge */
+    label: ReactNode;
+    /** The times as a heading (h3); off where the summary sits inside a button, which can't hold one */
+    heading?: boolean;
+}
+
+/** The answer first: when, and what to rig. The top of a kite window everywhere, and on its own where it opens the rest */
+export const KiteWindowSummary = ({ label, window, weight, profile, formatTime = formatClock, heading = true }: KiteWindowSummaryProps) => {
     const suggestedOnly = window.hours[0]?.kite.fit === "suggested";
-    const plan = window.plan;
-    const mainKite = suggestedOnly ? chooseKite(weight, window.avgSpeed, profile, []).size : plan[0].size;
-    const switches = suggestedOnly ? [] : plan.slice(1, 3);
+    // Inside a button only phrasing content is allowed, so there it's all spans
+    const [Outer, Box, Times] = heading ? (["header", "div", "h3"] as const) : (["span", "span", "span"] as const);
+    return (
+        <Outer className="flex items-start justify-between gap-3">
+            <Box className="min-w-0">
+                <Box className="flex items-center gap-2">{label}</Box>
+                <Times className="mt-1 flex items-baseline gap-2">
+                    <span className="text-xl font-semibold tabular-nums tracking-tight text-zinc-50">
+                        {formatTime(window.start)}–{formatTime(window.end)}
+                    </span>
+                    <span className="text-xs text-zinc-500">{window.duration}h</span>
+                </Times>
+            </Box>
+            <Box className="shrink-0 text-right">
+                <span className="block text-[11px] text-zinc-500">{suggestedOnly ? "Suggested" : "Your kite"}</span>
+                <span className="mt-1 block text-xl font-semibold tabular-nums tracking-tight text-zinc-50">{leadKite(window, weight, profile)} m²</span>
+            </Box>
+        </Outer>
+    );
+};
+
+/** The rest of a kite window: the day's strip, the wind in the window, then any kite switches or a gust warning */
+export const KiteWindowBody = ({ window, hours, profile, formatTime = formatClock }: Omit<KiteWindowPartProps, "weight"> & { hours: KiteHour[] }) => {
+    // With the rider's kites: list switches as the wind changes. Without them: the range of suggested sizes, since every
+    // 1 m² step isn't a real switch.
+    const suggestedOnly = window.hours[0]?.kite.fit === "suggested";
+    const switches = suggestedOnly ? [] : window.plan.slice(1, 3);
     const sizes = window.hours.map((h) => h.kite.size);
     const range = suggestedOnly && Math.min(...sizes) !== Math.max(...sizes) ? `${Math.min(...sizes)}–${Math.max(...sizes)} m²` : null;
     const gusty = window.maxGust - window.avgSpeed >= profile.gustyAt;
 
     return (
         <>
-            {/* The answer first: when, and what to rig */}
-            <header className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                    <div className="flex items-center gap-2">{label}</div>
-                    <h3 className="mt-1 flex items-baseline gap-2">
-                        <span className="text-xl font-semibold tabular-nums tracking-tight text-zinc-50">
-                            {formatTime(window.start)}–{formatTime(window.end)}
-                        </span>
-                        <span className="text-xs text-zinc-500">{window.duration}h</span>
-                    </h3>
-                </div>
-                <div className="shrink-0 text-right">
-                    <p className="text-[11px] text-zinc-500">{suggestedOnly ? "Suggested" : "Your kite"}</p>
-                    <p className="mt-1 text-xl font-semibold tabular-nums tracking-tight text-zinc-50">{mainKite} m²</p>
-                </div>
-            </header>
-
             <WindStrip hours={hours} window={window} formatTime={formatTime} />
 
             {/* Phones: one line. Desktop: the labelled breakdown for planning. */}
@@ -100,3 +105,21 @@ export const KiteWindowDetails = ({ label, window, hours, weight, profile, forma
         </>
     );
 };
+
+interface KiteWindowDetailsProps extends KiteWindowPartProps {
+    /** The line above the times, e.g. the day name and a "Best" badge */
+    label: ReactNode;
+    /** The day's daylight hours, for the strip */
+    hours: KiteHour[];
+}
+
+/**
+ * A kite window laid out the same way everywhere: when and what to rig first, the day's strip, the wind in the
+ * window, then any kite switches or a gust warning. Used by the spot page's Kite windows card and the home page.
+ */
+export const KiteWindowDetails = ({ label, window, hours, weight, profile, formatTime = formatClock }: KiteWindowDetailsProps) => (
+    <>
+        <KiteWindowSummary label={label} window={window} weight={weight} profile={profile} formatTime={formatTime} />
+        <KiteWindowBody window={window} hours={hours} profile={profile} formatTime={formatTime} />
+    </>
+);

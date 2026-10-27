@@ -228,80 +228,19 @@ html {
     }
 }
 
-/* Home page wind streaks: constant motion, so linear; transform and opacity only, so it stays off the main thread.
-   The mask fades them out towards every edge, so they drift in and out instead of popping at the card's border. */
-.wind-streaks {
-    -webkit-mask-image:
-        linear-gradient(to right, transparent, black 12%, black 88%, transparent),
-        linear-gradient(to bottom, transparent, black 14%, black 78%, transparent);
-    -webkit-mask-composite: source-in;
-    mask-image:
-        linear-gradient(to right, transparent, black 12%, black 88%, transparent),
-        linear-gradient(to bottom, transparent, black 14%, black 78%, transparent);
-    mask-composite: intersect;
-}
-
-.wind-streak {
-    opacity: 0;
-    animation: wind-streak var(--duration) linear var(--delay) infinite;
-}
-
-@keyframes wind-streak {
-    0% {
-        transform: translateX(-15%);
-        opacity: 0;
-    }
-    15%,
-    80% {
-        opacity: var(--peak);
-    }
-    100% {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-/* Gusty air doesn't run on rails: each streak drifts gently across its path while it travels.
-   A continuous back-and-forth wants a sine (easeInOutSine); the stronger UI curves snap at each end. */
-.wind-sway {
-    animation: wind-sway var(--sway-duration) cubic-bezier(0.37, 0, 0.63, 1) var(--sway-delay) infinite alternate;
-}
-
-@keyframes wind-sway {
-    from {
-        transform: translateY(calc(var(--sway) * -1));
-    }
-    to {
-        transform: translateY(var(--sway));
-    }
-}
-
-/* The map stops animating while it's off screen, which saves battery */
-.wind-streaks[data-paused] .wind-streak,
-.wind-streaks[data-paused] .wind-sway {
-    animation-play-state: paused;
-}
-
-/* Reduced motion: no drifting lines; the arrows next to each spot still give the direction */
-@media (prefers-reduced-motion: reduce) {
-    .wind-streaks {
-        display: none;
-    }
-}
-
-/* On phones, the spot name that appears over the map for the spot you touched */
-/* Position comes in through variables: an inline transform would also override the starting style */
-.spot-tag {
-    transform: var(--tag-to);
+/* A spot's card on the home map. Position comes in through variables: an inline transform would also override the
+   starting style */
+.spot-peek {
+    transform: var(--peek);
     transition:
         opacity 150ms ease,
         transform 150ms var(--ease-out);
 }
 
 @starting-style {
-    .spot-tag {
+    .spot-peek {
         opacity: 0;
-        transform: var(--tag-from);
+        transform: var(--peek-from);
     }
 }
 

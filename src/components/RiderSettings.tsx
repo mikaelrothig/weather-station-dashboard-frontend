@@ -31,7 +31,8 @@ const RiderSettingsButton = ({ open, onToggle, controls, buttonRef, className = 
             } ${className}`}
         >
             <SlidersHorizontal className="size-3.5 shrink-0 text-zinc-400" aria-hidden="true" />
-            <span className="truncate">{profile.label} · {weight} kg · {describeKites(kites)}</span>
+            {/* Takes any spare width when the button is stretched, so the text stays by the icon and the chevron goes to the end */}
+            <span className="min-w-0 flex-1 truncate text-left">{profile.label} · {weight} kg · {describeKites(kites)}</span>
             <ChevronDown
                 className={`size-3.5 shrink-0 text-zinc-500 transition-transform duration-200 ease-out ${open ? "rotate-180" : ""}`}
                 aria-hidden="true"

@@ -126,7 +126,7 @@ const KiteWindowComponent = ({ windData, outlook, loading, error, offshore, inde
 
             {/* mt-auto keeps the disclaimer at the bottom when the card stretches to match the Tide card */}
             <p className="mt-auto pt-3 text-[11px] leading-relaxed text-zinc-500">
-                A forecast-based suggestion. Always check conditions on the beach before you ride.
+                A forecast-based suggestion. Always check conditions before you ride.
             </p>
         </section>
     );

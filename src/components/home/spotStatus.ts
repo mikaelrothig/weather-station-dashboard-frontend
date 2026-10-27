@@ -17,6 +17,13 @@ export interface SpotStatus {
     windowLabel: string | null;
     /** Daylight hours of the window's day (or today's, without a window), for the hour strip; past ones are flagged */
     dayHours: KiteHour[];
+    /** Every forecast hour from midnight today, for the map's timeline */
+    hours: ForecastPoint[];
+    /** Spot-local clock times, "HH:MM" */
+    sunrise: string;
+    sunset: string;
+    /** The forecast model, e.g. "WRF 9 km" */
+    model: string;
 }
 
 /** A spot on the home page, with its wind when the summary has it */
@@ -61,6 +68,10 @@ export const getSpotStatus = (spot: Spot, summary: SpotSummary, rider: Rider): S
         reason: today?.reason ?? null,
         windowLabel: day?.window ? `${formatClock(day.window.start)}–${formatClock(day.window.end)}` : null,
         dayHours: (day ?? today)?.hours ?? [],
+        hours: summary.hours,
+        sunrise: summary.sunrise,
+        sunset: summary.sunset,
+        model: summary.model,
     };
 };
 
@@ -76,15 +87,37 @@ export const pickBestWindow = (statuses: SpotStatus[]): SpotStatus | null =>
 export const pickWindiest = (statuses: SpotStatus[]): SpotStatus | null =>
     statuses.reduce<SpotStatus | null>((best, s) => (!best || s.now.speed > best.now.speed ? s : best), null);
 
-/** Average wind over every spot, for the streaks drifting across the map */
-export const averageWind = (statuses: SpotStatus[]): { speed: number; direction: number } => {
+export interface Wind {
+    /** Knots */
+    speed: number;
+    /** Degrees the wind comes from */
+    direction: number;
+}
+
+/** Average of several winds: speeds averaged, directions weighted by strength */
+export const averageWind = (winds: Wind[]): Wind => {
     const rad = Math.PI / 180;
-    const x = statuses.reduce((sum, s) => sum + Math.cos(s.now.direction * rad) * s.now.speed, 0);
-    const y = statuses.reduce((sum, s) => sum + Math.sin(s.now.direction * rad) * s.now.speed, 0);
+    const x = winds.reduce((sum, w) => sum + Math.cos(w.direction * rad) * w.speed, 0);
+    const y = winds.reduce((sum, w) => sum + Math.sin(w.direction * rad) * w.speed, 0);
     return {
-        speed: statuses.reduce((sum, s) => sum + s.now.speed, 0) / (statuses.length || 1),
+        speed: winds.reduce((sum, w) => sum + w.speed, 0) / (winds.length || 1),
         direction: ((Math.atan2(y, x) / rad) + 360) % 360,
     };
+};
+
+/**
+ * A spot's wind at `hour`, counted in hours from midnight today and fractional between forecast hours, so the map can
+ * glide from one hour to the next. Clamped to the forecast's ends.
+ */
+export const windAt = (hours: ForecastPoint[], hour: number): Wind => {
+    const last = hours.length - 1;
+    const i = Math.min(Math.max(Math.floor(hour), 0), last);
+    const t = Math.min(Math.max(hour - i, 0), 1);
+    const a = hours[i];
+    const b = hours[Math.min(i + 1, last)];
+    // The direction turns the short way round, weighted towards whichever hour is nearer
+    const { direction } = averageWind([{ speed: 1 - t, direction: a.direction }, { speed: t, direction: b.direction }]);
+    return { speed: a.speed + (b.speed - a.speed) * t, direction };
 };
 
 // --- Coastline artwork -------------------------------------------------------------------------

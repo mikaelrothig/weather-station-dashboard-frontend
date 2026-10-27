@@ -230,5 +230,12 @@ export const describeKites = (kites: number[]): string =>
     kites.length === 0 ? "No kites added" : kites.length <= 3 ? `${kites.join(", ")} m²` : `${kites.length} kites`;
 
 /** "12–18", or just "18" when the wind barely changes */
+/**
+ * The kite to rig first for a window. With the rider's kites it's the first in the plan; without them it's the size for
+ * the window's average wind, since every 1 m² step in the plan isn't a real switch.
+ */
+export const leadKite = (window: KiteWindow, weightKg: number, profile: ExperienceProfile) =>
+    window.hours[0]?.kite.fit === "suggested" ? chooseKite(weightKg, window.avgSpeed, profile, []).size : window.plan[0].size;
+
 export const windRange = (min: number, max: number) =>
     Math.round(min) === Math.round(max) ? `${Math.round(max)}` : `${Math.round(min)}–${Math.round(max)}`;

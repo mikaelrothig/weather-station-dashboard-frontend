@@ -1,9 +1,10 @@
 /**
  * Builds the coastline artwork for the home page's map: src/components/home/outline.json.
  *
- * Frames the spots (plus a margin) at the map's aspect ratio, cuts the land, lakes and land borders out of
- * Natural Earth's 1:10m data (public domain), rounds the shapes off with Chaikin smoothing and writes them as SVG
- * paths in a Web Mercator projection. The map plots the spots with the same projection
+ * Frames the spots (plus a margin) at the map's aspect ratio and traces the coastline from the same elevation tiles the
+ * relief and sea floor come from (where the height crosses 0 m), so land, relief and sea floor meet exactly. Land
+ * borders come from Natural Earth's 1:10m data (public domain). Shapes are simplified lightly, rounded off with Chaikin
+ * smoothing and written as SVG paths in a Web Mercator projection. The map plots the spots with the same projection
  * (projectSpot in src/components/home/spotStatus.ts), so dots and coastline line up.
  *
  * Land is drawn well past the frame to the north (NORTH_EXTRA), so when the map card is taller than the artwork it
@@ -15,7 +16,7 @@
  * facing away. The map lays it over the land with a hard-light blend, clipped to the coastline.
  *
  * Run after adding a spot: npm run outlines
- * (downloads ~10 MB from naciscdn.org and ~25 MB of elevation tiles into a temp folder; the output is committed)
+ * (downloads ~1 MB from naciscdn.org and ~40 MB of elevation tiles into a temp folder; the output is committed)
  */
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
@@ -36,27 +37,55 @@ const MARGIN = 0.35;
 const MIN_MARGIN = 0.4;
 // Degrees of land drawn beyond the frame to the north, inland
 const NORTH_EXTRA = 2.5;
+// Coastline: traced at this tile zoom (about 125 m a pixel here, as the relief), then simplified so no point strays more
+// than this many tile pixels from the traced line, and islands and inlets smaller than this many km² dropped. One light
+// Chaikin pass softens the pixel corners
+const COAST_ZOOM = 10;
+const COAST_TOLERANCE = 0.7;
+const COAST_MIN_AREA_KM2 = 0.5;
+const SMOOTHING_PASSES = 1;
+// Land borders are simplified to about this many segments across the map
+const BORDER_SEGMENTS = 700;
 
 // Shaded relief: the tile zoom it's computed from (about 125 m a pixel here), the image's width, how far it reaches
 // above the frame (as a share of the frame's height, for cards taller than the artwork), how much the hills are
 // exaggerated, and where the light comes from (degrees clockwise from north, and above the horizon)
 const TERRAIN_ZOOM = 10;
-const TERRAIN_WIDTH = 1600;
+const TERRAIN_WIDTH = 2400;
 const TERRAIN_ABOVE = 0.4;
 const TERRAIN_EXAGGERATION = 2;
 const LIGHT_AZIMUTH = 315;
 const LIGHT_ALTITUDE = 45;
 // JPEG suits smooth shading far better than PNG: about a third of the size, with no visible difference at this quality
-const TERRAIN_QUALITY = 80;
+const TERRAIN_QUALITY = 74;
 const TERRAIN_OUT = new URL("../src/components/home/terrain.jpg", import.meta.url).pathname;
 
-// Islands too small for Natural Earth's 1:10m land, traced from OpenStreetMap (ODbL) and simplified by hand.
-// Robben Island's harbour is left out: at this size it only reads as a notch.
-const ISLANDS = {
-    "Robben Island": [[18.3566, -33.8019], [18.3603, -33.809], [18.3602, -33.8144], [18.3638, -33.8178], [18.3706, -33.8209],
-        [18.3816, -33.8177], [18.383, -33.8139], [18.3813, -33.8117], [18.382, -33.8089], [18.3761, -33.8023], [18.3739, -33.7964],
-        [18.3732, -33.7917], [18.3689, -33.7896], [18.3631, -33.7902], [18.3616, -33.7946], [18.358, -33.7967], [18.3566, -33.8019]],
-};
+// The sea floor, from the same elevation tiles (they carry bathymetry), drawn like a relief chart: shallow shelf lit and
+// deep water shaded, the floor itself hill-shaded from the north-west (exaggerated, as the sea floor is gentle next to
+// mountains) so the shelf edge, canyons and banks show. It reaches well
+// past the frame (a share of the frame's size each way), since wide and tall screens show sea beyond it, and fades to
+// neutral at its own edges so it never ends at a line.
+const DEPTH_ZOOM = 10;
+// As many pixels per artwork unit as the land relief, so the two are equally crisp
+const DEPTH_WIDTH = 3600;
+const DEPTH_EXAGGERATION = 9;
+// The floor is smoothed this many image pixels before it's shaded: the source has faint striping in deep water that
+// exaggeration would turn into scan lines, and a soft floor reads better under the wind anyway
+const DEPTH_SMOOTHING = 1;
+// The public sea-floor data is much coarser than the land's, so close in it's soft whatever the image size. Fine fractal
+// relief is added on top (artistic, not surveyed): a few octaves of noise, wavelengths in image pixels and heights in
+// metres, gentle over the shallow shelf and fuller in deep water, so the floor shades as crisply as the land
+const FLOOR_DETAIL = [
+    { wavelength: 5, metres: 6 },
+    { wavelength: 11, metres: 12 },
+    { wavelength: 23, metres: 22 },
+    { wavelength: 47, metres: 34 },
+];
+const FLOOR_DETAIL_FULL_AT = 400;
+const DEPTH_REACH = { side: 0.25, below: 1.0 };
+const DEPTH_FULL = 3000;
+const DEPTH_OUT = new URL("../src/components/home/depth.jpg", import.meta.url).pathname;
+
 
 const OUT = new URL("../src/components/home/outline.json", import.meta.url).pathname;
 const tmp = mkdtempSync(join(tmpdir(), "outlines-"));
@@ -103,7 +132,7 @@ const run = (...args) => execFileSync(process.execPath, [mapshaper, "-quiet", ..
 const geojson = ["format=geojson", "geojson-type=FeatureCollection"];
 
 // Chaikin corner cutting: each pass replaces every corner with two points a quarter of the way along its edges
-const chaikin = (points, closed, passes = 2) => {
+const chaikin = (points, closed, passes = SMOOTHING_PASSES) => {
     let pts = points;
     for (let pass = 0; pass < passes; pass++) {
         const ring = closed ? pts.slice(0, -1) : pts;
@@ -235,42 +264,252 @@ const terrain = async ([west, south, east, north]) => {
     return TERRAIN_ABOVE;
 };
 
+/**
+ * Writes the ocean depth shading to DEPTH_OUT, as grey to blend like the relief: mid grey on land and far out, lighter on
+ * the shallow shelf, darker over deep water. Returns where it sits on the artwork, in artwork units.
+ */
+const depth = async ([west, south, east, north]) => {
+    const z = DEPTH_ZOOM;
+    const worldPx = 256 * 2 ** z;
+    const span = east - west;
+    const w = west - span * DEPTH_REACH.side, e = east + span * DEPTH_REACH.side;
+    const top = mercatorY(north), frameBottom = mercatorY(south);
+    const bottom = frameBottom - (top - frameBottom) * DEPTH_REACH.below;
+    const width = DEPTH_WIDTH;
+    const height = Math.round(width * ((top - bottom) / ((e - w) * (Math.PI / 180))));
+
+    const left = ((w + 180) / 360) * worldPx, right = ((e + 180) / 360) * worldPx;
+    const upper = ((1 - top / Math.PI) / 2) * worldPx, lower = ((1 - bottom / Math.PI) / 2) * worldPx;
+    const dem = await elevationTiles(z, Math.floor(left / 256), Math.floor((right - 1e-9) / 256), Math.floor(upper / 256), Math.floor((lower - 1e-9) / 256));
+
+    // Box-average the tile pixels under each image pixel: smooth, and true to the floor's shape at the image's size
+    const metresAt = new Float32Array(width * height);
+    const stepX = (right - left) / width, stepY = (lower - upper) / height;
+    for (let j = 0; j < height; j++) {
+        const ya = Math.floor(upper + j * stepY - dem.originY), yb = Math.max(ya + 1, Math.floor(upper + (j + 1) * stepY - dem.originY));
+        for (let i = 0; i < width; i++) {
+            const xa = Math.floor(left + i * stepX - dem.originX), xb = Math.max(xa + 1, Math.floor(left + (i + 1) * stepX - dem.originX));
+            let sum = 0, count = 0;
+            for (let y = ya; y < yb; y++) for (let x = xa; x < xb; x++) { sum += dem.grid[y * dem.cols + x]; count++; }
+            metresAt[j * width + i] = sum / count;
+        }
+    }
+
+    // Three passes of a box blur, each way, which is close to a Gaussian
+    const tmp = new Float32Array(width * height);
+    for (let pass = 0; pass < 3; pass++) {
+        for (const [src, dst, horizontal] of [[metresAt, tmp, true], [tmp, metresAt, false]]) {
+            for (let j = 0; j < height; j++) {
+                for (let i = 0; i < width; i++) {
+                    let sum = 0, count = 0;
+                    for (let k = -DEPTH_SMOOTHING; k <= DEPTH_SMOOTHING; k++) {
+                        const x = horizontal ? i + k : i, y = horizontal ? j : j + k;
+                        if (x < 0 || x >= width || y < 0 || y >= height) continue;
+                        sum += src[y * width + x];
+                        count++;
+                    }
+                    dst[j * width + i] = sum / count;
+                }
+            }
+        }
+    }
+
+    // Fractal detail on the sea floor, deeper water getting more of it; land is left as it is
+    const hash = (x, y) => {
+        const h = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+        return (h - Math.floor(h)) * 2 - 1;
+    };
+    const noise = (x, y) => {
+        const ix = Math.floor(x), iy = Math.floor(y), fx = x - ix, fy = y - iy;
+        const u = fx * fx * (3 - 2 * fx), v = fy * fy * (3 - 2 * fy);
+        const a = hash(ix, iy), b = hash(ix + 1, iy), c = hash(ix, iy + 1), d = hash(ix + 1, iy + 1);
+        return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+    };
+    for (let j = 0; j < height; j++) {
+        for (let i = 0; i < width; i++) {
+            const k = j * width + i;
+            if (metresAt[k] >= 0) continue;
+            const share = 0.3 + 0.7 * Math.min(-metresAt[k] / FLOOR_DETAIL_FULL_AT, 1);
+            let detail = 0;
+            for (const { wavelength, metres } of FLOOR_DETAIL) detail += noise(i / wavelength, j / wavelength) * metres;
+            // Kept below the surface, so the coast's shape is the coastline's
+            metresAt[k] = Math.min(metresAt[k] + detail * share, -1);
+        }
+    }
+
+    const rad = Math.PI / 180;
+    const zenith = (90 - LIGHT_ALTITUDE) * rad;
+    const azimuth = ((360 - LIGHT_AZIMUTH + 90) % 360) * rad;
+    const flat = Math.cos(zenith);
+    const at = (i, j) => metresAt[Math.min(height - 1, Math.max(0, j)) * width + Math.min(width - 1, Math.max(0, i))];
+    const edge = (t) => Math.min(1, t / 0.12);
+    const pixels = Buffer.alloc(width * height * 4, 255);
+    for (let j = 0; j < height; j++) {
+        const lat = latFromMercatorY(top - ((j + 0.5) / height) * (top - bottom));
+        const cell = ((e - w) / width) * 111_320 * Math.cos(lat * rad);
+        for (let i = 0; i < width; i++) {
+            const metres = metresAt[j * width + i];
+            let lift = 0;
+            if (metres < 0) {
+                // Depth tint, on a log scale so the shelf's first hundred metres show as much as the drop to the deep
+                const t = Math.min(Math.log1p(-metres) / Math.log1p(DEPTH_FULL), 1);
+                lift = 30 - 78 * t;
+                // The floor's own relief
+                const [a, b, c, d, f, g, h, k] = [at(i - 1, j - 1), at(i, j - 1), at(i + 1, j - 1), at(i - 1, j), at(i + 1, j), at(i - 1, j + 1), at(i, j + 1), at(i + 1, j + 1)];
+                const dzdx = ((c + 2 * f + k) - (a + 2 * d + g)) / (8 * cell);
+                const dzdy = ((g + 2 * h + k) - (a + 2 * b + c)) / (8 * cell);
+                const slope = Math.atan(DEPTH_EXAGGERATION * Math.hypot(dzdx, dzdy));
+                const aspect = Math.atan2(dzdy, -dzdx);
+                const shade = Math.cos(zenith) * Math.cos(slope) + Math.sin(zenith) * Math.sin(slope) * Math.cos(azimuth - aspect);
+                lift += Math.max(-70, Math.min(70, (shade - flat) * 190));
+            }
+            const fade = Math.min(edge(i / width), edge(1 - i / width), edge(j / height), edge(1 - j / height));
+            const out = (j * width + i) * 4;
+            pixels.fill(Math.max(0, Math.min(255, Math.round(128 + lift * fade))), out, out + 3);
+        }
+    }
+
+    writeFileSync(DEPTH_OUT, jpeg.encode({ data: pixels, width, height }, TERRAIN_QUALITY).data);
+    console.log(`Depth: ${width}×${height}, ${(statSync(DEPTH_OUT).size / 1024).toFixed(0)} KB`);
+    // On the artwork: x is linear in longitude, y in Mercator, the same projection the outline uses
+    const frameTop = top;
+    return {
+        x: Math.round(((w - west) / span) * WIDTH * 10) / 10,
+        y: 0,
+        width: Math.round(((e - w) / span) * WIDTH * 10) / 10,
+        height: Math.round(((frameTop - bottom) / (frameTop - frameBottom)) * HEIGHT * 10) / 10,
+    };
+};
+
+/**
+ * The coastline as GeoJSON polygons (one ring each, land counter-clockwise, water inside land clockwise) traced where the
+ * elevation tiles cross 0 m over [west, south, east, north]. Marching squares with the crossing interpolated along each
+ * cell edge, a sea border all round so every ring closes, then Douglas–Peucker simplification.
+ */
+const traceCoast = async ([west, south, east, north]) => {
+    const z = COAST_ZOOM;
+    const worldPx = 256 * 2 ** z;
+    const gx = (lon) => ((lon + 180) / 360) * worldPx;
+    const gy = (lat) => ((1 - mercatorY(lat) / Math.PI) / 2) * worldPx;
+    const left = gx(west), right = gx(east), upper = gy(north), lower = gy(south);
+    const dem = await elevationTiles(z, Math.floor(left / 256), Math.floor((right - 1e-9) / 256), Math.floor(upper / 256), Math.floor((lower - 1e-9) / 256));
+    const x0 = Math.floor(left - dem.originX), x1 = Math.ceil(right - dem.originX);
+    const y0 = Math.floor(upper - dem.originY), y1 = Math.ceil(lower - dem.originY);
+    // The traced window, padded with sea all round
+    const cols = x1 - x0 + 3, rows = y1 - y0 + 3;
+    const v = new Float32Array(cols * rows).fill(-1);
+    // Sea level itself counts as sea, nudged just below: an exact 0 would put the crossing on a grid corner, where several
+    // cells' segments start at the same point and the rings tangle
+    for (let y = 0; y <= y1 - y0; y++) {
+        for (let x = 0; x <= x1 - x0; x++) {
+            const m = dem.grid[(y0 + y) * dem.cols + x0 + x];
+            v[(y + 1) * cols + x + 1] = m > 0 ? m : Math.min(m, -0.01);
+        }
+    }
+
+    // Segments with land on their left, keyed by start, so they chain into rings
+    const next = new Map();
+    const key = (p) => `${p[0].toFixed(4)},${p[1].toFixed(4)}`;
+    const at = (a, b, va, vb) => { const t = va / (va - vb); return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]; };
+    for (let j = 0; j < rows - 1; j++) {
+        for (let i = 0; i < cols - 1; i++) {
+            const tl = v[j * cols + i], tr = v[j * cols + i + 1], br = v[(j + 1) * cols + i + 1], bl = v[(j + 1) * cols + i];
+            const code = (tl > 0 ? 8 : 0) | (tr > 0 ? 4 : 0) | (br > 0 ? 2 : 0) | (bl > 0 ? 1 : 0);
+            if (code === 0 || code === 15) continue;
+            const T = at([i, j], [i + 1, j], tl, tr), R = at([i + 1, j], [i + 1, j + 1], tr, br);
+            const B = at([i, j + 1], [i + 1, j + 1], bl, br), L = at([i, j], [i, j + 1], tl, bl);
+            // Each case's segments run with land on the left (y grows downward)
+            const segs = {
+                1: [[B, L]], 2: [[R, B]], 3: [[R, L]], 4: [[T, R]], 5: [[T, L], [B, R]], 6: [[T, B]], 7: [[T, L]],
+                8: [[L, T]], 9: [[B, T]], 10: [[L, B], [R, T]], 11: [[R, T]], 12: [[L, R]], 13: [[B, R]], 14: [[L, B]],
+            }[code];
+            for (const [a, b] of segs) next.set(key(a), [a, b]);
+        }
+    }
+    const rings = [];
+    while (next.size) {
+        const [startKey, first] = next.entries().next().value;
+        next.delete(startKey);
+        const ring = [first[0], first[1]];
+        let k = key(first[1]);
+        while (k !== startKey && next.has(k)) {
+            const seg = next.get(k);
+            next.delete(k);
+            ring.push(seg[1]);
+            k = key(seg[1]);
+        }
+        if (k !== startKey) throw new Error(`Coastline ring didn't close (${ring.length} points)`);
+        if (ring.length > 3) rings.push(ring);
+    }
+
+    // Douglas–Peucker, iterative, on an open run of points
+    const simplify = (pts, tol) => {
+        const keep = new Uint8Array(pts.length);
+        keep[0] = keep[pts.length - 1] = 1;
+        const stack = [[0, pts.length - 1]];
+        while (stack.length) {
+            const [a, b] = stack.pop();
+            const [ax, ay] = pts[a], [bx, by] = pts[b];
+            const len = Math.hypot(bx - ax, by - ay) || 1;
+            let worst = 0, at = -1;
+            for (let i = a + 1; i < b; i++) {
+                const d = Math.abs((bx - ax) * (ay - pts[i][1]) - (ax - pts[i][0]) * (by - ay)) / len;
+                if (d > worst) [worst, at] = [d, i];
+            }
+            if (worst > tol) { keep[at] = 1; stack.push([a, at], [at, b]); }
+        }
+        return pts.filter((_, i) => keep[i]);
+    };
+    // Grid point back to [lon, lat]
+    const toLonLat = ([i, j]) => {
+        const px = dem.originX + x0 + i - 1, py = dem.originY + y0 + j - 1;
+        return [(px / worldPx) * 360 - 180, latFromMercatorY(Math.PI * (1 - (2 * py) / worldPx))];
+    };
+    // A tile pixel's area in km² at this latitude, for dropping specks
+    const pxKm = ((360 / worldPx) * 111.32 * Math.cos(((south + north) / 2) * (Math.PI / 180))) ** 2;
+    const features = [];
+    for (const ring of rings) {
+        let area = 0;
+        for (let i = 0; i < ring.length - 1; i++) area += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+        if (Math.abs(area / 2) * pxKm < COAST_MIN_AREA_KM2) continue;
+        // Simplified in two halves, so the ring's closing point is kept
+        const half = Math.floor(ring.length / 2);
+        const pts = [...simplify(ring.slice(0, half + 1), COAST_TOLERANCE), ...simplify(ring.slice(half), COAST_TOLERANCE).slice(1)];
+        if (pts.length < 4) continue;
+        features.push({ type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [pts.map(toLonLat)] } });
+    }
+    console.log(`Coastline: ${features.length} rings`);
+    return { type: "FeatureCollection", features };
+};
+
 console.log("Downloading Natural Earth…");
-const land = download("10m/physical/ne_10m_land");
-const lakes = download("10m/physical/ne_10m_lakes");
 const borders = download("10m/cultural/ne_10m_admin_0_boundary_lines_land");
 
 const bbox = frame(points);
 // Clip a little wider than the frame so smoothing never pulls a shape's edge inside the map, and far wider to the north
 const [w, s, e, n] = bbox;
-const clip = `bbox=${[w - 0.3, s - 0.3, e + 0.3, n + NORTH_EXTRA].join(",")}`;
-// About 250 segments across the map: detailed enough to recognise, soft enough to read as artwork
-const interval = `interval=${Math.round(((e - w) * 111_000 * Math.cos(((s + n) / 2) * (Math.PI / 180))) / 250)}`;
+const clipBox = [w - 0.3, s - 0.3, e + 0.3, n + NORTH_EXTRA];
+const clip = `bbox=${clipBox.join(",")}`;
+const interval = `interval=${Math.round(((e - w) * 111_000 * Math.cos(((s + n) / 2) * (Math.PI / 180))) / BORDER_SEGMENTS)}`;
 const file = (name) => join(tmp, `${name}.json`);
 
-run("-i", lakes, "-clip", clip, "-filter", "this.area > 2e7", "-o", file("lakes"), ...geojson);
-// mapshaper fails on an empty erase layer, and plenty of coasts have no sizeable lake nearby
-const hasLakes = JSON.parse(readFileSync(file("lakes"), "utf8")).features.length > 0;
-run("-i", land, "-clip", clip, ...(hasLakes ? ["-erase", file("lakes")] : []), "-filter-islands", "min-area=4km2", "remove-empty",
-    "-simplify", interval, "keep-shapes", "-explode", "-o", file("land"), ...geojson);
 run("-i", borders, "-clip", clip, "-simplify", interval, "-o", file("borders"), ...geojson);
 
 console.log("Downloading elevation…");
+writeFileSync(file("land"), JSON.stringify(await traceCoast(clipBox)));
 const terrainAbove = await terrain(bbox);
-
-writeFileSync(file("islands"), JSON.stringify({
-    type: "FeatureCollection",
-    features: Object.entries(ISLANDS).map(([name, ring]) => ({ type: "Feature", properties: { name }, geometry: { type: "Polygon", coordinates: [ring] } })),
-}));
+const depthBox = await depth(bbox);
 
 const outline = {
     width: WIDTH,
     height: HEIGHT,
     bbox: bbox.map((v) => Math.round(v * 1e5) / 1e5),
-    land: toPath(file("land"), bbox, true) + toPath(file("islands"), bbox, true),
+    land: toPath(file("land"), bbox, true),
     borders: toPath(file("borders"), bbox, false),
     // terrain.jpg covers the frame's full width, from this share of its height above it down to its bottom edge
     terrainAbove,
+    // Where depth.jpg sits on the artwork, in its units
+    depth: depthBox,
 };
 console.log(`Outline: ${((outline.land.length + outline.borders.length) / 1024).toFixed(1)} KB`);
 
